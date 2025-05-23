@@ -3,7 +3,13 @@ import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { client } from "@/sanity/client";
 import Link from "next/link";
-import Image from "next/image";
+import GalleryImage from "@/components/GalleryImage";
+
+interface GalleryItem {
+  url: string | null;
+  category: string | null;
+}
+
 const POST_QUERY = `*[_type == "post" && slug.current == $slug][0]`;
 
 const { projectId, dataset } = client.config();
@@ -20,29 +26,41 @@ export default async function PostPage({
   params: Promise<{ slug: string }>;
 }) {
   const post = await client.fetch<SanityDocument>(POST_QUERY, await params, options);
- 
-  const postImageUrl = post.image
-    ? urlFor(post.image)?.width(550).height(310).url()
-    : null;
+
+  const galleryData: GalleryItem[] = post.gallery?.map((image: SanityImageSource & { category?: string }) => {
+    const imageUrl = urlFor(image)?.width(1200).height(1200).url();
+    const category = image.category || null;
+    return { url: imageUrl, category };
+  });
+
+  const galleryImages = galleryData?.map((data) => data.url);
+  const galleryCategories = galleryData?.map((data) => data.category);
 
   return (
-    <main className="container mx-auto min-h-screen max-w-3xl p-8 flex flex-col gap-4">
+    <main className="container mx-auto max-w-6xl">
       <Link href="/" className="hover:underline">
         ← Back to posts
       </Link>
-      {postImageUrl && (
-        <Image
-          src={postImageUrl}
-          alt={post.title}
-          className="aspect-video rounded-xl"
-          width={550}
-          height={310}
-        />
+
+      {galleryImages && <GalleryImage galleryImages={galleryImages} />}
+
+      {galleryCategories && (
+        <div className="mt-4">
+          <h2 className="text-2xl font-bold">Categories</h2>
+          <ul className="list-disc pl-5">
+            {galleryCategories.map((category, index) => (
+              <li key={index} className="text-gray-700">
+                {category || "Uncategorized"}
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
+
       <h1 className="text-4xl font-bold mb-8">{post.title}</h1>
       <div className="prose">
         {Array.isArray(post.body) && <PortableText value={post.body} />}
-        <p>Published: {new Date(post.publishedAt).toLocaleDateString()}</p>
+
       </div>
     </main>
   );

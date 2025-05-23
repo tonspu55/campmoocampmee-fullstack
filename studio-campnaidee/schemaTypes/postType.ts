@@ -27,6 +27,30 @@ export const postType = defineType({
       type: 'image',
     }),
     defineField({
+      name: 'gallery',
+      title: 'Image Gallery',
+      type: 'array',
+      of: [
+        {
+          type: 'image',
+          fields: [
+            defineField({
+              name: 'category',
+              title: 'Category',
+              type: 'string',
+              options: {
+                list: [
+                  {title: 'Landscape', value: 'landscape'},
+                  {title: 'Portrait', value: 'portrait'},
+                  {title: 'Abstract', value: 'abstract'},
+                ],
+              },
+            }),
+          ],
+        },
+      ],
+    }),
+    defineField({
       name: 'body',
       type: 'array',
       of: [{type: 'block'}],
