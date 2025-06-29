@@ -23,12 +23,12 @@ export const postType = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: 'image',
+      name: 'thumbnail',
       type: 'image',
     }),
     defineField({
       name: 'gallery',
-      title: 'Image Gallery',
+      title: 'Gallery',
       type: 'array',
       of: [
         {
@@ -40,9 +40,9 @@ export const postType = defineType({
               type: 'string',
               options: {
                 list: [
-                  {title: 'Landscape', value: 'landscape'},
-                  {title: 'Portrait', value: 'portrait'},
-                  {title: 'Abstract', value: 'abstract'},
+                  {title: 'วิว', value: 'วิว'},
+                  {title: 'ที่พัก', value: 'ที่พัก'},
+                  {title: 'กิจกรรม', value: 'กิจกรรม'},
                 ],
               },
             }),
