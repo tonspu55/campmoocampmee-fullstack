@@ -2,7 +2,7 @@ import { client } from "@/sanity/client";
 import { PortableText, type SanityDocument } from "next-sanity";
 import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
-import GalleryImage from "@/components/GalleryImage";
+import ImageGallery from "@/components/ImageGallery";
 import type { Metadata } from "next";
 
 
@@ -44,13 +44,13 @@ export default async function PostPage({
     return { url: imageUrl, category };
   });
 
-  const galleryImages = galleryData?.map((data) => data.url);
+  const ImageGalleryData = galleryData?.map((data) => data.url);
 
   return (
     <main className="container mx-auto max-w-6xl  mt-[70px]">
 
 
-      {galleryImages && <GalleryImage galleryImages={galleryImages} slug={(await params).slug} />}
+      {ImageGalleryData && <ImageGallery ImageGallery={ImageGalleryData} slug={(await params).slug} />}
 
       <h4 className="text-xl font-bold my-6">{post.title}</h4>
       <div className="prose">
