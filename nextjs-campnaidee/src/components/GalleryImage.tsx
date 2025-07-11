@@ -33,21 +33,20 @@ const GalleryImage = ({ galleryImages, slug }: GalleryImageProps) => {
                   fill
                   className="object-cover "
                 />
-                <div className="absolute bottom-0 right-0">
-                  <div className="flex flex-col items-end pr-2">
-                    <Button asChild>
-                      <Link
-                        href={`/land/${slug}/gallery`}
-                        className="text-sm text-center my-2 p-2  rounded-full! w-10 h-10 flex items-center justify-center"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                        </svg>
-                      </Link>
-                    </Button>
-
+                {index === 4 && (
+                  <div className="absolute bottom-0 right-0">
+                    <div className="flex flex-col items-end pr-2">
+                      <Button asChild>
+                        <Link
+                          href={`/land/${slug}/gallery`}
+                          className="text-sm text-center absolute bottom-0 right-0 m-2 p-2"
+                        >
+                          ดูรูปภาพทั้งหมด
+                        </Link>
+                      </Button>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </SwiperSlide>
           ))}

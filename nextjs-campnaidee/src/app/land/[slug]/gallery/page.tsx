@@ -44,7 +44,7 @@ const GalleryPage = async ({ params }: PageProps) => {
   }) || [];
 
   return (
-    <div className="container mx-auto  max-w-[900px] max-lg:p-2">
+    <div className="container mx-auto  max-w-[900px]  mt-[90px] max-md:px-2">
       <Link href={`/land/${(await params).slug}`} className="hover:underline mb-4 inline-block">
         ← Back to post
       </Link>

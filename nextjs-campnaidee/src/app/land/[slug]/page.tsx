@@ -2,7 +2,6 @@ import { client } from "@/sanity/client";
 import { PortableText, type SanityDocument } from "next-sanity";
 import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
-import Link from "next/link";
 import GalleryImage from "@/components/GalleryImage";
 import type { Metadata } from "next";
 
@@ -48,17 +47,14 @@ export default async function PostPage({
   const galleryImages = galleryData?.map((data) => data.url);
 
   return (
-    <main className="container mx-auto max-w-6xl">
-      <Link href="/" className="hover:underline">
-        ← Back to posts
-      </Link>
+    <main className="container mx-auto max-w-6xl  mt-[70px]">
+
 
       {galleryImages && <GalleryImage galleryImages={galleryImages} slug={(await params).slug} />}
 
-      <h1 className="text-4xl font-bold mb-8">{post.title}</h1>
+      <h4 className="text-xl font-bold my-6">{post.title}</h4>
       <div className="prose">
         {Array.isArray(post.body) && <PortableText value={post.body} />}
-
       </div>
     </main>
   );
