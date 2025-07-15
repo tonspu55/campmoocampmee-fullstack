@@ -25,7 +25,7 @@ const NavLink = ({ path, children }: NavLinkProps) => {
   if (isExternal) {
     return (
       <a
-        className="hover:text-[#085953] font-medium"
+        className="hover:opacity-75 font-medium"
         href={path.startsWith('www.') ? `https://${path}` : path}
         target="_blank"
         rel="noopener noreferrer"
@@ -37,8 +37,8 @@ const NavLink = ({ path, children }: NavLinkProps) => {
 
   return (
     <Link
-      className={`${pathname === path ? "text-[#085953]" : ""
-        } hover:text-[#085953] font-medium`}
+      className={`${pathname === path ? "border-b-2 border-[#085953]" : ""
+        }  hover:opacity-75 font-medium`}
       href={path}
     >
       {children}
@@ -53,7 +53,7 @@ const NavLinkMobile = ({ path, children, onCloseNav }: NavLinkMobileProps) => {
   if (isExternal) {
     return (
       <a
-        className="hover:text-[#085953] font-medium"
+        className="hover:opacity-75 font-medium"
         href={path.startsWith('www.') ? `https://${path}` : path}
         target="_blank"
         rel="noopener noreferrer"
@@ -78,17 +78,32 @@ const NavLinkMobile = ({ path, children, onCloseNav }: NavLinkMobileProps) => {
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobileView, setIsMobileView] = useState(false);
-
-
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+
     const handleResize = () => {
       setIsMobileView(window.innerWidth < 768);
     };
+
     handleResize();
+    handleScroll();
+
     window.addEventListener("resize", handleResize);
+    window.addEventListener("scroll", handleScroll);
+
+
     return () => {
+      // Clean up 
       window.removeEventListener("resize", handleResize);
+      window.removeEventListener("scroll", handleScroll);
+      setMounted(false);
     };
   }, []);
 
@@ -98,11 +113,10 @@ const Header = () => {
         "flex",
         "absolute",
         "top-[70px]",
-        "w-full",
-        "p-2",
+        "w-[100%]",
         "gap-2",
         "flex-col",
-        "left-0",
+        "right-0",
       ].join(" ");
     } else {
       return [
@@ -118,16 +132,16 @@ const Header = () => {
 
   return (
     <nav
-      className={`flex items-center fixed top-0 left-0 right-0 z-50 h-[70px] bg-white dark:bg-[var(--background)]`}
-
+      className={`flex items-center fixed top-0 left-0 right-0 z-50 h-[70px]  ${mounted && isScrolled ? 'bg-white dark:bg-[var(--background)]' : 'bg-transparent'
+        }`}
     >
       <div className="container mx-auto flex items-center max-w-6xl max-md:px-2">
         <LogoSwitcher />
-        <div className={`${menuClasses} bg-white dark:bg-[var(--background)]`} >
+        <div className={`${mounted && isScrolled ? 'bg-white dark:bg-[var(--background)]' : 'bg-transparent'} ${menuClasses}`} >
           {isMobileView ? (
-            <>
+            <div className="bg-white dark:bg-[var(--background)] px-2 py-4">
               <div className="flex flex-row justify-between">
-                <div className=" flex flex-col gap-2">
+                <div className="flex flex-col gap-2">
                   <NavLinkMobile
                     onCloseNav={() => setIsOpen(false)}
                     path="/"
@@ -145,7 +159,7 @@ const Header = () => {
                   <ThemeSwitcher />
                 </div>
               </div>
-            </>
+            </div>
           ) : (
             <>
               <NavLink path="/">หน้าหลัก</NavLink>

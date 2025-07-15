@@ -1,3 +1,4 @@
+'use client'
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -20,7 +21,7 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div className="flex flex-col space-y-4">
-            <h4 className="text-lg font-semibold">Sitemap</h4>
+            <h4 className="text-lg font-semibold">เมนู</h4>
             <nav className="flex flex-col space-y-2">
               <Link href="/" className="text-gray-300 hover:text-white transition-colors">
                 หน้าหลัก

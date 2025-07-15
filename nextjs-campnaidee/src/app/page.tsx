@@ -4,6 +4,7 @@ import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { client } from "@/sanity/client";
 import Image from "next/image";
+import styles from "./homepage.module.css";
 
 
 const POSTS_QUERY = `*[
@@ -24,31 +25,37 @@ export default async function IndexPage() {
 
 
   return (
-    <main className="container mx-auto max-w-6xl mt-[90px] max-md:px-2">
-      <h1 className="text-4xl font-bold mb-8">รายชื่อแคมป์</h1>
-      <ul className="flex flex-col gap-y-4">
-        {posts.map((post) => {
-          const postImageUrl = post.thumbnail
-            ? urlFor(post.thumbnail)?.width(550).height(310).url()
-            : null;
-          return (
-            <li className="hover:underline" key={post._id}>
-              <Link href={`/land/${post.slug.current}`}>
-                {postImageUrl && (
-                  <Image
-                    src={postImageUrl}
-                    alt={post.title}
-                    className="aspect-video rounded-xl"
-                    width={550}
-                    height={310}
-                  />
-                )}
-                <h2 className="text-xl font-semibold">{post.title}</h2>
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
+    <main className="pb-8 lg:pb-12">
+      <div className="flex relative h-[320px] md:h-[570px]">
+        <div className={styles["home-bg"]} />
+      </div>
+      <div className="container mx-auto max-w-6xl max-md:px-2">
+        <h1 className="text-2xl font-bold my-6">แคมป์แนะนำ</h1>
+        <ul className="flex flex-col gap-y-4 list-none!">
+          {posts.map((post) => {
+            const postImageUrl = post.thumbnail
+              ? urlFor(post.thumbnail)?.width(550).height(310).url()
+              : null;
+            return (
+              <li key={post._id}>
+                <Link href={`/land/${post.slug.current}`}>
+                  {postImageUrl && (
+                    <Image
+                      src={postImageUrl}
+                      alt={post.title}
+                      className="aspect-video rounded-xl"
+                      width={450}
+                      height={450}
+                    />
+                  )}
+                  <h2 className="text-xl font-medium mt-4">{post.title}</h2>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
     </main>
   );
 }

@@ -8,6 +8,8 @@ import type { Metadata } from "next";
 import styles from "./style.module.css";
 import ShareToSocial from "@/components/ShareToSocial";
 import OtherBenefits from "@/components/OtherBenefits";
+import { Separator } from "@/components/ui/separator"
+
 
 
 type PageProps = {
@@ -60,10 +62,8 @@ export default async function PostPage({ params, }: PageProps) {
           <div className="text-description ml-[20px]">
             {Array.isArray(post.body) && <PortableText value={post.body} />}
           </div>
-          <div className="pt-4 lg:pt-8">
-            <OtherBenefits otherBenefits={post.otherBenefits} />
-          </div>
-
+          <Separator className="my-4 md:my-6" />
+          <OtherBenefits otherBenefits={post.otherBenefits} />
         </div>
         <div className="max-lg:px-2 max-lg:w-full basis-1/1  lg:basis-1/3 max-lg:pt-4">
           <div className={`border-primary  p-4 ${styles.contactInfo}`}>

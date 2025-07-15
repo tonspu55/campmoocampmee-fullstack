@@ -31,8 +31,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const post = await client.fetch<SanityDocument>(POST_QUERY, await params, options);
 
   return {
-    title: `แกลลอรี่ - ${post.title}`,
-    description: `ดูแกลลอรี่รูปภาพของ ${post.title}`,
+    title: `อัลบั้ม - ${post.title}`,
+    description: `ดูอัลบั้มรูปภาพของ ${post.title}`,
   };
 }
 
@@ -49,14 +49,23 @@ const GalleryPage = async ({ params }: PageProps) => {
     <div className="container mx-auto  max-w-[900px] pb-8 md:pb-12  mt-[90px] max-md:px-2">
 
 
-      <Button asChild className="flex h-9 w-9 items-center  justify-center rounded-full cursor-pointer" variant="default">
+      {/* <Button asChild className="flex h-9 w-9 items-center  justify-center rounded-full cursor-pointer" variant="default">
         <Link href={`/land/${(await params).slug}`} className="mb-6">
           <ArrowLeft className="w-5 h-5" />
         </Link>
-      </Button>
+      </Button> */}
+      <div className="flex flex-row mb-4 gap-2 items-center">
+        <Button asChild className="flex h-9 w-9 items-center  justify-center rounded-full cursor-pointer" variant="default">
+          <Link href={`/land/${(await params).slug}`} >
+            <ArrowLeft className="w-5 h-5" />
+          </Link>
+        </Button>
+        <h1 className="text-2xl font-bold ">อัลบั้ม - {post.title}</h1>
+      </div>
 
 
-      <h1 className="text-2xl font-bold mb-6">แกลลอรี่ - {post.title}</h1>
+
+
 
       <TabGallery dataGallery={dataGallery} />
     </div>
