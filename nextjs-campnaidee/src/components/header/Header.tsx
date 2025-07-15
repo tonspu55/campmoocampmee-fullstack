@@ -136,7 +136,7 @@ const Header = () => {
                   </NavLinkMobile>
                   <NavLinkMobile
                     onCloseNav={() => setIsOpen(false)}
-                    path="www.google.com"
+                    path="https://www.facebook.com/profile.php?id=100080127966873"
                   >
                     ติดต่อลงข้อมูลแคมป์
                   </NavLinkMobile>
@@ -149,7 +149,7 @@ const Header = () => {
           ) : (
             <>
               <NavLink path="/">หน้าหลัก</NavLink>
-              <NavLink path="www.google.com">ติดต่อลงข้อมูลแคมป์</NavLink>
+              <NavLink path="https://www.facebook.com/profile.php?id=100080127966873">ติดต่อลงข้อมูลแคมป์</NavLink>
             </>
           )}
         </div>

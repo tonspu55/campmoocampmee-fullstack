@@ -22,7 +22,7 @@ const ShareToSocial = ({ title, slug }: ShareToSocialProps) => {
     <>
       <Popover>
         <PopoverTrigger asChild>
-          <Button className="lex h-9 w-9 items-center  justify-center rounded-full cursor-pointer" variant="default"><Share /></Button>
+          <Button className="flex h-9 w-9 items-center  justify-center rounded-full cursor-pointer" variant="default"><Share /></Button>
         </PopoverTrigger>
         <PopoverContent className="w-30 border-primary">
           <div className="flex flex-row gap-2 justify-center">

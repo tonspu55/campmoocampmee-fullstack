@@ -48,26 +48,29 @@ export default async function PostPage({ params, }: PageProps) {
   const ImageGalleryData = galleryData?.map((data) => data.url);
 
   return (
-    <main className="container mx-auto max-w-6xl  mt-[70px]">
+    <main className="container mx-auto max-w-6xl  mt-[70px] pb-8 lg:pb-12">
       {ImageGalleryData && <ImageGallery ImageGallery={ImageGalleryData} slug={(await params).slug} />}
 
-      <div className="flex flex-col md:flex-row gap-4 mt-6 md:mt-9 items-start">
-        <div className="basis-1/1 md: max-md:px-2">
-          <div className="flex flex-row gap-4 justify-between items-start mb-4 md:mb-6">
+      <div className="flex flex-col lg:flex-row gap-4 mt-6 lg:mt-9 items-start">
+        <div className="basis-1/1 max-lg:px-2">
+          <div className="flex flex-row gap-4 justify-between items-start mb-4 lg:mb-6">
             <h2 className="text-2xl font-bold ">{post.title}</h2>
             <ShareToSocial title={post.title} slug={(await params).slug} />
           </div>
           <div className="text-description ml-[20px]">
             {Array.isArray(post.body) && <PortableText value={post.body} />}
           </div>
-          <div className="my-8">
+          <div className="pt-4 lg:pt-8">
             <OtherBenefits otherBenefits={post.otherBenefits} />
           </div>
 
         </div>
-        <div className={`border-primary basis-1/1 w-full md:basis-1/3 p-4 ${styles.contactInfo}`}>
-          <ContactSocialLink socialContactLinks={post.socialContactLinks} />
+        <div className="max-lg:px-2 max-lg:w-full basis-1/1  lg:basis-1/3 max-lg:pt-4">
+          <div className={`border-primary  p-4 ${styles.contactInfo}`}>
+            <ContactSocialLink socialContactLinks={post.socialContactLinks} />
+          </div>
         </div>
+
       </div>
     </main>
   );

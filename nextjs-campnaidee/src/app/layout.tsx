@@ -4,6 +4,7 @@ import { ThemeProvider } from '@/components/ui/theme-provider';
 import { cn } from '@/lib/utils';
 import Header from "@/components/header/Header";
 import "./globals.css";
+import Footer from "@/components/Footer";
 
 const notoSansThai = Noto_Sans_Thai({
 
@@ -22,6 +23,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <link rel="icon" href="/assets/images/favicon/favicon.ico" sizes="any" />
+      <link rel="apple-touch-icon" href="/assets/images/favicon/apple-touch-icon.png" />
+      <link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon/android-chrome-192x192.png" />
+      <link rel="icon" type="image/png" sizes="512x512" href="/assets/images/favicon/android-chrome-512x512.png" />
       <body
         className={cn(
           ' bg-background  antialiased',
@@ -35,6 +40,7 @@ export default function RootLayout({
         >
           <Header />
           {children}
+          <Footer />
         </ThemeProvider>
       </body>
     </html>

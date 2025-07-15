@@ -16,7 +16,7 @@ interface OtherBenefitsProps {
   otherBenefits: OtherBenefits;
 }
 const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
-  console.log(otherBenefits);
+
   return (
     <>
       <h4 className="text-lg font-bold mb-6">รายละเอียดเพิ่มเติม</h4>
@@ -25,7 +25,7 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
           <div className="flex flex-row  gap-4 items-center">
             <Image
               priority
-              src="/assets/images/management.svg"
+              src="/assets/images/plains.svg"
               alt="Price of Stay"
               width={50}
               height={50}

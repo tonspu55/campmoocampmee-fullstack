@@ -43,10 +43,13 @@ const TabGallery = ({ dataGallery }: TabGalleryProps) => {
         else if (tabsTop <= 60 && scrollY > originalTabsTop - 60) {
           setIsFixed(true);
         }
+
+
       }
     };
-
     window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // cleanup function to remove the event listener
     return () => window.removeEventListener('scroll', handleScroll);
   }, [originalTabsTop]);
 
@@ -59,7 +62,7 @@ const TabGallery = ({ dataGallery }: TabGalleryProps) => {
 
     // Scroll to the tabs element
     if (tabsRef.current) {
-      const tabsPosition = tabsRef.current.offsetTop - 70; // ให้มี margin 70px จากด้านบน
+      const tabsPosition = tabsRef.current.offsetTop - 70; // -70 = ให้มี margin 70px จากด้านบน
       window.scrollTo({
         top: tabsPosition,
         behavior: 'smooth'

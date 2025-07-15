@@ -5,6 +5,8 @@ import type { SanityDocument } from "next-sanity";
 import Link from "next/link";
 import TabGallery from "@/components/TabGallery";
 import type { Metadata } from "next";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
 interface ItemGallery {
   url: string | null;
@@ -44,12 +46,17 @@ const GalleryPage = async ({ params }: PageProps) => {
   }) || [];
 
   return (
-    <div className="container mx-auto  max-w-[900px]  mt-[90px] max-md:px-2">
-      <Link href={`/land/${(await params).slug}`} className="hover:underline mb-4 inline-block">
-        ← Back to post
-      </Link>
+    <div className="container mx-auto  max-w-[900px] pb-8 md:pb-12  mt-[90px] max-md:px-2">
 
-      <h1 className="text-4xl font-bold mb-8">แกลลอรี่ - {post.title}</h1>
+
+      <Button asChild className="flex h-9 w-9 items-center  justify-center rounded-full cursor-pointer" variant="default">
+        <Link href={`/land/${(await params).slug}`} className="mb-6">
+          <ArrowLeft className="w-5 h-5" />
+        </Link>
+      </Button>
+
+
+      <h1 className="text-2xl font-bold mb-6">แกลลอรี่ - {post.title}</h1>
 
       <TabGallery dataGallery={dataGallery} />
     </div>
