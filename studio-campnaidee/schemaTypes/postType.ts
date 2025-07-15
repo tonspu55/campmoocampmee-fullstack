@@ -55,5 +55,86 @@ export const postType = defineType({
       type: 'array',
       of: [{type: 'block'}],
     }),
+
+    defineField({
+      name: 'socialContactLinks',
+      title: 'Social Contact Links',
+      type: 'object',
+      fields: [
+        defineField({
+          name: 'facebook',
+          title: 'Facebook',
+          type: 'url',
+        }),
+        defineField({
+          name: 'line',
+          title: 'Line',
+          type: 'url',
+        }),
+        defineField({
+          name: 'instagram',
+          title: 'Instagram',
+          type: 'url',
+        }),
+        defineField({
+          name: 'googleMap',
+          title: 'Google Map',
+          type: 'url',
+        }),
+        defineField({
+          name: 'phone',
+          title: 'Phone',
+          type: 'string',
+        }),
+      ],
+    }),
+
+    defineField({
+      name: 'otherBenefits',
+      title: 'Other Benefits',
+      type: 'object',
+      fields: [
+        defineField({
+          name: 'checkIn',
+          title: 'Check In',
+          type: 'string',
+        }),
+        defineField({
+          name: 'checkOut',
+          title: 'Check Out',
+          type: 'string',
+        }),
+        defineField({
+          name: 'cabin',
+          title: 'Cabin',
+          type: 'string',
+        }),
+        defineField({
+          name: 'nature',
+          title: 'Nature',
+          type: 'string',
+        }),
+        defineField({
+          name: 'noNoise',
+          title: 'No Noise',
+          type: 'string',
+        }),
+        defineField({
+          name: 'petFriendly',
+          title: 'Pet Friendly',
+          type: 'string',
+        }),
+        defineField({
+          name: 'wifi',
+          title: 'WiFi',
+          type: 'string',
+        }),
+        defineField({
+          name: 'priceOfStay',
+          title: 'Price Of Stay',
+          type: 'string',
+        }),
+      ],
+    }),
   ],
 })

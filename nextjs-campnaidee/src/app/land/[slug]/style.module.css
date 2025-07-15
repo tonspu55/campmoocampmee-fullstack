@@ -1,0 +1,5 @@
+.contactInfo {
+  border: 1px solid oklch(0.419 0.0707 186.727);
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 4px 24px 2px;
+  border-radius: 16px;
+}

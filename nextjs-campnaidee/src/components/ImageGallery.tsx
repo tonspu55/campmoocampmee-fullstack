@@ -58,13 +58,13 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
       {/* Desktop View - Grid Layout */}
       <div className="hidden md:block">
         <div className="flex flex-row gap-2 items-stretch max-h-[400px]">
-          <div className="basis-1/2">
+          <div className="basis-1/2 ">
             {ImageGallery[0] && (
-              <div className="flex-col h-full">
+              <div className="flex-col h-full ">
                 <Image
                   src={ImageGallery[0]}
                   alt="Gallery image 1"
-                  className="object-cover w-full h-full max-h-[400px]"
+                  className="object-cover w-full h-full max-h-[400px] rounded-tl-xl rounded-bl-xl"
                   width={500}
                   height={400}
                 />
@@ -90,7 +90,7 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
                     <Image
                       src={ImageGallery[2]}
                       alt="Gallery image 3"
-                      className="object-cover w-full max-h-[196px]"
+                      className="object-cover w-full max-h-[196px] rounded-tr-xl "
                       width={500}
                       height={196}
                     />
@@ -117,7 +117,7 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
                       <Image
                         src={ImageGallery[4]}
                         alt="Gallery image 5"
-                        className="object-cover w-full max-h-[196px]"
+                        className="object-cover w-full max-h-[196px] rounded-br-xl"
                         width={500}
                         height={196}
                       />
