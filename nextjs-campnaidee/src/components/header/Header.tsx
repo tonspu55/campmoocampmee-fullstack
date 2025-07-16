@@ -26,12 +26,12 @@ const NavLink = ({ path, children }: NavLinkProps) => {
 
   // เช็คว่าอยู่ที่หน้าหลักและไม่ได้ scroll
   const isHomepageTop = pathname === "/" && !isScrolled;
-  const textColorClass = isHomepageTop ? "text-white" : "";
+  const textColorWhite = isHomepageTop ? "text-white" : "";
 
   if (isExternal) {
     return (
       <a
-        className={`hover:opacity-75 font-medium ${textColorClass}`}
+        className={`hover:opacity-75 font-medium ${textColorWhite}`}
         href={path.startsWith('www.') ? `https://${path}` : path}
         target="_blank"
         rel="noopener noreferrer"
@@ -44,7 +44,7 @@ const NavLink = ({ path, children }: NavLinkProps) => {
   return (
     <Link
       className={`${pathname === path ? "border-b-2 border-[#085953]" : ""
-        } hover:opacity-75 font-medium ${textColorClass}`}
+        } hover:opacity-75 font-medium ${textColorWhite}`}
       href={path}
     >
       {children}
