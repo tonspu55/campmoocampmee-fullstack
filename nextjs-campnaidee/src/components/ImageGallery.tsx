@@ -5,15 +5,111 @@ import Link from 'next/link';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
+import { useState, useEffect } from 'react';
+
 
 
 interface ImageGalleryProps {
   ImageGallery: (string | null)[];
   slug: string;
+
 }
 
 const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
+  const [isLoading, setIsLoading] = useState(true);
   const displayImages = ImageGallery.slice(0, 5).filter(Boolean) as string[];
+
+  useEffect(() => {
+    // Simulate loading time for 1 second
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Show loading state if internal loading or external loading is true
+  if (isLoading) {
+    return (
+      <div>
+        {/* Mobile View - Loading */}
+        <div className="md:hidden">
+          <div className="h-[300px]">
+            <Skeleton className="h-full w-full" />
+          </div>
+        </div>
+
+        {/* Desktop View - Loading */}
+        <div className="hidden md:block">
+          <div className="flex flex-row gap-2 items-stretch max-h-[400px]">
+            <div className="basis-1/2">
+              <Skeleton className="h-full w-full rounded-tl-xl rounded-bl-xl" />
+            </div>
+            <div className="basis-1/2 flex flex-col gap-2">
+              <div className="flex flex-row gap-2">
+                <div className="basis-1/2">
+                  <Skeleton className="h-[196px] w-full" />
+                </div>
+                <div className="basis-1/2">
+                  <Skeleton className="h-[196px] w-full rounded-tr-xl" />
+                </div>
+              </div>
+              <div className="flex flex-row gap-2">
+                <div className="basis-1/2">
+                  <Skeleton className="h-[196px] w-full" />
+                </div>
+                <div className="basis-1/2">
+                  <Skeleton className="h-[196px] w-full rounded-br-xl" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // If no images available, show skeleton as fallback
+  if (displayImages.length === 0) {
+    return (
+      <div>
+        {/* Mobile View - No Images */}
+        <div className="md:hidden">
+          <div className="h-[300px]">
+            <Skeleton className="h-full w-full " />
+          </div>
+        </div>
+
+        {/* Desktop View - No Images */}
+        <div className="hidden md:block">
+          <div className="flex flex-row gap-2 items-stretch max-h-[400px]">
+            <div className="basis-1/2">
+              <Skeleton className="h-full w-full rounded-tl-xl rounded-bl-xl" />
+            </div>
+            <div className="basis-1/2 flex flex-col gap-2">
+              <div className="flex flex-row gap-2">
+                <div className="basis-1/2">
+                  <Skeleton className="h-[196px] w-full" />
+                </div>
+                <div className="basis-1/2">
+                  <Skeleton className="h-[196px] w-full rounded-tr-xl" />
+                </div>
+              </div>
+              <div className="flex flex-row gap-2">
+                <div className="basis-1/2">
+                  <Skeleton className="h-[196px] w-full" />
+                </div>
+                <div className="basis-1/2">
+                  <Skeleton className="h-[196px] w-full rounded-br-xl" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
