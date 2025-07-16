@@ -6,6 +6,7 @@ import { ThemeSwitcher } from "@/components/header/ThemeSwitcher";
 import { LogoSwitcher } from "@/components/header/LogoSwitcher";
 import { AlignJustify, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useScrollStore } from "@/lib/store";
 
 interface NavLinkProps {
   path: string;
@@ -20,12 +21,17 @@ interface NavLinkMobileProps {
 
 const NavLink = ({ path, children }: NavLinkProps) => {
   const pathname = usePathname();
+  const isScrolled = useScrollStore((state) => state.isScrolled);
   const isExternal = path.startsWith('http://') || path.startsWith('https://') || path.startsWith('www.');
+
+  // เช็คว่าอยู่ที่หน้าหลักและไม่ได้ scroll
+  const isHomepageTop = pathname === "/" && !isScrolled;
+  const textColorClass = isHomepageTop ? "text-white" : "";
 
   if (isExternal) {
     return (
       <a
-        className="hover:opacity-75 font-medium"
+        className={`hover:opacity-75 font-medium ${textColorClass}`}
         href={path.startsWith('www.') ? `https://${path}` : path}
         target="_blank"
         rel="noopener noreferrer"
@@ -38,7 +44,7 @@ const NavLink = ({ path, children }: NavLinkProps) => {
   return (
     <Link
       className={`${pathname === path ? "border-b-2 border-[#085953]" : ""
-        }  hover:opacity-75 font-medium`}
+        } hover:opacity-75 font-medium ${textColorClass}`}
       href={path}
     >
       {children}
@@ -78,8 +84,9 @@ const NavLinkMobile = ({ path, children, onCloseNav }: NavLinkMobileProps) => {
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobileView, setIsMobileView] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const isScrolled = useScrollStore((state) => state.isScrolled);
+  const setIsScrolled = useScrollStore((state) => state.setIsScrolled);
 
   useEffect(() => {
     setMounted(true);
@@ -105,7 +112,7 @@ const Header = () => {
       window.removeEventListener("scroll", handleScroll);
       setMounted(false);
     };
-  }, []);
+  }, [setIsScrolled]);
 
   const menuClasses = useMemo(() => {
     if (isOpen) {
@@ -135,7 +142,7 @@ const Header = () => {
       className={`flex items-center fixed top-0 left-0 right-0 z-50 h-[70px]  ${mounted && isScrolled ? 'bg-white dark:bg-[var(--background)]' : 'bg-transparent'
         }`}
     >
-      <div className="container mx-auto flex items-center max-w-6xl max-md:px-2">
+      <div className="container mx-auto flex items-center max-w-6xl px-2">
         <LogoSwitcher />
         <div className={`${mounted && isScrolled ? 'bg-white dark:bg-[var(--background)]' : 'bg-transparent'} ${menuClasses}`} >
           {isMobileView ? (

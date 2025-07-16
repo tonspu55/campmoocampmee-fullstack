@@ -50,11 +50,11 @@ export default async function PostPage({ params, }: PageProps) {
   const ImageGalleryData = galleryData?.map((data) => data.url);
 
   return (
-    <main className="container mx-auto max-w-6xl  mt-[70px] pb-8 lg:pb-12">
+    <main className="container mx-auto max-w-6xl  mt-[70px] pb-6 lg:pb-10">
       {ImageGalleryData && <ImageGallery ImageGallery={ImageGalleryData} slug={(await params).slug} />}
 
-      <div className="flex flex-col lg:flex-row gap-4 mt-6 lg:mt-9 items-start">
-        <div className="basis-1/1 max-lg:px-2">
+      <div className="flex flex-col lg:flex-row gap-4 mt-6 lg:mt-8 items-start">
+        <div className="basis-1/1 px-2">
           <div className="flex flex-row gap-4 justify-between items-start mb-4 lg:mb-6">
             <h2 className="text-2xl font-bold ">{post.title}</h2>
             <ShareToSocial title={post.title} slug={(await params).slug} />
@@ -65,7 +65,7 @@ export default async function PostPage({ params, }: PageProps) {
           <Separator className="my-4 md:my-6" />
           <OtherBenefits otherBenefits={post.otherBenefits} />
         </div>
-        <div className="max-lg:px-2 max-lg:w-full basis-1/1  lg:basis-1/3 max-lg:pt-4">
+        <div className="px-2 max-lg:w-full basis-1/1  lg:basis-1/3 max-lg:pt-4">
           <div className={`border-primary  p-4 ${styles.contactInfo}`}>
             <ContactSocialLink socialContactLinks={post.socialContactLinks} />
           </div>
