@@ -26,6 +26,7 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
       setIsLoading(false);
     }, 500);
 
+    // cleanup function to clear the timer
     return () => clearTimeout(timer);
   }, []);
 
