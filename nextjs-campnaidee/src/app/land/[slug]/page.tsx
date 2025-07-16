@@ -32,9 +32,39 @@ const options = { next: { revalidate: 30 } };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const post = await client.fetch<SanityDocument>(POST_QUERY, await params, options);
+
+  // Get first gallery image for thumbnail
+  const galleryData: GalleryItem[] = post.gallery?.map((image: SanityImageSource & { category?: string }) => {
+    const imageUrl = urlFor(image)?.width(1200).height(1200).url();
+    const category = image.category || null;
+    return { url: imageUrl, category };
+  });
+
+  const thumbnailImage = galleryData?.[0]?.url;
+
+  console.log("Thumbnail Image URL:", thumbnailImage);
+
   return {
     title: `แคมป์ - ${post.title}`,
     description: `รายละเอียดแคมป์ ${post.title}`,
+    openGraph: {
+      title: `แคมป์ - ${post.title}`,
+      description: `รายละเอียดแคมป์ ${post.title}`,
+      images: thumbnailImage ? [
+        {
+          url: thumbnailImage,
+          width: 1200,
+          height: 1200,
+          alt: post.title,
+        }
+      ] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `แคมป์ - ${post.title}`,
+      description: `รายละเอียดแคมป์ ${post.title}`,
+      images: thumbnailImage ? [thumbnailImage] : undefined,
+    },
   };
 }
 
