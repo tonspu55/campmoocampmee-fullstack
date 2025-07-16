@@ -22,10 +22,19 @@ interface NavLinkMobileProps {
 const NavLink = ({ path, children }: NavLinkProps) => {
   const pathname = usePathname();
   const isScrolled = useScrollStore((state) => state.isScrolled);
+  const [mounted, setMounted] = useState(false);
   const isExternal = path.startsWith('http://') || path.startsWith('https://') || path.startsWith('www.');
 
-  // เช็คว่าอยู่ที่หน้าหลักและไม่ได้ scroll
-  const isHomepageTop = pathname === "/" && !isScrolled;
+  useEffect(() => {
+    setMounted(true);
+    // Clean up function to reset mounted state
+    return () => {
+      setMounted(false);
+    };
+  }, []);
+
+  // เช็คว่าอยู่ที่หน้าหลักและไม่ได้ scroll (เฉพาะเมื่อ mounted แล้ว)
+  const isHomepageTop = mounted && pathname === "/" && !isScrolled;
   const textColorWhite = isHomepageTop ? "text-white" : "";
 
   if (isExternal) {
