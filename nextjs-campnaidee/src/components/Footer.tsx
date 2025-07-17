@@ -30,8 +30,8 @@ const Footer = () => {
                 หน้าหลัก
               </Link>
 
-              <Link href="https://www.facebook.com/profile.php?id=100080127966873" target='_blank' className=" hover:opacity-70">
-                ติดต่อลงข้อมูลแคมป์
+              <Link href="/contact" className=" hover:opacity-70">
+                ติดต่อขอลงข้อมูล
               </Link>
             </nav>
           </div>

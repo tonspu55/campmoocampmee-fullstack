@@ -37,7 +37,7 @@ export default function HeroBanner() {
               ค้นหาที่พักแคมป์ปิ้งและธรรมชาติ<br />สำหรับการพักผ่อนที่ดีที่สุด
             </h1>
             <Button asChild className="cursor-pointer mt-2 lg:mt-4" variant="default">
-              <Link href="https://www.facebook.com/profile.php?id=100080127966873" target="_blank">
+              <Link href="/contact">
                 ติดต่อลงข้อมูลแคมป์
               </Link>
             </Button>

@@ -23,7 +23,7 @@ const NavLink = ({ path, children }: NavLinkProps) => {
   const pathname = usePathname();
   const isScrolled = useScrollStore((state) => state.isScrolled);
   const [mounted, setMounted] = useState(false);
-  const isExternal = path.startsWith('http://') || path.startsWith('https://') || path.startsWith('www.');
+  // const isExternal = path.startsWith('http://') || path.startsWith('https://') || path.startsWith('www.');
 
   useEffect(() => {
     setMounted(true);
@@ -37,18 +37,18 @@ const NavLink = ({ path, children }: NavLinkProps) => {
   const isHomepageTop = mounted && pathname === "/" && !isScrolled;
   const textColorWhite = isHomepageTop ? "text-white" : "";
 
-  if (isExternal) {
-    return (
-      <a
-        className={`hover:opacity-75 font-medium ${textColorWhite}`}
-        href={path.startsWith('www.') ? `https://${path}` : path}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        {children}
-      </a>
-    );
-  }
+  // if (isExternal) {
+  //   return (
+  //     <a
+  //       className={`hover:opacity-75 font-medium ${textColorWhite}`}
+  //       href={path.startsWith('www.') ? `https://${path}` : path}
+  //       target="_blank"
+  //       rel="noopener noreferrer"
+  //     >
+  //       {children}
+  //     </a>
+  //   );
+  // }
 
   return (
     <Link
@@ -63,21 +63,21 @@ const NavLink = ({ path, children }: NavLinkProps) => {
 
 const NavLinkMobile = ({ path, children, onCloseNav }: NavLinkMobileProps) => {
   const pathname = usePathname();
-  const isExternal = path.startsWith('http://') || path.startsWith('https://') || path.startsWith('www.');
+  // const isExternal = path.startsWith('http://') || path.startsWith('https://') || path.startsWith('www.');
 
-  if (isExternal) {
-    return (
-      <a
-        className="hover:opacity-75 font-medium"
-        href={path.startsWith('www.') ? `https://${path}` : path}
-        target="_blank"
-        rel="noopener noreferrer"
-        onClick={onCloseNav}
-      >
-        {children}
-      </a>
-    );
-  }
+  // if (isExternal) {
+  //   return (
+  //     <a
+  //       className="hover:opacity-75 font-medium"
+  //       href={path.startsWith('www.') ? `https://${path}` : path}
+  //       target="_blank"
+  //       rel="noopener noreferrer"
+  //       onClick={onCloseNav}
+  //     >
+  //       {children}
+  //     </a>
+  //   );
+  // }
 
   return (
     <Link
@@ -166,9 +166,9 @@ const Header = () => {
                   </NavLinkMobile>
                   <NavLinkMobile
                     onCloseNav={() => setIsOpen(false)}
-                    path="https://www.facebook.com/profile.php?id=100080127966873"
+                    path="/contact"
                   >
-                    ติดต่อลงข้อมูลแคมป์
+                    ติดต่อขอลงข้อมูล
                   </NavLinkMobile>
                 </div>
                 <div className="flex flex-col items-end">
@@ -179,7 +179,7 @@ const Header = () => {
           ) : (
             <>
               <NavLink path="/">หน้าหลัก</NavLink>
-              <NavLink path="https://www.facebook.com/profile.php?id=100080127966873">ติดต่อลงข้อมูลแคมป์</NavLink>
+              <NavLink path="/contact">ติดต่อขอลงข้อมูล</NavLink>
             </>
           )}
         </div>

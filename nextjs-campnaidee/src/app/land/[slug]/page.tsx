@@ -42,7 +42,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const thumbnailImage = galleryData?.[0]?.url;
 
-  console.log("Thumbnail Image URL:", thumbnailImage);
 
   return {
     title: `แคมป์ - ${post.title}`,

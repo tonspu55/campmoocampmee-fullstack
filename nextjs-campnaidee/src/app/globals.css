@@ -176,3 +176,15 @@
 ul {
   list-style: disc;
 }
+
+[data-sonner-toast] {
+  font-family: "Noto Sans Thai", sans-serif !important;
+}
+
+[data-sonner-toast] [data-title] {
+  font-family: "Noto Sans Thai", sans-serif !important;
+}
+
+[data-sonner-toast] [data-description] {
+  font-family: "Noto Sans Thai", sans-serif !important;
+}

@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import Header from "@/components/header/Header";
 import "./globals.css";
 import Footer from "@/components/Footer";
+import { Toaster } from "@/components/ui/sonner";
 
 const notoSansThai = Noto_Sans_Thai({
 
@@ -41,7 +42,9 @@ export default function RootLayout({
           <Header />
           {children}
           <Footer />
+          <Toaster />
         </ThemeProvider>
+
       </body>
     </html>
   );
