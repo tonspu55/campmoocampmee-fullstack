@@ -71,6 +71,7 @@ export const postType = defineType({
                   {title: 'วิว', value: 'วิว'},
                   {title: 'ที่พัก', value: 'ที่พัก'},
                   {title: 'กิจกรรม', value: 'กิจกรรม'},
+                  {title: 'ห้องน้ำ', value: 'ห้องน้ำ'},
                 ],
               },
             }),

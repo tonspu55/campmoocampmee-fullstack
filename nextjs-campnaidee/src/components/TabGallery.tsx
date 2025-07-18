@@ -98,7 +98,7 @@ const TabGallery = ({ dataGallery }: TabGalleryProps) => {
       {isFixed && <div className="h-16" />}
 
       {/* Gallery*/}
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid gap-2">
         {filteredData.map((item, index) => (
           <div key={index} className={`${index % 3 === 0 ? "col-span-2" : "col-span-1"}`}>
             {item.url && (
