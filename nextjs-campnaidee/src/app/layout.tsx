@@ -15,6 +15,24 @@ const notoSansThai = Noto_Sans_Thai({
 export const metadata: Metadata = {
   title: "แคมป์ไหนดี",
   description: "แหล่งรวมข้อมูลแคมป์และที่พักในประเทศไทย",
+  openGraph: {
+    title: "แคมป์ไหนดี",
+    description: "แหล่งรวมข้อมูลแคมป์และที่พักในประเทศไทย",
+    images: [
+      {
+        url: "/assets/images/banner-desktop.jpg",
+        width: 1200,
+        height: 630,
+        alt: "แคมป์ไหนดี - แหล่งรวมข้อมูลแคมป์และที่พักในประเทศไทย",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "แคมป์ไหนดี",
+    description: "แหล่งรวมข้อมูลแคมป์และที่พักในประเทศไทย",
+    images: ["/assets/images/banner-desktop.jpg"],
+  },
 };
 
 export default function RootLayout({
