@@ -84,7 +84,7 @@ export default async function PostPage({ params, }: PageProps) {
       {ImageGalleryData && <ImageGallery ImageGallery={ImageGalleryData} slug={(await params).slug} />}
 
       <div className="flex flex-col lg:flex-row gap-4 mt-6 lg:mt-8 items-start">
-        <div className="basis-1/1 px-2">
+        <div className="basis-1/1 px-2 lg:pr-0 lg:pl-2">
           <div className="flex flex-row gap-4 justify-between items-start mb-4 lg:mb-6">
             <div className="flex flex-col">
               <h2 className="text-2xl font-bold ">{post.title}</h2>
@@ -98,8 +98,8 @@ export default async function PostPage({ params, }: PageProps) {
           <Separator className="my-4 md:my-6" />
           <OtherBenefits otherBenefits={post.otherBenefits} />
         </div>
-        <div className="px-2 max-lg:w-full basis-1/1  lg:basis-1/3 max-lg:pt-4">
-          <div className={`border-primary  p-4 ${styles.contactInfo}`}>
+        <div className="px-2 max-lg:w-full basis-1/1 lg:pl-0  lg:basis-1/3 max-lg:pt-4">
+          <div className={`  p-4 ${styles.contactInfo}`}>
             <ContactSocialLink socialContactLinks={post.socialContactLinks} />
           </div>
         </div>

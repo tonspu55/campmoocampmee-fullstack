@@ -153,7 +153,7 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
       </div>
 
       {/* Desktop View - Grid Layout */}
-      <div className="hidden md:block">
+      <div className="hidden md:block md:px-2">
         <div className="flex flex-row gap-2 items-stretch max-h-[400px]">
           <div className="basis-1/2 ">
             {ImageGallery[0] && (
