@@ -55,14 +55,12 @@ export const submitContactType = defineType({
     select: {
       title: 'campName',
       subtitle: 'status',
-      description: 'telNumber',
     },
     prepare(selection) {
-      const {title, subtitle, description} = selection
+      const {title, subtitle} = selection
       return {
         title: title || 'ไม่มีชื่อแคมป์',
-        subtitle: `สถานะ: ${subtitle || 'ไม่ได้ระบุ'}`,
-        description: `เบอร์: ${description === 'pending' ? 'รอดำเนินการ' : description === 'contacting' ? 'กำลังติดต่อ' : 'เสร็จสิ้น'}`,
+        subtitle: `Status: ${subtitle || 'ไม่ได้ระบุ'}`,
       }
     },
   },
