@@ -26,6 +26,34 @@ export const postType = defineType({
       name: 'thumbnail',
       type: 'image',
     }),
+
+    defineField({
+      name: 'address',
+      title: 'Address',
+      type: 'object',
+      fields: [
+        defineField({
+          name: 'region',
+          title: 'Region',
+          type: 'string',
+        }),
+        defineField({
+          name: 'province',
+          title: 'Province',
+          type: 'string',
+        }),
+        defineField({
+          name: 'district',
+          title: 'District',
+          type: 'string',
+        }),
+        defineField({
+          name: 'subdistrict',
+          title: 'Subdistrict',
+          type: 'string',
+        }),
+      ],
+    }),
     defineField({
       name: 'gallery',
       title: 'Gallery',
@@ -132,6 +160,11 @@ export const postType = defineType({
         defineField({
           name: 'priceOfStay',
           title: 'Price Of Stay',
+          type: 'string',
+        }),
+        defineField({
+          name: 'food',
+          title: 'Food',
           type: 'string',
         }),
       ],

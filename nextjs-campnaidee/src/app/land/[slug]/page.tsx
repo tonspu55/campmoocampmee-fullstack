@@ -9,6 +9,7 @@ import styles from "./style.module.css";
 import ShareToSocial from "@/components/ShareToSocial";
 import OtherBenefits from "@/components/OtherBenefits";
 import { Separator } from "@/components/ui/separator"
+import InfoAddress from "@/components/InfoAddress";
 
 
 
@@ -85,7 +86,10 @@ export default async function PostPage({ params, }: PageProps) {
       <div className="flex flex-col lg:flex-row gap-4 mt-6 lg:mt-8 items-start">
         <div className="basis-1/1 px-2">
           <div className="flex flex-row gap-4 justify-between items-start mb-4 lg:mb-6">
-            <h2 className="text-2xl font-bold ">{post.title}</h2>
+            <div className="flex flex-col">
+              <h2 className="text-2xl font-bold ">{post.title}</h2>
+              <InfoAddress InfoAddress={post.address} />
+            </div>
             <ShareToSocial title={post.title} slug={(await params).slug} />
           </div>
           <div className="text-description ml-[20px]">

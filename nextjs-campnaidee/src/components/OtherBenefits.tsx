@@ -11,6 +11,7 @@ type OtherBenefits = {
   noNoise: string;
   petFriendly: string;
   wifi: string;
+  food: string
 }
 interface OtherBenefitsProps {
   otherBenefits: OtherBenefits;
@@ -115,6 +116,18 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               height={50}
             />
             <p>{otherBenefits.wifi}</p>
+          </div>
+        )}
+        {otherBenefits.food && (
+          <div className="flex flex-row  gap-4 items-center">
+            <Image
+              priority
+              src="/assets/images/roast.svg"
+              alt="Food"
+              width={50}
+              height={50}
+            />
+            <p>{otherBenefits.food}</p>
           </div>
         )}
       </div>
