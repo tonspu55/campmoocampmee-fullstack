@@ -37,13 +37,13 @@ export default function CampRecommend({ posts }: CampRecommendProps) {
                   <Image
                     src={postImageUrl}
                     alt={post.title}
-                    className="aspect-video rounded-t-md"
+                    className="aspect-video rounded-t-md w-full"
                     width={300}
                     height={250}
                   />
                 )}
                 <div className="px-2 pb-2">
-                  <h3 className="text-md font-semibold">{post.title}</h3>
+                  <h3 className="max-lg:text-sm text-md font-semibold">{post.title}</h3>
                   <InfoAddress InfoAddress={post.address} />
                 </div>
               </Card>
