@@ -58,13 +58,33 @@ const TabGallery = ({ dataGallery }: TabGalleryProps) => {
   const handleTabClick = (category: string) => {
     setActiveTab(category);
 
-    // Scroll to the tabs element
-    if (tabsRef.current) {
-      const tabsPosition = tabsRef.current.offsetTop;
-      window.scrollTo({
-        top: tabsPosition,
-        behavior: 'smooth'
-      });
+    // Scroll to top สำหรับ iOS Safari/Chrome
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isMobile = window.innerWidth <= 768;
+
+    if (isIOS || isMobile) {
+      // สำหรับ iOS และ mobile - scroll ไปด้านบนสุดเสมอ
+      setTimeout(() => {
+        // ลอง smooth scroll ก่อน
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+
+        // ใช้ instant scroll เป็น fallback เพื่อให้แน่ใจ
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+        }, 100);
+      }, 50);
+    } else {
+      // สำหรับ desktop - scroll ไปยัง tabs element
+      if (tabsRef.current) {
+        const tabsPosition = tabsRef.current.offsetTop;
+        window.scrollTo({
+          top: tabsPosition,
+          behavior: 'smooth'
+        });
+      }
     }
   };
 
@@ -98,7 +118,7 @@ const TabGallery = ({ dataGallery }: TabGalleryProps) => {
       {/* Gallery*/}
       <div className="grid gap-2">
         {filteredData.map((item, index) => (
-          <div key={index} className={`${index % 3 === 0 ? "col-span-2" : "col-span-1"}`}>
+          <div key={index} className={`${index % 3 === 0 ? "col-span-2" : "col-span-2 md:col-span-1"}`}>
             {item.url && (
               <div className="relative aspect-square">
                 <Image

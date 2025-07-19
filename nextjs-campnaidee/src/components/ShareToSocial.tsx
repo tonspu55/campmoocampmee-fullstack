@@ -24,7 +24,7 @@ const ShareToSocial = ({ title, slug }: ShareToSocialProps) => {
         <PopoverTrigger asChild>
           <Button className="flex h-9 w-9 items-center  justify-center rounded-full cursor-pointer" variant="default"><Share /></Button>
         </PopoverTrigger>
-        <PopoverContent className="w-30 border-primary">
+        <PopoverContent className="w-30 border-none">
           <div className="flex flex-row gap-2 justify-center">
             <FacebookShareButton
               url={slug ? `https://campnaidee.com/land/${slug}` : `https://campnaidee.com`}
