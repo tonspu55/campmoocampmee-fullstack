@@ -43,10 +43,6 @@ const TabGallery = ({ dataGallery }: TabGalleryProps) => {
         else if (tabsTop <= 0 && scrollY > originalTabsTop) {
           setIsFixed(true);
         }
-        // ถ้า scroll ขึ้นไปจน tabs กลับมาอยู่ที่ตำแหน่งเดิม ให้ยกเลิก fixed
-        else if (tabsTop > 0) {
-          setIsFixed(false);
-        }
       }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
