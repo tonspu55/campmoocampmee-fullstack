@@ -46,15 +46,15 @@ const GalleryPage = async ({ params }: PageProps) => {
   }) || [];
 
   return (
-    <div className="container mx-auto  max-w-[900px] py-6 md:py-10  mt-[70px] px-2">
+    <div className="container mx-auto  max-w-[900px] py-6 md:py-10  px-2">
 
-      <div className="flex flex-row mb-4 gap-2 items-center">
+      <div className="flex flex-row  gap-2 items-center">
         <Button asChild className="flex h-9 w-9 items-center  justify-center rounded-full cursor-pointer" variant="default">
           <Link href={`/land/${(await params).slug}`} >
             <ArrowLeft className="w-5 h-5" />
           </Link>
         </Button>
-        <h1 className="text-2xl font-bold ">อัลบั้ม - {post.title}</h1>
+        <h1 className="text-lg lg:text-2xl font-bold ">{post.title}</h1>
       </div>
 
 

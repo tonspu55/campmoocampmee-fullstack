@@ -2,10 +2,9 @@ import type { Metadata } from "next";
 import { Noto_Sans_Thai } from "next/font/google";
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { cn } from '@/lib/utils';
-import Header from "@/components/header/Header";
 import "./globals.css";
-import Footer from "@/components/Footer";
 import { Toaster } from "@/components/ui/sonner";
+import ConditionalLayout from "@/components/ConditionalLayout";
 
 const notoSansThai = Noto_Sans_Thai({
 
@@ -57,9 +56,9 @@ export default function RootLayout({
           defaultTheme="light"
           enableSystem={false}
         >
-          <Header />
-          {children}
-          <Footer />
+          <ConditionalLayout>
+            {children}
+          </ConditionalLayout>
           <Toaster />
         </ThemeProvider>
 

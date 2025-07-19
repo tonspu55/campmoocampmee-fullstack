@@ -36,15 +36,17 @@ const TabGallery = ({ dataGallery }: TabGalleryProps) => {
         const tabsTop = tabsRef.current.getBoundingClientRect().top;
 
         // ถ้า scroll มาถึงตำแหน่งเดิมของ tabs หรือเลยขึ้นไป ให้ยกเลิก fixed
-        if (scrollY <= originalTabsTop - 60) {
+        if (scrollY <= originalTabsTop) {
           setIsFixed(false);
         }
         // ถ้า scroll ลงไปจนกระทั่ง tabs จะหายจากด้านบน ให้เริ่ม fixed
-        else if (tabsTop <= 60 && scrollY > originalTabsTop - 60) {
+        else if (tabsTop <= 0 && scrollY > originalTabsTop) {
           setIsFixed(true);
         }
-
-
+        // ถ้า scroll ขึ้นไปจน tabs กลับมาอยู่ที่ตำแหน่งเดิม ให้ยกเลิก fixed
+        else if (tabsTop > 0) {
+          setIsFixed(false);
+        }
       }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -62,7 +64,7 @@ const TabGallery = ({ dataGallery }: TabGalleryProps) => {
 
     // Scroll to the tabs element
     if (tabsRef.current) {
-      const tabsPosition = tabsRef.current.offsetTop - 70; // -70 = ให้มี margin 70px จากด้านบน
+      const tabsPosition = tabsRef.current.offsetTop;
       window.scrollTo({
         top: tabsPosition,
         behavior: 'smooth'
@@ -75,8 +77,8 @@ const TabGallery = ({ dataGallery }: TabGalleryProps) => {
       {/* Tabs */}
       <div
         ref={tabsRef}
-        className={`flex flex-wrap gap-2 mb-6 transition-all duration-200 z-10 bg-white dark:bg-[var(--background)]  ${isFixed
-          ? 'fixed top-[60px] left-0 right-0 max-md:px-2  py-4 container mx-auto max-w-[900px]'
+        className={`flex flex-wrap gap-2 py-4 transition-all duration-200 z-10 bg-white dark:bg-[var(--background)]  ${isFixed
+          ? 'fixed top-0 left-0 right-0 max-md:px-2  py-4 container mx-auto max-w-[884px]'
           : 'relative'
           }`}
       >
