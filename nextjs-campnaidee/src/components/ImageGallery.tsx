@@ -36,7 +36,7 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
       <div>
         {/* Mobile View - Loading */}
         <div className="md:hidden">
-          <div className="h-[300px]">
+          <div className="h-[250px]">
             <Skeleton className="h-full w-full" />
           </div>
         </div>
@@ -77,7 +77,7 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
       <div>
         {/* Mobile View - No Images */}
         <div className="md:hidden">
-          <div className="h-[300px]">
+          <div className="h-[250px]">
             <Skeleton className="h-full w-full " />
           </div>
         </div>
@@ -119,7 +119,7 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
         <Swiper
           spaceBetween={10}
           slidesPerView={1.1}
-          className="h-[300px] "
+          className="h-[250px] "
         >
           {displayImages.map((image, index) => (
             <SwiperSlide key={index}>
