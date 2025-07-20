@@ -34,11 +34,11 @@ export default function HeroBanner() {
           <div className="w-[50%] flex-none"></div>
           <div ref={contentRef} className="w-full lg:w-[50%] gap-4">
             <h1 className="text-xl lg:text-4xl font-bold text-white">
-              ค้นหาที่พักแคมป์ปิ้งและธรรมชาติ<br />สำหรับการพักผ่อนที่ดีที่สุด
+              ค้นหาลานกางเต็นท์หรือแคมป์ปิ้ง<br />สำหรับการพักผ่อนที่ดีที่สุด
             </h1>
             <Button asChild className="cursor-pointer mt-2 lg:mt-4" variant="default">
               <Link href="/contact">
-                ติดต่อลงข้อมูลแคมป์
+                ติดต่อลงข้อมูล
               </Link>
             </Button>
           </div>

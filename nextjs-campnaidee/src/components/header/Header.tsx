@@ -168,7 +168,7 @@ const Header = () => {
                     onCloseNav={() => setIsOpen(false)}
                     path="/contact"
                   >
-                    ติดต่อขอลงข้อมูล
+                    ติดต่อลงข้อมูล
                   </NavLinkMobile>
                 </div>
                 <div className="flex flex-col items-end">
@@ -179,7 +179,7 @@ const Header = () => {
           ) : (
             <>
               <NavLink path="/">หน้าหลัก</NavLink>
-              <NavLink path="/contact">ติดต่อขอลงข้อมูล</NavLink>
+              <NavLink path="/contact">ติดต่อลงข้อมูล</NavLink>
             </>
           )}
         </div>

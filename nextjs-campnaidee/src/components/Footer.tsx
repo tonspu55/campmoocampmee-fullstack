@@ -17,7 +17,7 @@ const Footer = () => {
               <h3 className="text-xl font-bold">แคมป์ไหนดี</h3>
             </div>
             <p className=" text-sm">
-              ค้นหาที่พักแคมป์ปิ้งและธรรมชาติ<br />
+              ค้นหาลานกางเต็นท์หรือแคมป์ปิ้ง<br />
               สำหรับการพักผ่อนที่ดีที่สุด
             </p>
           </div>
@@ -31,7 +31,7 @@ const Footer = () => {
               </Link>
 
               <Link href="/contact" className=" hover:opacity-70">
-                ติดต่อขอลงข้อมูล
+                ติดต่อลงข้อมูล
               </Link>
             </nav>
           </div>
@@ -41,7 +41,7 @@ const Footer = () => {
             <h4 className="text-lg font-bold">ติดต่อเรา</h4>
             <div className="flex flex-col space-y-2 ">
               <p className="text-sm">
-                <span className="">โทรศัพท์:</span> 0635979594
+                <span className="">เบอร์โทร</span> 0635979594
               </p>
             </div>
 
