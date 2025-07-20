@@ -34,22 +34,17 @@ const options = { next: { revalidate: 30 } };
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const post = await client.fetch<SanityDocument>(POST_QUERY, await params, options);
 
-  // Get first gallery image for thumbnail
-  const galleryData: GalleryItem[] = post.gallery?.map((image: SanityImageSource & { category?: string }) => {
-    const imageUrl = urlFor(image)?.width(1200).height(1200).url();
-    const category = image.category || null;
-    return { url: imageUrl, category };
-  });
-
-  const thumbnailImage = galleryData?.[0]?.url;
+  const thumbnailImage = post.thumbnail
+    ? urlFor(post.thumbnail)?.width(1200).height(1200).url() || null
+    : null;
 
 
   return {
     title: `แคมป์ - ${post.title}`,
-    description: `รายละเอียดแคมป์ ${post.title}`,
+    description: `รายละเอียด ${post.title}`,
     openGraph: {
       title: `แคมป์ - ${post.title}`,
-      description: `รายละเอียดแคมป์ ${post.title}`,
+      description: `รายละเอียด ${post.title}`,
       images: thumbnailImage ? [
         {
           url: thumbnailImage,
@@ -72,10 +67,10 @@ export default async function PostPage({ params, }: PageProps) {
   const post = await client.fetch<SanityDocument>(POST_QUERY, await params, options);
 
   const galleryData: GalleryItem[] = post.gallery?.map((image: SanityImageSource & { category?: string }) => {
-    const imageUrl = urlFor(image)?.width(1200).height(1200).url();
+    const imageUrl = urlFor(image)?.width(1200).height(1200).url() || null;
     const category = image.category || null;
     return { url: imageUrl, category };
-  });
+  }) || [];
 
   const ImageGalleryData = galleryData?.map((data) => data.url);
 

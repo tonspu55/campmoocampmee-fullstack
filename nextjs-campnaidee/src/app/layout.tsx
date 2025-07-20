@@ -13,23 +13,23 @@ const notoSansThai = Noto_Sans_Thai({
 
 export const metadata: Metadata = {
   title: "แคมป์ไหนดี",
-  description: "แหล่งรวมข้อมูลแคมป์และที่พักในประเทศไทย",
+  description: "ค้นหาลานกางเต็นท์หรือแคมป์ปิ้ง สำหรับการพักผ่อนที่ดีที่สุด",
   openGraph: {
     title: "แคมป์ไหนดี",
-    description: "แหล่งรวมข้อมูลแคมป์และที่พักในประเทศไทย",
+    description: "ค้นหาลานกางเต็นท์หรือแคมป์ปิ้ง สำหรับการพักผ่อนที่ดีที่สุด",
     images: [
       {
         url: "/assets/images/banner-desktop.jpg",
         width: 1200,
         height: 630,
-        alt: "แคมป์ไหนดี - แหล่งรวมข้อมูลแคมป์และที่พักในประเทศไทย",
+        alt: "ค้นหาลานกางเต็นท์หรือแคมป์ปิ้ง สำหรับการพักผ่อนที่ดีที่สุด",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     title: "แคมป์ไหนดี",
-    description: "แหล่งรวมข้อมูลแคมป์และที่พักในประเทศไทย",
+    description: "ค้นหาลานกางเต็นท์หรือแคมป์ปิ้ง สำหรับการพักผ่อนที่ดีที่สุด",
     images: ["/assets/images/banner-desktop.jpg"],
   },
 };
