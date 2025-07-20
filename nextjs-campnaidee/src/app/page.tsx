@@ -15,7 +15,7 @@ export default async function IndexPage() {
   const posts = await client.fetch<SanityDocument[]>(POSTS_QUERY, {}, options);
 
   return (
-    <main className="pb-8 lg:pb-12">
+    <main className="pb-6 lg:pb-10">
       <div className="flex relative h-[320px] md:h-[500px] flex-col">
         <HeroBanner />
       </div>
