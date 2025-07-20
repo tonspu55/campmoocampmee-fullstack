@@ -95,10 +95,11 @@ export default async function PostPage({ params, }: PageProps) {
           <div className="text-description ml-[20px] max-md:text-sm">
             {Array.isArray(post.body) && <PortableText value={post.body} />}
           </div>
-          <div className={`lg:hidden mt-4 p-4 ${styles.contactInfo} dark:border-primary dark:border`}>
+          <Separator className="my-4 lg:hidden" />
+          <div className={`lg:hidden mt-4 `}>
             <ContactSocialLink socialContactLinks={post.socialContactLinks} />
           </div>
-          <Separator className="mt-6 mb-4 lg:my-8" />
+          <Separator className="my-4 lg:my-8" />
           <OtherBenefits otherBenefits={post.otherBenefits} />
         </div>
         <div className="px-2 max-lg:w-full basis-1/1 lg:pl-0  lg:basis-1/3 max-lg:pt-4 max-lg:hidden">
