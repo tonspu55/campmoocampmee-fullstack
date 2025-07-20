@@ -20,8 +20,8 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
 
   return (
     <>
-      <h4 className="text-lg font-bold mb-6">รายละเอียดเพิ่มเติม</h4>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 ">
+      <h4 className="text-lg font-bold mb-4">รายละเอียดเพิ่มเติม</h4>
+      <div className="grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-4 ">
         {otherBenefits.priceOfStay && (
           <div className="flex flex-row  gap-4 items-center">
             <Image
@@ -31,7 +31,7 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               width={50}
               height={50}
             />
-            <p>{otherBenefits.priceOfStay}</p>
+            <p className="max-md:text-sm">{otherBenefits.priceOfStay}</p>
           </div>
         )}
         {otherBenefits.checkIn && (
@@ -43,7 +43,7 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               width={50}
               height={50}
             />
-            <p>{otherBenefits.checkIn}</p>
+            <p className="max-md:text-sm">{otherBenefits.checkIn}</p>
           </div>
         )}
         {otherBenefits.checkOut && (
@@ -55,7 +55,7 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               width={50}
               height={50}
             />
-            <p>{otherBenefits.checkOut}</p>
+            <p className="max-md:text-sm">{otherBenefits.checkOut}</p>
           </div>
         )}
         {otherBenefits.nature && (
@@ -67,7 +67,7 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               width={50}
               height={50}
             />
-            <p>{otherBenefits.nature}</p>
+            <p className="max-md:text-sm">{otherBenefits.nature}</p>
           </div>
         )}
         {otherBenefits.cabin && (
@@ -79,7 +79,7 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               width={50}
               height={50}
             />
-            <p>{otherBenefits.cabin}</p>
+            <p className="max-md:text-sm">{otherBenefits.cabin}</p>
           </div>
         )}
         {otherBenefits.noNoise && (
@@ -91,7 +91,7 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               width={50}
               height={50}
             />
-            <p>{otherBenefits.noNoise}</p>
+            <p className="max-md:text-sm">{otherBenefits.noNoise}</p>
           </div>
         )}
         {otherBenefits.petFriendly && (
@@ -103,7 +103,7 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               width={50}
               height={50}
             />
-            <p>{otherBenefits.petFriendly}</p>
+            <p className="max-md:text-sm">{otherBenefits.petFriendly}</p>
           </div>
         )}
         {otherBenefits.wifi && (
@@ -115,7 +115,7 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               width={50}
               height={50}
             />
-            <p>{otherBenefits.wifi}</p>
+            <p className="max-md:text-sm">{otherBenefits.wifi}</p>
           </div>
         )}
         {otherBenefits.food && (
@@ -127,7 +127,7 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               width={50}
               height={50}
             />
-            <p>{otherBenefits.food}</p>
+            <p className="max-md:text-sm">{otherBenefits.food}</p>
           </div>
         )}
       </div>

@@ -92,14 +92,17 @@ export default async function PostPage({ params, }: PageProps) {
             </div>
             <ShareToSocial title={post.title} slug={(await params).slug} />
           </div>
-          <div className="text-description ml-[20px]">
+          <div className="text-description ml-[20px] max-md:text-sm">
             {Array.isArray(post.body) && <PortableText value={post.body} />}
           </div>
-          <Separator className="my-4 md:my-6" />
+          <div className={`lg:hidden mt-4 p-4 ${styles.contactInfo} dark:border-primary dark:border`}>
+            <ContactSocialLink socialContactLinks={post.socialContactLinks} />
+          </div>
+          <Separator className="mt-6 mb-4 lg:my-8" />
           <OtherBenefits otherBenefits={post.otherBenefits} />
         </div>
-        <div className="px-2 max-lg:w-full basis-1/1 lg:pl-0  lg:basis-1/3 max-lg:pt-4">
-          <div className={`  p-4 ${styles.contactInfo}`}>
+        <div className="px-2 max-lg:w-full basis-1/1 lg:pl-0  lg:basis-1/3 max-lg:pt-4 max-lg:hidden">
+          <div className={`p-4 ${styles.contactInfo} dark:border-primary dark:border`}>
             <ContactSocialLink socialContactLinks={post.socialContactLinks} />
           </div>
         </div>
