@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Noto_Sans_Thai } from "next/font/google";
+import Script from "next/script";
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { cn } from '@/lib/utils';
 import "./globals.css";
@@ -51,6 +52,19 @@ export default function RootLayout({
           notoSansThai.className
         )}
       >
+        {/* Google tag (gtag.js) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-36B3HR5S05"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-36B3HR5S05');
+          `}
+        </Script>
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
