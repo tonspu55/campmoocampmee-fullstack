@@ -42,6 +42,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <meta name="google-site-verification" content="1ux37MJZu2__Qw7RM8WVtQNTV9lVcUI3xklRWoXaFdo" />
       <link rel="icon" href="/assets/images/favicon/favicon.ico" sizes="any" />
       <link rel="apple-touch-icon" href="/assets/images/favicon/apple-touch-icon.png" />
       <link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon/android-chrome-192x192.png" />
