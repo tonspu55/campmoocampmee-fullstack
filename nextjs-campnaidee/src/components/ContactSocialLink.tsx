@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from "next/image";
 import { PhoneCall } from "lucide-react";
+import { Button } from '@/components/ui/button';
 
 type SocialContactLinks = {
   facebook?: string;
@@ -27,10 +28,12 @@ const ContactSocialLink = ({ socialContactLinks }: ContactSocialLinkProps) => {
 
           {socialContactLinks.phone && (
             <div className="flex flex-row gap-2 items-center">
-              <PhoneCall className='w-6 h-6 text-[#085953]' />
-              <Link href={`tel:${socialContactLinks.phone}`}>
-                <p className='text-blue-500'>{socialContactLinks.phone}</p>
-              </Link>
+              <Button variant="default" className="flex items-center">
+                <PhoneCall className='w-6 h-6 ' />
+                <Link href={`tel:${socialContactLinks.phone}`}>
+                  {socialContactLinks.phone}
+                </Link>
+              </Button>
             </div>
           )}
           <div className="flex flex-row gap-2 ">
