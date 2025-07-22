@@ -39,14 +39,14 @@ const Footer = () => {
           {/* Contact Info */}
           <div className="flex flex-col space-y-4">
             <h4 className="text-lg font-bold">ติดต่อเรา</h4>
-            <div className="flex flex-col space-y-2 ">
+            {/* <div className="flex flex-col space-y-2 ">
               <p className="text-sm">
                 <span className="">เบอร์โทร</span> 0635979594
               </p>
-            </div>
+            </div> */}
 
             {/* Social Media */}
-            <div className="flex space-x-2 mt-2">
+            <div className="flex space-x-2">
               <Link href="https://www.facebook.com/profile.php?id=100080127966873" target='_blank' className=" hover:text-white">
                 <Image
                   src="/assets/images/facebook.png"
