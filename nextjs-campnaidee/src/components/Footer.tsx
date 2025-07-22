@@ -46,7 +46,7 @@ const Footer = () => {
             </div> */}
 
             {/* Social Media */}
-            <div className="flex space-x-2 mt-2">
+            <div className="flex space-x-2">
               <Link href="https://www.facebook.com/profile.php?id=100080127966873" target='_blank' className=" hover:text-white">
                 <Image
                   src="/assets/images/facebook.png"
