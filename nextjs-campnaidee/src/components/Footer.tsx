@@ -39,11 +39,11 @@ const Footer = () => {
           {/* Contact Info */}
           <div className="flex flex-col space-y-4">
             <h4 className="text-lg font-bold">ติดต่อเรา</h4>
-            <div className="flex flex-col space-y-2 ">
+            {/* <div className="flex flex-col space-y-2 ">
               <p className="text-sm">
                 <span className="">เบอร์โทร</span> 0635979594
               </p>
-            </div>
+            </div> */}
 
             {/* Social Media */}
             <div className="flex space-x-2 mt-2">
