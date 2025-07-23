@@ -10,6 +10,7 @@ import ShareToSocial from "@/components/ShareToSocial";
 import OtherBenefits from "@/components/OtherBenefits";
 import { Separator } from "@/components/ui/separator"
 import InfoAddress from "@/components/InfoAddress";
+import NavigationMobile from "@/components/NavigationMobile";
 
 
 
@@ -77,7 +78,6 @@ export default async function PostPage({ params, }: PageProps) {
   return (
     <main className="container mx-auto max-w-6xl  mt-[70px] pb-6 lg:pb-10">
       {ImageGalleryData && <ImageGallery ImageGallery={ImageGalleryData} slug={(await params).slug} />}
-
       <div className="flex flex-col lg:flex-row gap-4 mt-4 lg:mt-6 items-start">
         <div className="basis-1/1 px-2 lg:pr-0 lg:pl-2 w-full">
           <div className="flex flex-row gap-4 justify-between items-start mb-4 lg:mb-6">
@@ -102,8 +102,9 @@ export default async function PostPage({ params, }: PageProps) {
             <ContactSocialLink socialContactLinks={post.socialContactLinks} />
           </div>
         </div>
-
       </div>
+      <div className="end-page-detection lg:hidden"></div>
+      <NavigationMobile socialContactLinks={post.socialContactLinks} />
     </main>
   );
 }
