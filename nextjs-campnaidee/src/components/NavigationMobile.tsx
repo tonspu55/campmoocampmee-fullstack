@@ -62,9 +62,10 @@ const NavigationMobile = ({ socialContactLinks }: ContactSocialLinkProps) => {
       <div className='py-2 flex flex-row gap-2 items-center'>
         <div className="basis-1/2">
           {socialContactLinks.phone && (
-            <Button variant="default" className="flex items-center w-full">
-              <PhoneCall className='w-6 h-6 ' />
+            <Button variant="default" className="flex items-center w-full" asChild>
+
               <Link href={`tel:${socialContactLinks.phone}`}>
+                <PhoneCall className='w-6 h-6 ' />
                 จองที่พัก
               </Link>
             </Button>
@@ -72,14 +73,15 @@ const NavigationMobile = ({ socialContactLinks }: ContactSocialLinkProps) => {
         </div>
         <div className="basis-1/2">
           {socialContactLinks.facebook && (
-            <Button variant="default" className="flex items-center w-full">
-              <MessageCircleMore className='w-6 h-6 ' />
+            <Button variant="default" className="flex items-center w-full" asChild>
               <Link target='_blank' href={`${socialContactLinks.facebook}`}>
+                <MessageCircleMore className='w-6 h-6 ' />
                 จองที่พักผ่านเพจ
               </Link>
             </Button>
           )}
         </div>
+
       </div>
     </div>
   )
