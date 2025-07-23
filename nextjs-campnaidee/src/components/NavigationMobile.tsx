@@ -65,7 +65,7 @@ const NavigationMobile = ({ socialContactLinks }: ContactSocialLinkProps) => {
             <Button variant="default" className="flex items-center w-full">
               <PhoneCall className='w-6 h-6 ' />
               <Link href={`tel:${socialContactLinks.phone}`}>
-                ติดต่อที่พัก
+                จองที่พัก
               </Link>
             </Button>
           )}
@@ -75,7 +75,7 @@ const NavigationMobile = ({ socialContactLinks }: ContactSocialLinkProps) => {
             <Button variant="default" className="flex items-center w-full">
               <MessageCircleMore className='w-6 h-6 ' />
               <Link target='_blank' href={`${socialContactLinks.facebook}`}>
-                ติดต่อผ่านเพจ
+                จองที่พักผ่านเพจ
               </Link>
             </Button>
           )}
