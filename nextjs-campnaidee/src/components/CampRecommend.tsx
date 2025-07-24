@@ -43,7 +43,7 @@ export default function CampRecommend({ posts }: CampRecommendProps) {
                   />
                 )}
                 <div className="px-2 pb-2">
-                  <h3 className="max-lg:text-sm text-md font-semibold">{post.title}</h3>
+                  <h3 className="max-lg:text-sm text-md font-semibold line-clamp-1">{post.title}</h3>
                   <InfoAddress InfoAddress={post.address} />
                 </div>
               </Card>
