@@ -14,11 +14,10 @@ const Footer = () => {
           <div className="flex flex-col space-y-4">
             <div className="flex items-center space-x-2">
 
-              <h3 className="text-xl font-bold">แคมป์ไหนดี</h3>
+              <h3 className="text-xl font-bold">แคมป์หมู แคมป์หมี</h3>
             </div>
             <p className=" text-sm">
-              ค้นหาลานกางเต็นท์หรือแคมป์ปิ้ง<br />
-              สำหรับการพักผ่อนที่ดีที่สุด
+              แคมป์หมู แคมป์หมี แคมป์คุณมาดูหน่อย
             </p>
           </div>
 
@@ -78,7 +77,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className=" pt-6">
           <div className="flex flex-col md:flex-row justify-between items-center text-sm ">
-            <p>&copy; 2025 campnaidee.com</p>
+            <p>&copy; 2025 campmoocampmee</p>
           </div>
         </div>
       </div>
