@@ -11,7 +11,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Share, Link2, Check } from "lucide-react";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 interface ShareToSocialProps {
   title?: string;
@@ -21,8 +21,16 @@ interface ShareToSocialProps {
 const ShareToSocial = ({ title, slug }: ShareToSocialProps) => {
   const [copied, setCopied] = useState(false);
   const [open, setOpen] = useState(false);
+  const [baseUrl, setBaseUrl] = useState('');
 
-  const currentUrl = slug ? `https://campnaidee.com/land/${slug}` : `https://campnaidee.com`;
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const currentDomain = `${window.location.protocol}//${window.location.host}`;
+      setBaseUrl(process.env.NEXT_PUBLIC_BASE_URL || currentDomain);
+    }
+  }, []);
+
+  const currentUrl = slug ? `${baseUrl}/land/${slug}` : baseUrl;
 
   const handleCopyUrl = useCallback(async () => {
     try {
@@ -72,10 +80,13 @@ const ShareToSocial = ({ title, slug }: ShareToSocialProps) => {
         <PopoverTrigger asChild>
           <Button className="flex h-9 w-9 items-center  justify-center rounded-full cursor-pointer" variant="default"><Share /></Button>
         </PopoverTrigger>
-        <PopoverContent className="w-34 border-none">
-          <div className="flex flex-row gap-2 justify-center">
+        <PopoverContent className="w-34 border-none" >
+          <div className="flex flex-row gap-2 justify-center" >
             <Button
-              onClick={handleCopyUrl}
+              onClick={() => {
+                handleCopyUrl();
+                setOpen(true);
+              }}
               variant="default"
               className="flex justify-center rounded-full cursor-pointer h-[30px] w-[30px]"
             >
@@ -87,8 +98,8 @@ const ShareToSocial = ({ title, slug }: ShareToSocialProps) => {
             </Button>
             <FacebookShareButton
               url={currentUrl}
-              quote={`ดูที่พัก ${title} ได้ที่ campnaidee.com`}
-              hashtag={'#campnaidee'}
+              quote={`ดูที่พัก ${title} ได้ที่ campmoocampmee.com`}
+              hashtag={'#campmoocampmee'}
             >
               <Image
                 priority
@@ -100,7 +111,7 @@ const ShareToSocial = ({ title, slug }: ShareToSocialProps) => {
             </FacebookShareButton>
             <LineShareButton
               url={currentUrl}
-              title={`ดูที่พัก ${title} ได้ที่ campnaidee.com`}
+              title={`ดูที่พัก ${title} ได้ที่ campmoocampmee.com`}
             >
               <Image
                 priority

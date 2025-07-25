@@ -35,7 +35,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       {
-        message: "ส่งข้อมูลเรียบร้อยแล้ว แคมป์ไหนดีจะติดต่อกลับโดยเร็วที่สุด",
+        message:
+          "ส่งข้อมูลเรียบร้อยแล้ว แคมป์หมู แคมป์หมี จะติดต่อกลับโดยเร็วที่สุด",
         id: result._id,
       },
       { status: 201 }
