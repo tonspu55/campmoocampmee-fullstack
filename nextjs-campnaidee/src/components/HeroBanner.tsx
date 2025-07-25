@@ -30,11 +30,11 @@ export default function HeroBanner() {
   return (
     <div className={`${styles.homeBg}`}>
       <div className="container mx-auto max-w-6xl px-2 h-full">
-        <div className="flex flex-col items-center justify-center text-center h-full mt-[-20px] lg:justify-center lg:items-center lg:text-left lg:flex-row lg:pl-[100px] lg:mt-[-20px]">
+        <div className="flex flex-col items-center justify-center text-center h-full mt-[-20px] lg:justify-center lg:items-center lg:text-left lg:flex-row lg:pl-[0px] lg:mt-[-20px]">
           <div className="w-[50%] flex-none"></div>
           <div ref={contentRef} className="w-full lg:w-[50%] gap-4">
             <h1 className="text-xl lg:text-4xl font-bold text-white">
-              แคมป์หมู แคมป์หมี<br />แคมป์คุณมาดูหน่อย
+              ค้นหาลานกางเต็นท์หรือแคมป์ปิ้ง<br />สำหรับการพักผ่อนที่ดีที่สุด
             </h1>
             <Button asChild className="cursor-pointer mt-2 lg:mt-4" variant="default">
               <Link href="/contact">

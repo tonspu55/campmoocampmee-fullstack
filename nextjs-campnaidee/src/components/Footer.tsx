@@ -12,13 +12,22 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
           {/* Logo and Description */}
           <div className="flex flex-col space-y-4">
-            <div className="flex items-center space-x-2">
-
-              <h3 className="text-xl font-bold">แคมป์หมู แคมป์หมี</h3>
+            <div className="flex flex-col items-start gap-4">
+              <Image
+                priority
+                src="/assets/images/logo.webp"
+                alt="Logo"
+                width={50}
+                height={50}
+              ></Image>
+              <div className="flex flex-col gap-2">
+                <h3 className="text-md">แคมป์หมูแคมป์หมี...แคมป์คุณมาดูหน่อย</h3>
+                <p className=" text-sm">
+                  ค้นหาลานกางเต็นท์หรือแคมป์ปิ้งสำหรับการพักผ่อนที่ดีที่สุด
+                </p>
+              </div>
             </div>
-            <p className=" text-sm">
-              แคมป์หมู แคมป์หมี แคมป์คุณมาดูหน่อย
-            </p>
+
           </div>
 
           {/* Quick Links */}
