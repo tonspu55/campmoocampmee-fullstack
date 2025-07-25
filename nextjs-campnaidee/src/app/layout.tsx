@@ -13,24 +13,24 @@ const notoSansThai = Noto_Sans_Thai({
 });
 
 export const metadata: Metadata = {
-  title: "แคมป์หมู แคมป์หมี",
-  description: "แคมป์หมู แคมป์หมี แคมป์คุณมาดูหน่อย",
+  title: "แคมป์หมูแคมป์หมี - ค้นหาลานกางเต็นท์หรือแคมป์ปิ้งสำหรับการพักผ่อนที่ดีที่สุด",
+  description: "แคมป์หมูแคมป์หมี...แคมป์คุณมาดูหน่อย - ค้นหาลานกางเต็นท์หรือแคมป์ปิ้งสำหรับการพักผ่อนที่ดีที่สุด",
   openGraph: {
-    title: "แคมป์หมู แคมป์หมี",
-    description: "แคมป์หมู แคมป์หมี แคมป์คุณมาดูหน่อย",
+    title: "แคมป์หมูแคมป์หมี",
+    description: "แคมป์หมูแคมป์หมี...แคมป์คุณมาดูหน่อย",
     images: [
       {
         url: "/assets/images/banner-desktop.jpg",
         width: 1200,
         height: 630,
-        alt: "แคมป์หมู แคมป์หมี แคมป์คุณมาดูหน่อย",
+        alt: "แคมป์หมูแคมป์หมี...แคมป์คุณมาดูหน่อย",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "แคมป์หมู แคมป์หมี",
-    description: "แคมป์หมู แคมป์หมี แคมป์คุณมาดูหน่อย",
+    title: "แคมป์หมูแคมป์หมี",
+    description: "แคมป์หมูแคมป์หมี...แคมป์คุณมาดูหน่อย",
     images: ["/assets/images/banner-desktop.jpg"],
   },
 };
