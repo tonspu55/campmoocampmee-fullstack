@@ -76,7 +76,7 @@ export default async function PostPage({ params, }: PageProps) {
   const ImageGalleryData = galleryData?.map((data) => data.url);
 
   return (
-    <main className="container mx-auto max-w-6xl  mt-[70px] pb-6 lg:pb-10">
+    <main className="container mx-auto max-w-6xl  mt-[60px] pb-6 lg:pb-10">
       {ImageGalleryData && <ImageGallery ImageGallery={ImageGalleryData} slug={(await params).slug} />}
       <div className="flex flex-col lg:flex-row gap-4 mt-4 lg:mt-6 items-start">
         <div className="basis-1/1 px-2 lg:pr-0 lg:pl-2 w-full">
