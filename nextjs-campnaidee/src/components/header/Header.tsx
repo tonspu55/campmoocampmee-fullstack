@@ -128,7 +128,7 @@ const Header = () => {
       return [
         "flex",
         "absolute",
-        "top-[70px]",
+        "top-[60px]",
         "w-[100%]",
         "gap-2",
         "flex-col",
@@ -148,12 +148,13 @@ const Header = () => {
 
   return (
     <nav
-      className={`flex items-center fixed top-0 left-0 right-0 z-50 h-[70px]  ${mounted && isScrolled ? 'bg-white dark:bg-[var(--background)]' : 'bg-transparent'
+      className={`flex items-center fixed top-0 left-0 right-0 z-50 h-[60px] ${mounted ? (isScrolled ? 'bg-white dark:bg-[var(--background)]' : 'bg-transparent') : 'bg-transparent'
         }`}
     >
       <div className="container mx-auto flex items-center max-w-6xl px-2">
         <LogoSwitcher />
-        <div className={`${mounted && isScrolled ? 'bg-white dark:bg-[var(--background)]' : 'bg-transparent'} ${menuClasses}`} >
+        <div className={`${mounted ? (isScrolled ? 'bg-white dark:bg-[var(--background)]' : 'bg-transparent') : 'bg-transparent'
+          } ${menuClasses}`} >
           {isMobileView ? (
             <div className="bg-white dark:bg-[var(--background)] px-2 py-4">
               <div className="flex flex-row justify-between">
