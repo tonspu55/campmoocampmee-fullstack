@@ -11,13 +11,22 @@ import { ArrowLeft } from "lucide-react";
 interface ItemGallery {
   url: string | null;
   category: string | null;
+  alt: string | null;
 }
 
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-const POST_QUERY = `*[_type == "post" && slug.current == $slug][0]`;
+const POST_QUERY = `*[_type == "post" && slug.current == $slug][0]{
+  ...,
+  gallery[]{
+    ...,
+    asset,
+    category,
+    alt
+  }
+}`;
 
 const { projectId, dataset } = client.config();
 const urlFor = (source: SanityImageSource) =>
@@ -39,10 +48,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 const GalleryPage = async ({ params }: PageProps) => {
   const post = await client.fetch<SanityDocument>(POST_QUERY, await params, options);
 
-  const dataGallery: ItemGallery[] = post.gallery?.map((image: SanityImageSource & { category?: string }) => {
+  const dataGallery: ItemGallery[] = post.gallery?.map((image: SanityImageSource & { category?: string; alt?: string }) => {
     const imageUrl = urlFor(image)?.width(1200).height(1200).url();
     const category = image.category || null;
-    return { url: imageUrl, category };
+    const alt = image.alt || null;
+    return { url: imageUrl, category, alt };
   }) || [];
 
   return (

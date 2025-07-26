@@ -31,9 +31,9 @@ export const postType = defineType({
           type: 'string',
           options: {
             list: [
-              {title: 'แคมป์แนะนำ', value: 'แคมป์แนะนำ'},
-              {title: 'แคมป์เปิดใหม่', value: 'แคมป์เปิดใหม่'},
-              {title: 'แคมป์ไกล้กรุงเทพ', value: 'แคมป์ไกล้กรุงเทพ'},
+              {title: 'recommend', value: 'recommend'},
+              {title: 'new', value: 'new'},
+              {title: 'nearBangkok', value: 'nearBangkok'},
             ],
           },
         },
