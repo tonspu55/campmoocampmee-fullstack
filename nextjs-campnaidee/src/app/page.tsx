@@ -15,7 +15,7 @@ const options = { next: { revalidate: 60 } };
 
 export default async function IndexPage() {
   const posts = await client.fetch<SanityDocument[]>(POSTS_QUERY, {}, options);
-  console.log('Fetched posts:', posts);
+
 
   // สร้าง seed จาก timestamp ทุก 60 วินาที
   const sixtySecondInterval = Math.floor(Date.now() / (60 * 1000));
