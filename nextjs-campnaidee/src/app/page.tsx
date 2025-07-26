@@ -7,13 +7,15 @@ import CampRecommend from "@/components/CampRecommend";
 const POSTS_QUERY = `*[
   _type == "post"
   && defined(slug.current)
-]| order(publishedAt desc)[0...8]{_id, title, address, thumbnail, slug}`;
+  && "แคมป์แนะนำ" in tags
+]| order(publishedAt desc)[0...8]{_id, title, address, thumbnail, slug, tags}`;
 
 
 const options = { next: { revalidate: 60 } };
 
 export default async function IndexPage() {
   const posts = await client.fetch<SanityDocument[]>(POSTS_QUERY, {}, options);
+  console.log('Fetched posts:', posts);
 
   // สร้าง seed จาก timestamp ทุก 60 วินาที
   const sixtySecondInterval = Math.floor(Date.now() / (60 * 1000));
