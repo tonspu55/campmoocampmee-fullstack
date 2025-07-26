@@ -147,7 +147,7 @@ const Header = () => {
   }, [isOpen]);
 
   return (
-    <nav
+    <nav suppressHydrationWarning
       className={`flex items-center fixed top-0 left-0 right-0 z-50 h-[60px] ${mounted ? (isScrolled ? 'bg-white dark:bg-[var(--background)]' : 'bg-transparent') : 'bg-transparent'
         }`}
     >

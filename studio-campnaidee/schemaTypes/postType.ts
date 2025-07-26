@@ -78,11 +78,17 @@ export const postType = defineType({
       of: [
         {
           type: 'image',
+          options: {
+            hotspot: true,
+            accept: 'image/*',
+            storeOriginalFilename: false,
+          },
           fields: [
             defineField({
               name: 'category',
               title: 'Category',
               type: 'string',
+              validation: (rule) => rule.required().error('กรุณาเลือกหมวดหมู่'),
               options: {
                 list: [
                   {title: 'วิว', value: 'วิว'},
@@ -90,11 +96,22 @@ export const postType = defineType({
                   {title: 'กิจกรรม', value: 'กิจกรรม'},
                   {title: 'ห้องน้ำ', value: 'ห้องน้ำ'},
                 ],
+                layout: 'dropdown',
               },
+              initialValue: 'วิว',
+            }),
+            defineField({
+              name: 'alt',
+              title: 'Alt Text',
+              type: 'string',
             }),
           ],
         },
       ],
+      options: {
+        layout: 'grid',
+      },
+      validation: (Rule) => Rule.min(1).error('ต้องมีรูปภาพอย่างน้อย 1 รูป'),
     }),
     defineField({
       name: 'body',
