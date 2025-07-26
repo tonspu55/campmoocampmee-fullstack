@@ -17,9 +17,9 @@ const InfoAddress = ({ InfoAddress }: InfoAddressProps) => {
       {InfoAddress?.province && (
         <>
           <div className="flex flex-row gap-1">
-            <p className="text-sm ">{`${InfoAddress.province}`}</p>
-            <p className="text-sm line-clamp-1">{`${InfoAddress.district}`}</p>
-            <p className="text-sm line-clamp-1">{`${InfoAddress.subdistrict}`}</p>
+            <p className="text-sm ">{`จ.${InfoAddress.province}`}</p>
+            <p className="text-sm line-clamp-1">{`อ.${InfoAddress.district}`}</p>
+            <p className="text-sm line-clamp-1">{`ต.${InfoAddress.subdistrict}`}</p>
           </div>
         </>
       )}

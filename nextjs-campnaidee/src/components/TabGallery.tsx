@@ -15,7 +15,15 @@ interface TabGalleryProps {
 
 const TabGallery = ({ dataGallery }: TabGalleryProps) => {
   const categories = [...new Set(dataGallery.map((data) => data.category))].filter(Boolean) as string[];
-  const allCategories = ["ทั้งหมด", ...categories];
+  // กำหนดลำดับที่แสดงผลของหมวดหมู่
+  const categoryOrder = ["ทั้งหมด", "วิว", "กิจกรรม", "ที่พัก", "ห้องน้ำ"];
+
+  // เรียงลำดับตาม categoryOrder และเพิ่มหมวดหมู่อื่นๆ ที่ไม่อยู่ในลิสต์ไว้ท้าย
+  const allCategories = categoryOrder.filter(c =>
+    c === "ทั้งหมด" || categories.includes(c)
+  ).concat(
+    categories.filter(c => !categoryOrder.includes(c))
+  );
 
   const [activeTab, setActiveTab] = useState("ทั้งหมด");
   const [isFixed, setIsFixed] = useState(false);

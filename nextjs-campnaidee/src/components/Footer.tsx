@@ -21,7 +21,7 @@ const Footer = () => {
                 height={50}
               ></Image>
               <div className="flex flex-col gap-2">
-                <h3 className="text-md">แคมป์หมูแคมป์หมี...แคมป์คุณมาดูหน่อย</h3>
+                <h3 className="text-md">แคมป์หมูแคมป์หมี</h3>
                 <p className=" text-sm">
                   ค้นหาลานกางเต็นท์หรือแคมป์ปิ้งสำหรับการพักผ่อนที่ดีที่สุด
                 </p>
