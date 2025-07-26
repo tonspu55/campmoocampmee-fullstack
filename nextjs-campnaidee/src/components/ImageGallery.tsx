@@ -12,15 +12,19 @@ import { useState, useEffect } from 'react';
 
 
 
-interface ImageGalleryProps {
-  ImageGallery: (string | null)[];
-  slug: string;
+type ImageGalleryItem = {
+  url: string;
+  alt: string | null;
+};
 
+interface ImageGalleryProps {
+  ImageGallery: ImageGalleryItem[];
+  slug: string;
 }
 
 const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
   const [isLoading, setIsLoading] = useState(true);
-  const displayImages = ImageGallery.slice(0, 5).filter(Boolean) as string[];
+  const displayImages = ImageGallery.slice(0, 5);
 
   useEffect(() => {
     // Simulate loading time for 1 second
@@ -127,12 +131,12 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
             dynamicBullets: true,
           }}
         >
-          {displayImages.map((image, index) => (
+          {displayImages.map((imageItem, index) => (
             <SwiperSlide key={index}>
               <div className="relative h-full">
                 <Image
-                  src={image}
-                  alt={`Gallery image ${index + 1}`}
+                  src={imageItem.url}
+                  alt={imageItem.alt || `Gallery image ${index + 1}`}
                   fill
                   className="object-cover "
                 />
@@ -165,8 +169,8 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
             {ImageGallery[0] && (
               <div className="flex-col h-full ">
                 <Image
-                  src={ImageGallery[0]}
-                  alt="Gallery image 1"
+                  src={ImageGallery[0].url}
+                  alt={ImageGallery[0].alt || "Gallery image 1"}
                   className="object-cover w-full h-full max-h-[400px] rounded-tl-xl rounded-bl-xl"
                   width={500}
                   height={400}
@@ -180,8 +184,8 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
                 {ImageGallery[1] && (
                   <div className="flex-col basis-1/2">
                     <Image
-                      src={ImageGallery[1]}
-                      alt="Gallery image 2"
+                      src={ImageGallery[1].url}
+                      alt={ImageGallery[1].alt || "Gallery image 2"}
                       className="object-cover w-full max-h-[196px]"
                       width={500}
                       height={196}
@@ -191,8 +195,8 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
                 {ImageGallery[2] && (
                   <div className="flex-col basis-1/2">
                     <Image
-                      src={ImageGallery[2]}
-                      alt="Gallery image 3"
+                      src={ImageGallery[2].url}
+                      alt={ImageGallery[2].alt || "Gallery image 3"}
                       className="object-cover w-full max-h-[196px] rounded-tr-xl "
                       width={500}
                       height={196}
@@ -206,8 +210,8 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
                 {ImageGallery[3] && (
                   <div className="flex-col basis-1/2">
                     <Image
-                      src={ImageGallery[3]}
-                      alt="Gallery image 4"
+                      src={ImageGallery[3].url}
+                      alt={ImageGallery[3].alt || "Gallery image 4"}
                       className="object-cover w-full max-h-[196px]"
                       width={500}
                       height={196}
@@ -218,8 +222,8 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
                   <div className="flex-col basis-1/2">
                     <div className="relative h-full">
                       <Image
-                        src={ImageGallery[4]}
-                        alt="Gallery image 5"
+                        src={ImageGallery[4].url}
+                        alt={ImageGallery[4].alt || "Gallery image 5"}
                         className="object-cover w-full max-h-[196px] rounded-br-xl"
                         width={500}
                         height={196}

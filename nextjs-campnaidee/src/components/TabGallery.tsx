@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 type GalleryItem = {
   url: string | null;
   category: string | null;
+  alt: string | null;
 }
 
 interface TabGalleryProps {
@@ -131,7 +132,7 @@ const TabGallery = ({ dataGallery }: TabGalleryProps) => {
               <div className="relative aspect-square">
                 <Image
                   src={item.url}
-                  alt={`Gallery image ${index + 1}`}
+                  alt={item.alt || `Gallery image ${index + 1}`}
                   fill
                   className="object-cover"
                 />

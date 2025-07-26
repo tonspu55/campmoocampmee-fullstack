@@ -20,9 +20,18 @@ type PageProps = {
 interface GalleryItem {
   url: string | null;
   category: string | null;
+  alt: string | null;
 }
 
-const POST_QUERY = `*[_type == "post" && slug.current == $slug][0]`;
+const POST_QUERY = `*[_type == "post" && slug.current == $slug][0]{
+  ...,
+  gallery[]{
+    ...,
+    asset,
+    category,
+    alt
+  }
+}`;
 
 const { projectId, dataset } = client.config();
 const urlFor = (source: SanityImageSource) =>
@@ -67,13 +76,19 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function PostPage({ params, }: PageProps) {
   const post = await client.fetch<SanityDocument>(POST_QUERY, await params, options);
 
-  const galleryData: GalleryItem[] = post.gallery?.map((image: SanityImageSource & { category?: string }) => {
+  const galleryData: GalleryItem[] = post.gallery?.map((image: SanityImageSource & { category?: string; alt?: string }) => {
     const imageUrl = urlFor(image)?.width(1200).height(1200).url() || null;
     const category = image.category || null;
-    return { url: imageUrl, category };
+    const alt = image.alt || null;
+    return { url: imageUrl, category, alt };
   }) || [];
 
-  const ImageGalleryData = galleryData?.map((data) => data.url);
+  const ImageGalleryData = galleryData
+    .map(item => ({
+      url: item.url!,
+      alt: item.alt
+    }));
+
 
   return (
     <main className="container mx-auto max-w-6xl  mt-[60px] pb-6 lg:pb-10">

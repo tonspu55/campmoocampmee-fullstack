@@ -7,7 +7,7 @@ import CampRecommend from "@/components/CampRecommend";
 const POSTS_QUERY = `*[
   _type == "post"
   && defined(slug.current)
-  && "แคมป์แนะนำ" in tags
+  && "recommend" in tags
 ]| order(publishedAt desc)[0...8]{_id, title, address, thumbnail, slug, tags}`;
 
 
