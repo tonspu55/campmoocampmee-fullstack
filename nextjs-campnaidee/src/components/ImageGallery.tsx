@@ -3,7 +3,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination } from 'swiper/modules';
 import 'swiper/css';
+import 'swiper/css/pagination';
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useState, useEffect } from 'react';
@@ -118,8 +120,12 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
       <div className="md:hidden">
         <Swiper
           spaceBetween={10}
-          slidesPerView={1.1}
-          className="h-[250px] "
+          slidesPerView={1}
+          className="h-[250px] [&_.swiper-pagination-bullet-active]:bg-white! [&_.swiper-pagination-bullet]:bg-white! [&_.swiper-pagination-bullet]:opacity-100!"
+          modules={[Pagination]}
+          pagination={{
+            dynamicBullets: true,
+          }}
         >
           {displayImages.map((image, index) => (
             <SwiperSlide key={index}>
