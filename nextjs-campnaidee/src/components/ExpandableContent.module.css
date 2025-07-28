@@ -15,5 +15,6 @@
 
 /* Dark mode support */
 :global(.dark) .topBlur::before {
-  background: linear-gradient(transparent, hsl(var(--background)));
+  /* background: linear-gradient(transparent, hsl(var(--background))); */
+  background: linear-gradient(0deg, #0a0a0a, transparent);
 }

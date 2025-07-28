@@ -43,8 +43,8 @@ const ExpandableContent = ({ children, maxHeight = 200 }: ExpandableContentProps
 
       {shouldShowButton && (
 
-        <div className={`${!isExpanded ? `absolute bottom-0 left-0 right-0 ${styles.topBlur}` : 'relative pt-4 dark:pt-0'}`}>
-          <div className="dark:pt-4 flex justify-center bg-white dark:bg-[var(--background)] relative">
+        <div className={`${!isExpanded ? `absolute bottom-0 left-0 right-0 ${styles.topBlur}` : 'relative pt-4'}`}>
+          <div className="flex justify-center bg-white dark:bg-[var(--background)] relative">
 
             <Button
               onClick={toggleExpanded}
