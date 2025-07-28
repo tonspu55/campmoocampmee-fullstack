@@ -11,6 +11,7 @@ import OtherBenefits from "@/components/OtherBenefits";
 import { Separator } from "@/components/ui/separator"
 import InfoAddress from "@/components/InfoAddress";
 import NavigationMobile from "@/components/NavigationMobile";
+import ExpandableContent from "@/components/ExpandableContent";
 
 
 
@@ -102,8 +103,10 @@ export default async function PostPage({ params, }: PageProps) {
             </div>
             <ShareToSocial title={post.title} slug={(await params).slug} />
           </div>
-          <div className="text-description ml-[20px] max-md:text-sm">
-            {Array.isArray(post.body) && <PortableText value={post.body} />}
+          <div className="text-description max-md:text-sm">
+            <ExpandableContent maxHeight={200}>
+              {Array.isArray(post.body) && <PortableText value={post.body} />}
+            </ExpandableContent>
           </div>
           <Separator className="my-4 lg:hidden" />
           <div className={`lg:hidden mt-4 `}>
