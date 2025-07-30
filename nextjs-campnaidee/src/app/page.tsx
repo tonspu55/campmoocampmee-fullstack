@@ -16,6 +16,8 @@ const options = { next: { revalidate: 60 } };
 export default async function IndexPage() {
   const posts = await client.fetch<SanityDocument[]>(POSTS_QUERY, {}, options);
 
+  // console.log("Fetched address:", posts.map(post => post.address));
+
 
   // สร้าง seed จาก timestamp ทุก 60 วินาที
   const sixtySecondInterval = Math.floor(Date.now() / (60 * 1000));
@@ -53,7 +55,10 @@ export default async function IndexPage() {
       <div className="flex relative h-[320px] md:h-[500px] flex-col">
         <HeroBanner />
       </div>
-      <CampRecommend posts={shuffledPosts} />
+      <div className="container mx-auto px-2 max-w-6xl pt-6 lg:pt-10">
+        <CampRecommend posts={shuffledPosts} />
+      </div>
+
     </main>
   );
 }
