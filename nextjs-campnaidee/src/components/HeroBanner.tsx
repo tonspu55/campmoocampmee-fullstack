@@ -1,9 +1,8 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import styles from "@/app/homepage.module.css";
+import SearchBox from "@/components/SearchBox";
 
 export default function HeroBanner() {
   const contentRef = useRef<HTMLDivElement>(null);
@@ -36,11 +35,14 @@ export default function HeroBanner() {
             <h1 className="text-xl lg:text-4xl font-bold text-white">
               ค้นหาลานกางเต็นท์หรือแคมป์ปิ้ง<br />สำหรับการพักผ่อนที่ดีที่สุด
             </h1>
-            <Button asChild className="cursor-pointer mt-2 lg:mt-4" variant="default">
+            {/* <Button asChild className="cursor-pointer mt-2 lg:mt-4" variant="default">
               <Link href="/contact">
                 ติดต่อลงข้อมูล
               </Link>
-            </Button>
+            </Button> */}
+            <div className="flex flex-col items-center lg:items-start mt-2 lg:mt-4">
+              <div className="w-[220px] lg:w-[350px]"><SearchBox /></div>
+            </div>
           </div>
         </div>
       </div>

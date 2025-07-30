@@ -11,6 +11,7 @@ import {
 
 interface CampRecommendProps {
   posts: SanityDocument[];
+  showTitle?: boolean;
 }
 
 const { projectId, dataset } = client.config();
@@ -19,10 +20,10 @@ const urlFor = (source: SanityImageSource) =>
     ? imageUrlBuilder({ projectId, dataset }).image(source)
     : null;
 
-export default function CampRecommend({ posts }: CampRecommendProps) {
+export default function CampRecommend({ posts, showTitle = true }: CampRecommendProps) {
   return (
-    <div className="container mx-auto max-w-6xl pt-6 lg:pt-10 px-2">
-      <h1 className="text-2xl font-bold mb-4">แคมป์แนะนำ</h1>
+    <div className="">
+      {showTitle && <h1 className="text-2xl font-bold mb-4">แคมป์แนะนำ</h1>}
       <div className="grid grid-cols-2 gap-2 lg:grid-cols-4 lg:gap-4">
         {posts.map((post) => {
           const postImageUrl = post.thumbnail
