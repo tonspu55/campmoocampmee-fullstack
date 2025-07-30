@@ -31,11 +31,10 @@ export default function SearchBox() {
         province.includes(value)
       );
       setFilteredProvinces(filtered);
-      setShowDropdown(true);
     } else {
-      setFilteredProvinces([]);
-      setShowDropdown(false);
+      setFilteredProvinces(THAILAND_PROVINCES);
     }
+    setShowDropdown(true);
   };
 
   const handleProvinceSelect = (province: string) => {
@@ -56,6 +55,25 @@ export default function SearchBox() {
     }
   };
 
+  const handleInputFocus = () => {
+    if (searchTerm.length > 0) {
+      const filtered = THAILAND_PROVINCES.filter(province =>
+        province.includes(searchTerm)
+      );
+      setFilteredProvinces(filtered);
+    } else {
+      setFilteredProvinces(THAILAND_PROVINCES);
+    }
+    setShowDropdown(true);
+  };
+
+  const handleInputBlur = () => {
+    // ใช้ setTimeout เพื่อให้ onclick ของ dropdown item ทำงานก่อน
+    setTimeout(() => {
+      setShowDropdown(false);
+    }, 150);
+  };
+
   return (
     <div className="relative">
       <div className="flex">
@@ -63,6 +81,8 @@ export default function SearchBox() {
           value={searchTerm}
           onChange={(e) => handleInputChange(e.target.value)}
           onKeyPress={handleKeyPress}
+          onFocus={handleInputFocus}
+          onBlur={handleInputBlur}
           placeholder="ใส่ชื่อจังหวัด"
           className="border-0 bg-white dark:text-[#000000] dark:bg-white focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 rounded-r-none"
         />
@@ -83,7 +103,7 @@ export default function SearchBox() {
               onClick={() => handleProvinceSelect(province)}
               className="text-left px-4 py-2 hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0"
             >
-              <p className="text-sm md:text-md">{province}</p>
+              <p className="text-sm md:text-md dark:text-black">{province}</p>
             </div>
           ))}
         </div>
