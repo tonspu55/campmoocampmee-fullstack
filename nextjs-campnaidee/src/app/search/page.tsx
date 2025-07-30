@@ -3,13 +3,13 @@ import { client } from "@/sanity/client";
 import CampRecommend from "@/components/CampRecommend";
 
 interface SearchPageProps {
-  searchParams: {
+  searchParams: Promise<{
     province?: string;
-  };
+  }>;
 }
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
-  const { province } = searchParams;
+  const { province } = await searchParams;
 
   // Query สำหรับค้นหาตามจังหวัด - ใช้ multiple conditions เพื่อความแม่นยำ
   const SEARCH_QUERY = province
