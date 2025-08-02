@@ -31,7 +31,7 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               width={50}
               height={50}
             />
-            <p className="max-md:text-sm">{otherBenefits.priceOfStay}</p>
+            <p className="max-md:text-sm">ค่าเข้าลาน {otherBenefits.priceOfStay} / คน</p>
           </div>
         )}
         {otherBenefits.checkIn && (
@@ -43,7 +43,7 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               width={50}
               height={50}
             />
-            <p className="max-md:text-sm">{otherBenefits.checkIn}</p>
+            <p className="max-md:text-sm">เช็คอิน {otherBenefits.checkIn} น.</p>
           </div>
         )}
         {otherBenefits.checkOut && (
@@ -55,7 +55,7 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               width={50}
               height={50}
             />
-            <p className="max-md:text-sm">{otherBenefits.checkOut}</p>
+            <p className="max-md:text-sm">เช็คเอาท์ {otherBenefits.checkOut} น.</p>
           </div>
         )}
         {otherBenefits.nature && (
@@ -91,7 +91,7 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               width={50}
               height={50}
             />
-            <p className="max-md:text-sm">{otherBenefits.noNoise}</p>
+            <p className="max-md:text-sm">งดส่งเสียงดัง {otherBenefits.noNoise} น.</p>
           </div>
         )}
         {otherBenefits.petFriendly && (
