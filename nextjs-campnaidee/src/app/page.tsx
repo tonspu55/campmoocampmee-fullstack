@@ -2,6 +2,9 @@ import { type SanityDocument } from "next-sanity";
 import { client } from "@/sanity/client";
 import HeroBanner from "@/components/HeroBanner";
 import CampRecommend from "@/components/CampRecommend";
+import Link from "next/link";
+import styles from "@/app/homepage.module.css";
+import { Button } from "@/components/ui/button";
 
 
 const POSTS_QUERY = `*[
@@ -57,8 +60,22 @@ export default async function IndexPage() {
       </div>
       <div className="container mx-auto px-2 max-w-6xl pt-6 lg:pt-10">
         <CampRecommend posts={shuffledPosts} />
+        <div className={`${styles.contactBg} rounded-2xl mt-6 lg:mt-10 flex flex-col h-[270px]!  lg:h-[400px]!`}>
+          <div className="flex flex-col items-start justify-start lg:justify-center h-full">
+            <div className="w-[80%] lg:w-[50%]">
+              <div className="flex flex-col gap-4 items-start max-lg:pt-[16px] max-lg:px-[16px] lg:pl-[10%]">
+                <h4 className="text-white dark:text-white font-medium text-[14px] lg:text-[16px]">สำหรับเจ้าของธุรกิจลานกางเต็นท์หรือแคมป์ปิ้งที่สนใจลงข้อมูลเกี่ยวกับที่พักของท่านผ่านเว็บแคมป์หมูแคมป์หมี เพื่อนำหน้าเพจไปใช้โปรโมทผ่านช่องทางต่างๆฟรีโดยไม่มีค่าใช้จ่ายใดๆทั้งสิ้นในการลงข้อมูล</h4>
+                <Button asChild className="cursor-pointer" variant="default">
+                  <Link href="/contact">
+                    ติดต่อลงข้อมูล
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-    </main>
+    </main >
   );
 }

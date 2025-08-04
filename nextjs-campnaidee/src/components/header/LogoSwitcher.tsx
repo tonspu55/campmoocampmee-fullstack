@@ -23,7 +23,7 @@ export function LogoSwitcher() {
             <Image
               priority
               src="/assets/images/logo.svg"
-              alt="Logo"
+              alt="แคมป์หมูแคมป์หมี Logo"
               width={60}
               height={60}
             ></Image>
@@ -35,7 +35,7 @@ export function LogoSwitcher() {
             <Image
               priority
               src="/assets/images/logo.svg"
-              alt="Logo"
+              alt="แคมป์หมูแคมป์หมี Logo"
               width={60}
               height={60}
             ></Image>
