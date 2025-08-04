@@ -13,10 +13,10 @@ const notoSansThai = Noto_Sans_Thai({
 });
 
 export const metadata: Metadata = {
-  title: "แคมป์หมูแคมป์หมี | campmoocampmee",
+  title: "แคมป์หมูแคมป์หมี - ค้นหาลานกางเต็นท์ทั่วไทย",
   description: "ค้นหาลานกางเต็นท์หรือแคมป์ปิ้งสำหรับการพักผ่อนที่ดีที่สุด",
   openGraph: {
-    title: "แคมป์หมูแคมป์หมี | campmoocampmee",
+    title: "แคมป์หมูแคมป์หมี - ค้นหาลานกางเต็นท์ทั่วไทย",
     description: "ค้นหาลานกางเต็นท์หรือแคมป์ปิ้งสำหรับการพักผ่อนที่ดีที่สุด",
     images: [
       {
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "แคมป์หมูแคมป์หมี | campmoocampmee",
+    title: "แคมป์หมูแคมป์หมี - ค้นหาลานกางเต็นท์ทั่วไทย",
     description: "ค้นหาลานกางเต็นท์หรือแคมป์ปิ้งสำหรับการพักผ่อนที่ดีที่สุด",
     images: ["/assets/images/banner-desktop.jpg"],
   },
