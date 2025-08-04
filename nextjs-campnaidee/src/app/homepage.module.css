@@ -6,3 +6,18 @@
   height: 100%;
   width: 100%;
 }
+
+.contactBg {
+  background-image: url("/assets/images/thumbnail_contact.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: bottom;
+  height: 100%;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .contactBg {
+    background-position: bottom right 65%;
+  }
+}

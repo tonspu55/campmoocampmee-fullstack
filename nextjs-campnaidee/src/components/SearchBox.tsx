@@ -83,7 +83,7 @@ export default function SearchBox() {
           onKeyPress={handleKeyPress}
           onFocus={handleInputFocus}
           onBlur={handleInputBlur}
-          placeholder="ใส่ชื่อจังหวัด"
+          placeholder="ระบุชื่อจังหวัด"
           className="border-0 bg-white dark:text-[#000000] dark:bg-white focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 rounded-r-none"
         />
         <Button

@@ -15,8 +15,8 @@ const Footer = () => {
             <div className="flex flex-col items-start gap-4">
               <Image
                 priority
-                src="/assets/images/logo.webp"
-                alt="Logo"
+                src="/assets/images/logo.svg"
+                alt="แคมป์หมูแคมป์หมี Logo"
                 width={50}
                 height={50}
               ></Image>
