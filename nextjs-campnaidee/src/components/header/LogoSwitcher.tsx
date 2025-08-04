@@ -22,10 +22,10 @@ export function LogoSwitcher() {
           <Link href="/">
             <Image
               priority
-              src="/assets/images/logo.webp"
+              src="/assets/images/logo.svg"
               alt="Logo"
-              width={50}
-              height={50}
+              width={60}
+              height={60}
             ></Image>
           </Link>
         </div>
@@ -34,10 +34,10 @@ export function LogoSwitcher() {
           <Link href="/">
             <Image
               priority
-              src="/assets/images/logo.webp"
+              src="/assets/images/logo.svg"
               alt="Logo"
-              width={50}
-              height={50}
+              width={60}
+              height={60}
             ></Image>
           </Link>
         </div>
