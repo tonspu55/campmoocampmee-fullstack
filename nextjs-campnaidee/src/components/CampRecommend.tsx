@@ -49,9 +49,6 @@ export default function CampRecommend({ posts, showTitle = true }: CampRecommend
                 </div>
               </Card>
             </Link>
-
-
-
           );
         })}
       </div>
