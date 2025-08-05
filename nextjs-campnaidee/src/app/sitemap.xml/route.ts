@@ -12,7 +12,10 @@ const POSTS_QUERY = `*[_type == "post" && defined(slug.current)]{
   _updatedAt
 }`;
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+const baseUrl =
+  process.env.NEXT_PUBLIC_BASE_URL?.trim() ||
+  "https://www.campmoocampmee.com" ||
+  "https://campmoocampmee.com";
 
 export async function GET() {
   try {
