@@ -13,9 +13,7 @@ const POSTS_QUERY = `*[_type == "post" && defined(slug.current)]{
 }`;
 
 const baseUrl =
-  process.env.NEXT_PUBLIC_BASE_URL?.trim() ||
-  "https://www.campmoocampmee.com" ||
-  "https://campmoocampmee.com";
+  process.env.NEXT_PUBLIC_BASE_URL?.trim() || "https://www.campmoocampmee.com";
 
 export async function GET() {
   try {
