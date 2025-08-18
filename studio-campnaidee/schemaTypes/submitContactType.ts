@@ -50,6 +50,41 @@ export const submitContactType = defineType({
       initialValue: 'pending',
       validation: (rule) => rule.required(),
     }),
+    defineField({
+      name: 'userInfo',
+      title: 'ข้อมูลผู้ใช้',
+      type: 'object',
+      description: 'ข้อมูลของผู้ใช้ที่ล็อกอินส่งฟอร์ม',
+      fields: [
+        defineField({
+          name: 'name',
+          title: 'ชื่อผู้ใช้',
+          type: 'string',
+        }),
+        defineField({
+          name: 'email',
+          title: 'อีเมล',
+          type: 'string',
+        }),
+        defineField({
+          name: 'image',
+          title: 'รูปโปรไฟล์',
+          type: 'url',
+        }),
+        defineField({
+          name: 'provider',
+          title: 'ผู้ให้บริการ OAuth',
+          type: 'string',
+          description: 'เช่น google, facebook เป็นต้น',
+        }),
+        defineField({
+          name: 'providerId',
+          title: 'Provider Account ID',
+          type: 'string',
+          description: 'ID ของบัญชีจากผู้ให้บริการ OAuth',
+        }),
+      ],
+    }),
   ],
   preview: {
     select: {
