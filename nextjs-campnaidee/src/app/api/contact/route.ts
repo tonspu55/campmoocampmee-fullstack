@@ -4,7 +4,7 @@ import { client } from "@/sanity/client";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { campName, phoneNumber, lineId } = body;
+    const { campName, phoneNumber, lineId, userInfo } = body;
 
     // Validate required fields
     if (!campName || !phoneNumber) {
@@ -23,15 +23,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create document in Sanity
-    const result = await client.create({
+    // เตรียมข้อมูลสำหรับบันทึกใน Sanity
+    const contactData = {
       _type: "submitContact",
       campName,
       telNumber: phoneNumber,
       lineId: lineId || "",
       submittedAt: new Date().toISOString(),
       status: "pending",
-    });
+      ...(userInfo && {
+        userInfo: {
+          name: userInfo.name,
+          email: userInfo.email,
+          image: userInfo.image,
+          provider: userInfo.provider,
+          providerId: userInfo.providerId,
+        },
+      }),
+    };
+
+    // Create document in Sanity
+    const result = await client.create(contactData);
 
     return NextResponse.json(
       {

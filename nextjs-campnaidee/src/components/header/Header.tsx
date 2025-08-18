@@ -172,7 +172,8 @@ const Header = () => {
                     ติดต่อลงข้อมูล
                   </NavLinkMobile>
                 </div>
-                <div className="flex flex-col items-end">
+                <div className="flex flex-col items-end gap-2">
+
                   <ThemeSwitcher />
                 </div>
               </div>
@@ -184,7 +185,8 @@ const Header = () => {
             </>
           )}
         </div>
-        <div className="hidden md:flex md:flex-1 md:items-center md:justify-end">
+        <div className="hidden md:flex md:flex-1 md:items-center md:justify-end md:gap-4">
+
           <ThemeSwitcher />
         </div>
         <div className="flex items-center md:hidden">

@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import ConditionalLayout from "@/components/ConditionalLayout";
+import AuthProvider from "@/components/AuthProvider";
 
 const notoSansThai = Noto_Sans_Thai({
 
@@ -71,9 +72,11 @@ export default function RootLayout({
           defaultTheme="light"
           enableSystem={false}
         >
-          <ConditionalLayout>
-            {children}
-          </ConditionalLayout>
+          <AuthProvider>
+            <ConditionalLayout>
+              {children}
+            </ConditionalLayout>
+          </AuthProvider>
           <Toaster />
         </ThemeProvider>
 

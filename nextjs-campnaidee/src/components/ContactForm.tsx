@@ -15,6 +15,7 @@ import { z } from "zod"
 import { toast } from "sonner"
 import { Loader2Icon } from "lucide-react"
 import { useState } from "react"
+import { useSession } from "next-auth/react"
 
 
 
@@ -35,6 +36,7 @@ const formSchema = z.object({
 export default function ContactForm() {
   // สร้าง loading state
   const [isLoading, setIsLoading] = useState(false)
+  const { data: session } = useSession()
 
   // สร้าง form instance
   const form = useForm<z.infer<typeof formSchema>>({
@@ -50,12 +52,24 @@ export default function ContactForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true)
     try {
+      // เตรียมข้อมูลส่ง รวมข้อมูลผู้ใช้จาก session
+      const submitData = {
+        ...values,
+        userInfo: session?.user ? {
+          name: session.user.name,
+          email: session.user.email,
+          image: session.user.image,
+          provider: (session.user as typeof session.user & { provider?: string }).provider,
+          providerId: (session.user as typeof session.user & { providerId?: string }).providerId,
+        } : null
+      }
+
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(submitData),
       })
 
       const data = await response.json()
