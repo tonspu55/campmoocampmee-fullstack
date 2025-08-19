@@ -3,7 +3,7 @@ import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import type { SanityDocument } from "next-sanity";
 import Link from "next/link";
-import TabGallery from "@/components/TabGallery";
+import GalleryWithInitialImage from "@/components/GalleryWithInitialImage";
 import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -71,7 +71,7 @@ const GalleryPage = async ({ params }: PageProps) => {
 
 
 
-      <TabGallery dataGallery={dataGallery} />
+      <GalleryWithInitialImage dataGallery={dataGallery} />
     </div>
   );
 };

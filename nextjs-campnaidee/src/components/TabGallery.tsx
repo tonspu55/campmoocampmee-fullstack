@@ -12,9 +12,11 @@ type GalleryItem = {
 
 interface TabGalleryProps {
   dataGallery: GalleryItem[];
+  initialImageIndex?: number;
+  onTabChange?: () => void;
 }
 
-const TabGallery = ({ dataGallery }: TabGalleryProps) => {
+const TabGallery = ({ dataGallery, initialImageIndex, onTabChange }: TabGalleryProps) => {
   const categories = [...new Set(dataGallery.map((data) => data.category))].filter(Boolean) as string[];
   // กำหนดลำดับที่แสดงผลของหมวดหมู่
   const categoryOrder = ["ทั้งหมด", "วิว", "กิจกรรม", "ที่พัก", "ห้องน้ำ"];
@@ -30,6 +32,7 @@ const TabGallery = ({ dataGallery }: TabGalleryProps) => {
   const [isFixed, setIsFixed] = useState(false);
   const tabsRef = useRef<HTMLDivElement>(null);
   const [originalTabsTop, setOriginalTabsTop] = useState(0);
+  const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     // เก็บตำแหน่งเดิมของ tabs
@@ -37,6 +40,21 @@ const TabGallery = ({ dataGallery }: TabGalleryProps) => {
       setOriginalTabsTop(tabsRef.current.offsetTop);
     }
   }, [originalTabsTop]);
+
+  // Check for selected image index from props
+  useEffect(() => {
+    if (initialImageIndex !== undefined && imageRefs.current) {
+      const targetImage = imageRefs.current[initialImageIndex];
+      if (targetImage) {
+        setTimeout(() => {
+          targetImage.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }, 100);
+      }
+    }
+  }, [dataGallery, activeTab, initialImageIndex]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -66,6 +84,11 @@ const TabGallery = ({ dataGallery }: TabGalleryProps) => {
 
   const handleTabClick = (category: string) => {
     setActiveTab(category);
+
+    // Cleanup initialImageIndex when changing tabs
+    if (onTabChange) {
+      onTabChange();
+    }
 
     // Scroll to top สำหรับ iOS Safari/Chrome
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
@@ -127,7 +150,19 @@ const TabGallery = ({ dataGallery }: TabGalleryProps) => {
       {/* Gallery*/}
       <div className="grid gap-2">
         {filteredData.map((item, index) => (
-          <div key={index} className={`${index % 3 === 0 ? "col-span-2" : "col-span-2 md:col-span-1"}`}>
+          <div
+            key={index}
+            className={`${index % 3 === 0 ? "col-span-2" : "col-span-2 md:col-span-1"}`}
+            ref={(el) => {
+              // Find the original index in the full dataGallery array
+              const originalIndex = dataGallery.findIndex(originalItem =>
+                originalItem.url === item.url && originalItem.category === item.category
+              );
+              if (originalIndex !== -1) {
+                imageRefs.current[originalIndex] = el;
+              }
+            }}
+          >
             {item.url && (
               <div className="relative aspect-square">
                 <Image
