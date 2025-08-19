@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
 import 'swiper/css';
@@ -9,6 +8,8 @@ import 'swiper/css/pagination';
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useState, useEffect } from 'react';
+import { useGalleryStore } from '@/lib/store';
+import { useRouter } from 'next/navigation';
 
 
 
@@ -25,6 +26,20 @@ interface ImageGalleryProps {
 const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const displayImages = ImageGallery.slice(0, 5);
+  const setSelectedImageIndex = useGalleryStore((state) => state.setSelectedImageIndex);
+  const router = useRouter();
+
+  const handleImageClick = (index: number) => {
+    // Set the selected index using React state via context
+    setSelectedImageIndex(index);
+    // Navigate to gallery page
+    router.push(`/land/${slug}/gallery`);
+  };
+
+  const handleViewAllClick = () => {
+    // Navigate to gallery page without setting index
+    router.push(`/land/${slug}/gallery`);
+  };
 
   useEffect(() => {
     // Simulate loading time for 1 second
@@ -133,7 +148,10 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
         >
           {displayImages.map((imageItem, index) => (
             <SwiperSlide key={index}>
-              <div className="relative h-full">
+              <div
+                className="relative h-full cursor-pointer"
+                onClick={() => handleImageClick(index)}
+              >
                 <Image
                   src={imageItem.url}
                   alt={imageItem.alt || `Gallery image ${index + 1}`}
@@ -142,14 +160,16 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
                 />
                 {index === 4 && (
                   <div className="absolute bottom-0 right-0">
-                    <div className="flex flex-col items-end pr-2">
-                      <Button asChild>
-                        <Link
-                          href={`/land/${slug}/gallery`}
-                          className="text-sm text-center absolute bottom-0 right-0 m-2 p-2"
-                        >
-                          ดูรูปภาพทั้งหมด
-                        </Link>
+                    <div className="flex flex-col items-end pr-2 ">
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent triggering handleImageClick
+                          handleViewAllClick();
+                        }}
+                        className="text-sm text-center cursor-pointer hover:cursor-pointer"
+                        style={{ cursor: 'pointer' }}
+                      >
+                        ดูรูปภาพทั้งหมด
                       </Button>
                     </div>
                   </div>
@@ -167,7 +187,10 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
         <div className="flex flex-row gap-2 items-stretch max-h-[400px]">
           <div className="basis-1/2 ">
             {ImageGallery[0] && (
-              <div className="flex-col h-full ">
+              <div
+                className="flex-col h-full cursor-pointer"
+                onClick={() => handleImageClick(0)}
+              >
                 <Image
                   src={ImageGallery[0].url}
                   alt={ImageGallery[0].alt || "Gallery image 1"}
@@ -182,7 +205,10 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
             <div className="flex flex-col ">
               <div className="flex flex-row gap-2">
                 {ImageGallery[1] && (
-                  <div className="flex-col basis-1/2">
+                  <div
+                    className="flex-col basis-1/2 cursor-pointer"
+                    onClick={() => handleImageClick(1)}
+                  >
                     <Image
                       src={ImageGallery[1].url}
                       alt={ImageGallery[1].alt || "Gallery image 2"}
@@ -193,7 +219,10 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
                   </div>
                 )}
                 {ImageGallery[2] && (
-                  <div className="flex-col basis-1/2">
+                  <div
+                    className="flex-col basis-1/2 cursor-pointer"
+                    onClick={() => handleImageClick(2)}
+                  >
                     <Image
                       src={ImageGallery[2].url}
                       alt={ImageGallery[2].alt || "Gallery image 3"}
@@ -208,7 +237,10 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
             <div className="flex flex-col ">
               <div className="flex flex-row gap-2">
                 {ImageGallery[3] && (
-                  <div className="flex-col basis-1/2">
+                  <div
+                    className="flex-col basis-1/2 cursor-pointer"
+                    onClick={() => handleImageClick(3)}
+                  >
                     <Image
                       src={ImageGallery[3].url}
                       alt={ImageGallery[3].alt || "Gallery image 4"}
@@ -219,7 +251,10 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
                   </div>
                 )}
                 {ImageGallery[4] && (
-                  <div className="flex-col basis-1/2">
+                  <div
+                    className="flex-col basis-1/2 cursor-pointer"
+                    onClick={() => handleImageClick(4)}
+                  >
                     <div className="relative h-full">
                       <Image
                         src={ImageGallery[4].url}
@@ -228,13 +263,15 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
                         width={500}
                         height={196}
                       />
-                      <Button asChild>
-                        <Link
-                          href={`/land/${slug}/gallery`}
-                          className="text-sm text-center absolute bottom-0 right-0 m-2 p-2"
-                        >
-                          ดูรูปภาพทั้งหมด
-                        </Link>
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent triggering handleImageClick
+                          handleViewAllClick();
+                        }}
+                        className="text-sm text-center absolute bottom-0 right-0 m-2 p-2 cursor-pointer hover:cursor-pointer"
+                        style={{ cursor: 'pointer' }}
+                      >
+                        ดูรูปภาพทั้งหมด
                       </Button>
 
                     </div>
