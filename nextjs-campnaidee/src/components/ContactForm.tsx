@@ -76,7 +76,7 @@ export default function ContactForm() {
 
       if (response.ok) {
         // แสดง toast message เมื่อส่งข้อมูลสำเร็จ
-        toast.success("ส่งข้อมูลเรียบร้อยแล้ว", {
+        toast.success("ส่งข้อมูลเรียบร้อย", {
           description: "แคมป์หมูแคมป์หมี จะติดต่อกลับโดยเร็วที่สุด",
         })
         // รีเซ็ตฟอร์มหลังจากส่งข้อมูลสำเร็จ
