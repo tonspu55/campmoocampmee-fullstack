@@ -4,7 +4,6 @@ import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import Image from 'next/image'
-import ContactForm from '@/components/ContactForm'
 import { Button } from '@/components/ui/button'
 import { LogOut } from 'lucide-react'
 
@@ -75,11 +74,11 @@ export default function ProtectedContactForm() {
             className="flex items-center gap-2 cursor-pointer"
           >
             <LogOut size={16} />
-            <span className="hidden md:inline">ออกจากระบบ</span>
+            <span className="inline">ออกจากระบบ</span>
           </Button>
         </div>
       </div>
-      <ContactForm />
+      <p className='text-center py-4'>พบกันระบบจองที่พักผ่านเว็บไซต์แคมป์หมูแคมป์หมีได้เร็วๆนี้</p>
     </div>
   )
 }

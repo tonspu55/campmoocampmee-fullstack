@@ -4,7 +4,7 @@ import { client } from "@/sanity/client";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { campName, phoneNumber, lineId, userInfo } = body;
+    const { campName, phoneNumber, lineId } = body;
 
     // Validate required fields
     if (!campName || !phoneNumber) {
@@ -31,15 +31,6 @@ export async function POST(request: NextRequest) {
       lineId: lineId || "",
       submittedAt: new Date().toISOString(),
       status: "pending",
-      ...(userInfo && {
-        userInfo: {
-          name: userInfo.name,
-          email: userInfo.email,
-          image: userInfo.image,
-          provider: userInfo.provider,
-          providerId: userInfo.providerId,
-        },
-      }),
     };
 
     // Create document in Sanity

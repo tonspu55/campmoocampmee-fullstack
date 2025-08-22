@@ -13,7 +13,7 @@ export default function SignInForm() {
     const checkSession = async () => {
       const session = await getSession()
       if (session) {
-        router.push('/contact')
+        router.push('/landowner')
       }
     }
     checkSession()
@@ -23,7 +23,7 @@ export default function SignInForm() {
     setLoading(true)
     try {
       await signIn('google', {
-        callbackUrl: '/contact',
+        callbackUrl: '/landowner',
         redirect: true,
       })
     } catch (error) {
@@ -37,12 +37,12 @@ export default function SignInForm() {
       <div className="container mx-auto max-w-[600px] px-4">
         <div className=" p-8">
           <h2 className=" text-xl font-bold text-center ">
-            สำหรับผู้ติดต่อลงข้อมูลแคมป์
+            สำหรับเจ้าของลานกางเต็นท์
           </h2>
 
           <div className="text-center mb-4">
             <p className=" mb-4">
-              กรุณาเข้าสู่ระบบเพื่อใช้งานแบบฟอร์มติดต่อ
+              กรุณาเข้าสู่ระบบเพื่อเข้าถึงข้อมูลลานกางเต็นท์ของท่าน
             </p>
           </div>
 
