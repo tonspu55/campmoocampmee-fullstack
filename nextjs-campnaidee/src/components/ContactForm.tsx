@@ -136,10 +136,10 @@ export default function ContactForm() {
             name="lineId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Line ID</FormLabel>
+                <FormLabel>ไอดีไลน์</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="กรุณาใส่ Line ID (ไม่บังคับ)"
+                    placeholder="กรุณาใส่ไอดีไลน์เพื่อความสะดวกในการติดต่อ (ไม่บังคับ)"
                     {...field}
                     value={field.value || ""}
                   />
