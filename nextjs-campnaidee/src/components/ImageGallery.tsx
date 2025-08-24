@@ -57,7 +57,7 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
       <div>
         {/* Mobile View - Loading */}
         <div className="md:hidden">
-          <div className="h-[250px]">
+          <div className="h-[300px]">
             <Skeleton className="h-full w-full" />
           </div>
         </div>
@@ -98,7 +98,7 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
       <div>
         {/* Mobile View - No Images */}
         <div className="md:hidden">
-          <div className="h-[250px]">
+          <div className="h-[300px]">
             <Skeleton className="h-full w-full " />
           </div>
         </div>
@@ -140,7 +140,7 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
         <Swiper
           spaceBetween={10}
           slidesPerView={1}
-          className="h-[250px] [&_.swiper-pagination-bullet-active]:bg-white! [&_.swiper-pagination-bullet]:bg-white! [&_.swiper-pagination-bullet]:opacity-100!"
+          className="h-[300px] [&_.swiper-pagination-bullet-active]:bg-white! [&_.swiper-pagination-bullet]:bg-white! [&_.swiper-pagination-bullet]:opacity-100!"
           modules={[Pagination]}
           pagination={{
             dynamicBullets: true,
@@ -166,7 +166,7 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
                           e.stopPropagation(); // Prevent triggering handleImageClick
                           handleViewAllClick();
                         }}
-                        className="text-sm text-center cursor-pointer hover:cursor-pointer"
+                        className="text-sm text-center absolute bottom-0 right-0 m-2 p-2 cursor-pointer hover:cursor-pointer"
                         style={{ cursor: 'pointer' }}
                       >
                         ดูรูปภาพทั้งหมด

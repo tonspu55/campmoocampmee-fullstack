@@ -61,7 +61,7 @@ const GalleryPage = async ({ params }: PageProps) => {
       <div className="flex flex-row  gap-2 items-center">
         <Button asChild className="flex h-9 w-9 items-center  justify-center rounded-full cursor-pointer" variant="default">
           <Link href={`/land/${(await params).slug}`} >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-4 h-4" />
           </Link>
         </Button>
         <h1 className="text-lg lg:text-2xl font-bold ">{post.title}</h1>
