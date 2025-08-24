@@ -11,7 +11,7 @@ const POSTS_QUERY = `*[
   _type == "post"
   && defined(slug.current)
   && "recommend" in tags
-]| order(publishedAt desc)[0...12]{_id, title, address, thumbnail, slug, tags}`;
+]| order(publishedAt desc)[0...24]{_id, title, address, thumbnail, slug, tags}`;
 
 
 const options = { next: { revalidate: 60 } };
