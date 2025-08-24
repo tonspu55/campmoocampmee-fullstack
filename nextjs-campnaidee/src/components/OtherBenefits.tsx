@@ -28,10 +28,10 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               priority
               src="/assets/images/plains.svg"
               alt="Price of Stay"
-              width={50}
-              height={50}
+              width={35}
+              height={35}
             />
-            <p className="max-md:text-sm">ค่าเข้าลาน {otherBenefits.priceOfStay} / คน</p>
+            <p className="max-md:text-sm">ค่าเข้า {otherBenefits.priceOfStay} / คน</p>
           </div>
         )}
         {otherBenefits.checkIn && (
@@ -40,8 +40,8 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               priority
               src="/assets/images/camper-van.svg"
               alt="Check In"
-              width={50}
-              height={50}
+              width={35}
+              height={35}
             />
             <p className="max-md:text-sm">เช็คอิน {otherBenefits.checkIn} น.</p>
           </div>
@@ -52,8 +52,8 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               priority
               src="/assets/images/check-out.svg"
               alt="Check Out"
-              width={50}
-              height={50}
+              width={35}
+              height={35}
             />
             <p className="max-md:text-sm">เช็คเอาท์ {otherBenefits.checkOut} น.</p>
           </div>
@@ -64,8 +64,8 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               priority
               src="/assets/images/tent.svg"
               alt="Nature"
-              width={50}
-              height={50}
+              width={35}
+              height={35}
             />
             <p className="max-md:text-sm">{otherBenefits.nature}</p>
           </div>
@@ -76,8 +76,8 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               priority
               src="/assets/images/cabin.svg"
               alt="Cabin"
-              width={50}
-              height={50}
+              width={35}
+              height={35}
             />
             <p className="max-md:text-sm">{otherBenefits.cabin}</p>
           </div>
@@ -88,10 +88,10 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               priority
               src="/assets/images/tent-to-night.svg"
               alt="No Noise"
-              width={50}
-              height={50}
+              width={35}
+              height={35}
             />
-            <p className="max-md:text-sm">งดส่งเสียงดัง {otherBenefits.noNoise} น.</p>
+            <p className="max-md:text-sm">งดส่งเสียง {otherBenefits.noNoise} น.</p>
           </div>
         )}
         {otherBenefits.petFriendly && (
@@ -100,8 +100,8 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               priority
               src="/assets/images/dog.svg"
               alt="Pet Friendly"
-              width={50}
-              height={50}
+              width={35}
+              height={35}
             />
             <p className="max-md:text-sm">{otherBenefits.petFriendly}</p>
           </div>
@@ -112,8 +112,8 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               priority
               src="/assets/images/wifi-router.svg"
               alt="WiFi"
-              width={50}
-              height={50}
+              width={35}
+              height={35}
             />
             <p className="max-md:text-sm">{otherBenefits.wifi}</p>
           </div>
@@ -124,8 +124,8 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               priority
               src="/assets/images/roast.svg"
               alt="Food"
-              width={50}
-              height={50}
+              width={35}
+              height={35}
             />
             <p className="max-md:text-sm">{otherBenefits.food}</p>
           </div>

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button"
+import TabGalleryPopup from "./TabGalleryPopup";
 
 type GalleryItem = {
   url: string | null;
@@ -30,6 +31,8 @@ const TabGallery = ({ dataGallery, initialImageIndex, onTabChange }: TabGalleryP
 
   const [activeTab, setActiveTab] = useState("ทั้งหมด");
   const [isFixed, setIsFixed] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [currentPopupIndex, setCurrentPopupIndex] = useState(0);
   const tabsRef = useRef<HTMLDivElement>(null);
   const [originalTabsTop, setOriginalTabsTop] = useState(0);
   const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -120,6 +123,31 @@ const TabGallery = ({ dataGallery, initialImageIndex, onTabChange }: TabGalleryP
     }
   };
 
+  const handleImageClick = (clickedItem: GalleryItem) => {
+    // หา index ของรูปที่คลิกใน filteredData
+    const clickedIndex = filteredData.findIndex(item => item.url === clickedItem.url);
+    if (clickedIndex !== -1) {
+      setCurrentPopupIndex(clickedIndex);
+      setIsPopupOpen(true);
+    }
+  };
+
+  const handlePopupNext = () => {
+    if (currentPopupIndex < filteredData.length - 1) {
+      setCurrentPopupIndex(currentPopupIndex + 1);
+    }
+  };
+
+  const handlePopupPrevious = () => {
+    if (currentPopupIndex > 0) {
+      setCurrentPopupIndex(currentPopupIndex - 1);
+    }
+  };
+
+  const handlePopupClose = () => {
+    setIsPopupOpen(false);
+  };
+
   return (
     <>
       {/* Tabs */}
@@ -164,7 +192,10 @@ const TabGallery = ({ dataGallery, initialImageIndex, onTabChange }: TabGalleryP
             }}
           >
             {item.url && (
-              <div className="relative aspect-square">
+              <div
+                className="relative aspect-square cursor-pointer hover:opacity-90 transition-opacity"
+                onClick={() => handleImageClick(item)}
+              >
                 <Image
                   src={item.url}
                   alt={item.alt || `Gallery image ${index + 1}`}
@@ -181,6 +212,16 @@ const TabGallery = ({ dataGallery, initialImageIndex, onTabChange }: TabGalleryP
           ไม่พบรูปภาพในหมวดหมู่นี้
         </div>
       )}
+
+      {/* Popup Gallery */}
+      <TabGalleryPopup
+        isOpen={isPopupOpen}
+        onClose={handlePopupClose}
+        images={filteredData}
+        currentIndex={currentPopupIndex}
+        onNext={handlePopupNext}
+        onPrevious={handlePopupPrevious}
+      />
     </>
   );
 };
