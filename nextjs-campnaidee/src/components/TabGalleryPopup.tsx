@@ -4,12 +4,7 @@ import { useEffect, useCallback } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
-
-type GalleryItem = {
-  url: string | null;
-  category: string | null;
-  alt: string | null;
-}
+import type { GalleryItem } from "@/types/gallery";
 
 interface TabGalleryPopupProps {
   isOpen: boolean;
@@ -29,6 +24,37 @@ const TabGalleryPopup = ({
   onPrevious
 }: TabGalleryPopupProps) => {
   const currentImage = images[currentIndex];
+
+  // ฟังก์ชันตรวจสอบว่าเป็น video หรือไม่
+  const isVideo = (item: GalleryItem) => {
+    return item._type === 'video' && item.embedCode;
+  };
+
+  // ฟังก์ชันสำหรับ render video embed
+  const renderVideoEmbed = (item: GalleryItem) => {
+    if (!item.embedCode) {
+      return (
+        <div className="flex items-center justify-center h-96 bg-gray-100 rounded-lg">
+          <p className="text-white">ไม่พบโค้ดวิดีโอ</p>
+        </div>
+      );
+    }
+
+    return (
+      <div
+        className="video-embed-container w-full h-full flex items-center justify-center max-w-[90%] lg:max-w-[50%]"
+        style={{
+          // maxWidth: item.platform ? '80%' : 'auto',
+          maxHeight: '50%'
+        }}
+      >
+        <div
+          dangerouslySetInnerHTML={{ __html: item.embedCode }}
+          className="w-full h-full"
+        />
+      </div>
+    );
+  };
 
   // Handle keyboard navigation
   const handleKeyPress = useCallback((e: KeyboardEvent) => {
@@ -61,7 +87,7 @@ const TabGalleryPopup = ({
     };
   }, [isOpen, handleKeyPress]);
 
-  if (!isOpen || !currentImage?.url) return null;
+  if (!isOpen || !currentImage) return null;
 
   return (
     <div className="fixed inset-0 z-50 bg-black/100 flex items-center justify-center">
@@ -97,17 +123,27 @@ const TabGalleryPopup = ({
         <ChevronRight className="h-4 w-4" />
       </Button>
 
-      {/* Image container */}
-      <div className="relative max-w-[100vw] max-h-[95vh] w-full h-full flex items-center justify-center">
-        <div className="relative w-full h-full">
-          <Image
-            src={currentImage.url}
-            alt={currentImage.alt || `Gallery image ${currentIndex + 1}`}
-            fill
-            className="object-contain"
-            priority
-          />
-        </div>
+      {/* Content container */}
+      <div className="relative max-w-[100%] md:max-w-[80vw] max-h-[80vh] w-full h-full flex items-center justify-center">
+        {isVideo(currentImage) ? (
+          <div className="relative w-full h-full flex items-center justify-center">
+            {renderVideoEmbed(currentImage)}
+          </div>
+        ) : currentImage.url ? (
+          <div className="relative w-full h-full">
+            <Image
+              src={currentImage.url}
+              alt={currentImage.alt || `Gallery image ${currentIndex + 1}`}
+              fill
+              className="object-contain"
+              priority
+            />
+          </div>
+        ) : (
+          <div className="flex items-center justify-center h-96 bg-gray-100 rounded-lg">
+            <p className="text-gray-500">ไม่พบข้อมูล</p>
+          </div>
+        )}
       </div>
 
       {/* Image counter */}

@@ -12,25 +12,37 @@ import { Separator } from "@/components/ui/separator"
 import InfoAddress from "@/components/InfoAddress";
 import NavigationMobile from "@/components/NavigationMobile";
 import ExpandableContent from "@/components/ExpandableContent";
-
-
+import { transformGalleryData } from "@/lib/videoUtils";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
-interface GalleryItem {
-  url: string | null;
-  category: string | null;
-  alt: string | null;
+
+interface SanityGalleryRawItem {
+  _type: 'image' | 'videoUrl';
+  asset?: { _id: string; url: string };
+  category?: string;
+  alt?: string;
+  url?: string;
+  platform?: string;
+  title?: string;
 }
 
 const POST_QUERY = `*[_type == "post" && slug.current == $slug][0]{
   ...,
   gallery[]{
-    ...,
-    asset,
+    _type,
+    // สำหรับ image
+    asset->{
+      _id,
+      url
+    },
     category,
-    alt
+    alt,
+    // สำหรับ videoUrl
+    url,
+    title,
+    platform
   }
 }`;
 
@@ -48,7 +60,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const thumbnailImage = post.thumbnail
     ? urlFor(post.thumbnail)?.width(1200).height(1200).url() || null
     : null;
-
 
   return {
     title: `แคมป์ - ${post.title}`,
@@ -74,22 +85,32 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function PostPage({ params, }: PageProps) {
+export default async function PostPage({ params }: PageProps) {
   const post = await client.fetch<SanityDocument>(POST_QUERY, await params, options);
 
-  const galleryData: GalleryItem[] = post.gallery?.map((image: SanityImageSource & { category?: string; alt?: string }) => {
-    const imageUrl = urlFor(image)?.width(1200).height(1200).url() || null;
-    const category = image.category || null;
-    const alt = image.alt || null;
-    return { url: imageUrl, category, alt };
-  }) || [];
+  // แปลงข้อมูล gallery รวมทั้งรูปภาพและวิดีโอ
+  const rawGalleryData: SanityGalleryRawItem[] = post.gallery || [];
 
-  const ImageGalleryData = galleryData
-    .map(item => ({
-      url: item.url!,
-      alt: item.alt
-    }));
+  // แปลงข้อมูลสำหรับ TabGallery (รองรับทั้งรูปและวิดีโอ)
+  const tabGalleryData = transformGalleryData(rawGalleryData);
 
+  // สำหรับ ImageGallery (เฉพาะรูปภาพ)
+  const ImageGalleryData = rawGalleryData
+    .filter((item): item is SanityGalleryRawItem & { _type: 'image'; asset: { url: string } } =>
+      item._type === 'image' && !!item.asset?.url
+    )
+    .map(item => {
+      const imageUrl = urlFor(item)?.width(1200).height(1200).url();
+      return {
+        url: imageUrl || '',
+        alt: item.alt || null
+      };
+    })
+    .filter(item => item.url);
+
+  console.log('Raw Gallery Data:', rawGalleryData);
+  console.log('Tab Gallery Data:', tabGalleryData);
+  console.log('Image Gallery Data:', ImageGalleryData);
 
   return (
     <main className="container mx-auto max-w-6xl  mt-[60px] pb-6 lg:pb-10">

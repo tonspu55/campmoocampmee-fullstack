@@ -188,3 +188,11 @@ ul {
 [data-sonner-toast] [data-description] {
   font-family: "Noto Sans Thai", sans-serif !important;
 }
+
+/* Video embed iframe styles */
+.video-embed-container iframe {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  border: none;
+}

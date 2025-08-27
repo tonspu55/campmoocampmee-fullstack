@@ -3,13 +3,9 @@
 import { useEffect, useState } from 'react';
 import TabGallery from './TabGallery';
 import { useGalleryStore } from '@/lib/store';
+import type { GalleryItem } from "@/types/gallery";
 
-type GalleryItem = {
-  url: string | null;
-  category: string | null;
-  alt: string | null;
-}
-
+// ใช้ type เดียวกับ TabGallery
 interface GalleryWithInitialImageProps {
   dataGallery: GalleryItem[];
 }
