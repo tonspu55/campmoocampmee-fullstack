@@ -4,23 +4,12 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button"
 import TabGalleryPopup from "./TabGalleryPopup";
-
-type GalleryItem = {
-  url: string | null;
-  category: string | null;
-  alt: string | null;
-}
-
-interface TabGalleryProps {
-  dataGallery: GalleryItem[];
-  initialImageIndex?: number;
-  onTabChange?: () => void;
-}
+import type { GalleryItem, TabGalleryProps } from "@/types/gallery";
 
 const TabGallery = ({ dataGallery, initialImageIndex, onTabChange }: TabGalleryProps) => {
   const categories = [...new Set(dataGallery.map((data) => data.category))].filter(Boolean) as string[];
   // กำหนดลำดับที่แสดงผลของหมวดหมู่
-  const categoryOrder = ["ทั้งหมด", "วิว", "กิจกรรม", "ที่พัก", "ห้องน้ำ"];
+  const categoryOrder = ["ทั้งหมด", "วิว", "กิจกรรม", "ที่พัก", "ห้องน้ำ", "วิดีโอ"];
 
   // เรียงลำดับตาม categoryOrder และเพิ่มหมวดหมู่อื่นๆ ที่ไม่อยู่ในลิสต์ไว้ท้าย
   const allCategories = categoryOrder.filter(c =>
@@ -148,13 +137,47 @@ const TabGallery = ({ dataGallery, initialImageIndex, onTabChange }: TabGalleryP
     setIsPopupOpen(false);
   };
 
+
+
+  // ฟังก์ชันสำหรับ render video embed
+  const renderVideoEmbed = (item: GalleryItem) => {
+    if (!item.embedCode) {
+      return (
+        <div className="flex items-center justify-center h-48 bg-gray-100 rounded-lg">
+          <p >ไม่พบโค้ดวิดีโอ</p>
+        </div>
+      );
+    }
+
+    // สร้าง container สำหรับ embed code
+    return (
+      <div
+        className="video-embed-container w-full"
+        style={{
+          aspectRatio: item.platform ? '16/9' : 'auto',
+          minHeight: item.platform ? '100%' : 'auto'
+        }}
+      >
+        <div
+          dangerouslySetInnerHTML={{ __html: item.embedCode }}
+          className="w-full h-full"
+        />
+      </div>
+    );
+  };
+
+  // ฟังก์ชันตรวจสอบว่าเป็น video หรือไม่
+  const isVideo = (item: GalleryItem) => {
+    return item._type === 'video' && item.embedCode;
+  };
+
   return (
     <>
       {/* Tabs */}
       <div
         ref={tabsRef}
         className={`flex flex-wrap gap-2 py-4 transition-all duration-200 z-10 bg-white dark:bg-[var(--background)]  ${isFixed
-          ? 'fixed top-0 left-0 right-0 max-md:px-2  py-4 container mx-auto max-w-[884px]'
+          ? 'fixed top-0 left-0 right-0 max-lg:px-2  py-4 container mx-auto max-w-[884px]'
           : 'relative'
           }`}
       >
@@ -204,12 +227,17 @@ const TabGallery = ({ dataGallery, initialImageIndex, onTabChange }: TabGalleryP
                 />
               </div>
             )}
+            {isVideo(item) && (
+              <div className="relative cursor-pointer hover:opacity-90 transition-opacity">
+                {renderVideoEmbed(item)}
+              </div>
+            )}
           </div>
         ))}
       </div>
       {filteredData.length === 0 && (
         <div className="text-center py-8 text-gray-500">
-          ไม่พบรูปภาพในหมวดหมู่นี้
+          ไม่พบข้อมูลในหมวดหมู่นี้
         </div>
       )}
 

@@ -1,18 +1,12 @@
 import { client } from "@/sanity/client";
-import imageUrlBuilder from "@sanity/image-url";
-import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import type { SanityDocument } from "next-sanity";
 import Link from "next/link";
 import GalleryWithInitialImage from "@/components/GalleryWithInitialImage";
 import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-
-interface ItemGallery {
-  url: string | null;
-  category: string | null;
-  alt: string | null;
-}
+import { transformGalleryData } from "@/lib/videoUtils";
+import type { GalleryItem } from "@/types/gallery";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -21,18 +15,20 @@ type PageProps = {
 const POST_QUERY = `*[_type == "post" && slug.current == $slug][0]{
   ...,
   gallery[]{
-    ...,
-    asset,
+    _type,
+    // สำหรับ image
+    asset->{
+      _id,
+      url
+    },
     category,
-    alt
+    alt,
+    // สำหรับ videoUrl
+    url,
+    title,
+    platform
   }
 }`;
-
-const { projectId, dataset } = client.config();
-const urlFor = (source: SanityImageSource) =>
-  projectId && dataset
-    ? imageUrlBuilder({ projectId, dataset }).image(source)
-    : null;
 
 const options = { next: { revalidate: 30 } };
 
@@ -48,12 +44,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 const GalleryPage = async ({ params }: PageProps) => {
   const post = await client.fetch<SanityDocument>(POST_QUERY, await params, options);
 
-  const dataGallery: ItemGallery[] = post.gallery?.map((image: SanityImageSource & { category?: string; alt?: string }) => {
-    const imageUrl = urlFor(image)?.width(1200).height(1200).url();
-    const category = image.category || null;
-    const alt = image.alt || null;
-    return { url: imageUrl, category, alt };
-  }) || [];
+  // แปลงข้อมูล gallery รวมทั้งรูปภาพและวิดีโอ
+  const rawGalleryData = post.gallery || [];
+
+  // แปลงข้อมูลสำหรับ TabGallery (รองรับทั้งรูปและวิดีโอ)
+  const tabGalleryData = transformGalleryData(rawGalleryData).filter(Boolean);
+
+  console.log('Gallery Page - Raw Data:', rawGalleryData);
+  console.log('Gallery Page - Tab Gallery Data:', tabGalleryData);
 
   return (
     <div className="container mx-auto  max-w-[900px] py-6 md:py-10  px-2">
@@ -71,7 +69,7 @@ const GalleryPage = async ({ params }: PageProps) => {
 
 
 
-      <GalleryWithInitialImage dataGallery={dataGallery} />
+      <GalleryWithInitialImage dataGallery={tabGalleryData as GalleryItem[]} />
     </div>
   );
 };

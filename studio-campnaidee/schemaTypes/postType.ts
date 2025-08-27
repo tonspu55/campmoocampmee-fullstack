@@ -107,11 +107,59 @@ export const postType = defineType({
             }),
           ],
         },
+        {
+          type: 'object',
+          name: 'videoUrl',
+          title: 'Video URL',
+          fields: [
+            defineField({
+              name: 'url',
+              title: 'Video URL',
+              type: 'url',
+              description:
+                'วางลิงค์วิดีโอจาก YouTube URL ที่นี่ เช่น https://www.youtube.com/embed/VIDEO_ID หรือ https://www.youtube.com/watch?v=VIDEO_ID',
+              validation: (rule) => rule.required().error('กรุณาใส่ลิงค์วิดีโอ'),
+            }),
+
+            defineField({
+              name: 'platform',
+              title: 'Platform',
+              type: 'string',
+              options: {
+                list: [{title: 'YouTube', value: 'youtube'}],
+                layout: 'radio',
+              },
+              initialValue: 'youtube',
+            }),
+            defineField({
+              name: 'category',
+              title: 'Category',
+              type: 'string',
+              initialValue: 'วิดีโอ',
+              readOnly: true,
+              hidden: false,
+            }),
+          ],
+          preview: {
+            select: {
+              title: 'title',
+              url: 'url',
+              platform: 'platform',
+            },
+            prepare({title, url, platform}) {
+              return {
+                title: title || 'Video URL',
+                subtitle: `${platform ? platform.toUpperCase() : 'VIDEO'} - ${url || 'No URL'}`,
+                media: () => '🎬',
+              }
+            },
+          },
+        },
       ],
       options: {
         layout: 'grid',
       },
-      validation: (Rule) => Rule.min(1).error('ต้องมีรูปภาพอย่างน้อย 1 รูป'),
+      validation: (Rule) => Rule.min(1).error('ต้องมีรูปภาพหรือวิดีโออย่างน้อย 1 รายการ'),
     }),
     defineField({
       name: 'body',
