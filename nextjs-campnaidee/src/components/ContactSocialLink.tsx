@@ -9,6 +9,7 @@ type SocialContactLinks = {
   facebook?: string;
   line?: string;
   instagram?: string;
+  tiktok?: string;
   googleMap?: string;
   phone?: string;
 }
@@ -46,6 +47,21 @@ const ContactSocialLink = ({ socialContactLinks }: ContactSocialLinkProps) => {
                   priority
                   src="/assets/images/facebook.png"
                   alt="Facebook"
+                  width={30}
+                  height={30}
+                ></Image>
+
+              </Link>
+            )}
+            {socialContactLinks.tiktok && (
+              <Link
+                href={socialContactLinks.tiktok}
+                target="_blank"
+              >
+                <Image
+                  priority
+                  src="/assets/images/tiktok.png"
+                  alt="TikTok"
                   width={30}
                   height={30}
                 ></Image>

@@ -207,7 +207,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                     ))}
 
                     {hasNextPage && (
-                      <PaginationItem>
+                      <PaginationItem >
                         <PaginationNext href={createPageUrl(currentPage + 1)} />
                       </PaginationItem>
                     )}
