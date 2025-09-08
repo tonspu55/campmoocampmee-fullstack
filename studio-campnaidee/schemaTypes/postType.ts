@@ -178,6 +178,11 @@ export const postType = defineType({
           type: 'url',
         }),
         defineField({
+          name: 'tiktok',
+          title: 'TikTok',
+          type: 'url',
+        }),
+        defineField({
           name: 'line',
           title: 'Line',
           type: 'url',
