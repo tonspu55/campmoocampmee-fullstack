@@ -8,7 +8,7 @@ export default defineConfig({
   title: 'campmoocampmee',
 
   projectId: 'tqzf3jx1',
-  dataset: 'production',
+  dataset: process.env.SANITY_STUDIO_DATASET || 'production',
 
   plugins: [structureTool(), visionTool()],
 
