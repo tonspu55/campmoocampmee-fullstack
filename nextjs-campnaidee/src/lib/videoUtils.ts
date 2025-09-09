@@ -40,12 +40,17 @@ export const createVideoIframe = (
   if (!processedUrl) return null;
 
   if (platform === "youtube") {
-    return `<iframe width="560" height="315" src="${processedUrl}" title="${title || "YouTube video player"}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+    return `<iframe width="438" height="315" src="${processedUrl}" title="${title || "YouTube video player"}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
   }
 
+  // สำหรับ TikTok
   if (platform === "tiktok") {
     // TikTok จะต้องใช้ blockquote embed แทน iframe
-    return `<iframe src="${processedUrl}" width="325" height="580" frameborder="0" scrolling="no" allow="encrypted-media" allowfullscreen></iframe>`;
+    return `<blockquote class="tiktok-embed" cite="${processedUrl}" data-video-id="${title}" style="max-width: 325px; margin: 0 auto; display: block;">
+      <section>
+        <a target="_blank" title="${title || "TikTok video"}" href="${processedUrl}">Watch the video</a>
+      </section>
+    </blockquote>`;
   }
 
   // สำหรับ platform อื่นๆ
