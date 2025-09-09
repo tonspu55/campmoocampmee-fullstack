@@ -196,7 +196,3 @@ ul {
   max-width: 100% !important;
   border: none;
 }
-
-ul > li {
-  list-style: none;
-}
