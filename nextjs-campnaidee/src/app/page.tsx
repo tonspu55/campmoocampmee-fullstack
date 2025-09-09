@@ -1,7 +1,7 @@
 import { type SanityDocument } from "next-sanity";
 import { client } from "@/sanity/client";
 import HeroBanner from "@/components/HeroBanner";
-import CampRecommend from "@/components/CampRecommend";
+import CampThumbnail from "@/components/CampThumbnail";
 import Link from "next/link";
 import styles from "@/app/homepage.module.css";
 import { Button } from "@/components/ui/button";
@@ -59,7 +59,7 @@ export default async function IndexPage() {
         <HeroBanner />
       </div>
       <div className="container mx-auto px-2 max-w-6xl pt-6 lg:pt-10">
-        <CampRecommend posts={shuffledPosts} />
+        <CampThumbnail posts={shuffledPosts} />
         <div className={`${styles.contactBg} rounded-2xl mt-6 lg:mt-10 flex flex-col h-[270px]!  lg:h-[400px]!`}>
           <div className="flex flex-col items-start justify-start lg:justify-center h-full">
             <div className="w-[80%] lg:w-[50%]">
