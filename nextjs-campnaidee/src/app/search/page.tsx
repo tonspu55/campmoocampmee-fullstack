@@ -1,6 +1,6 @@
 import { type SanityDocument } from "next-sanity";
 import { client } from "@/sanity/client";
-import CampRecommend from "@/components/CampRecommend";
+import CampThumbnail from "@/components/CampThumbnail";
 import {
   Pagination,
   PaginationContent,
@@ -177,7 +177,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         {posts.length > 0 ? (
           <>
             <div className="mt-4">
-              <CampRecommend posts={posts} showTitle={false} />
+              <CampThumbnail posts={posts} showTitle={false} />
             </div>
 
             {/* Pagination */}
