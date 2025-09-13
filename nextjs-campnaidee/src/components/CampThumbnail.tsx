@@ -24,7 +24,7 @@ export default function CampRecommend({ posts, showTitle = true }: CampRecommend
   return (
     <div className="">
       {showTitle && <h1 className="text-2xl font-bold mb-4">แคมป์ทั้งหมด</h1>}
-      <div className="grid grid-cols-2 gap-2 lg:grid-cols-3 lg:gap-4">
+      <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-4">
         {posts.map((post) => {
           const postImageUrl = post.thumbnail
             ? urlFor(post.thumbnail)?.width(550).height(300).url()
@@ -38,7 +38,7 @@ export default function CampRecommend({ posts, showTitle = true }: CampRecommend
                   <Image
                     src={postImageUrl}
                     alt={post.title}
-                    className="aspect-video rounded-xl w-full"
+                    className="aspect-video rounded-[20px] w-full h-[175px] lg:h-[235px] object-cover"
                     width={300}
                     height={300}
                   />

@@ -60,7 +60,7 @@ export default async function IndexPage() {
       </div>
       <div className="container mx-auto px-2 max-w-6xl pt-6 lg:pt-10">
         <CampThumbnail posts={shuffledPosts} />
-        <div className={`${styles.contactBg} rounded-2xl mt-6 lg:mt-10 flex flex-col h-[270px]!  lg:h-[400px]!`}>
+        <div className={`${styles.contactBg} rounded-[20px] mt-6 lg:mt-10 flex flex-col h-[270px]!  lg:h-[400px]!`}>
           <div className="flex flex-col items-start justify-start lg:justify-center h-full">
             <div className="w-[80%] lg:w-[50%]">
               <div className="flex flex-col gap-4 items-start max-lg:pt-[16px] max-lg:px-[16px] lg:pl-[10%]">
