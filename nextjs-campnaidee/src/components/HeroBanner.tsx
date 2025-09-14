@@ -41,7 +41,7 @@ export default function HeroBanner() {
               </Link>
             </Button> */}
             <div className="flex flex-col items-center lg:items-start mt-2 lg:mt-4">
-              <div className="w-[220px] lg:w-[350px]"><SearchBox /></div>
+              <div className="w-[250px] lg:w-[350px]"><SearchBox /></div>
             </div>
           </div>
         </div>

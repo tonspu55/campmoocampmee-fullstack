@@ -1,45 +1,63 @@
 'use client'
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input"
 
-const THAILAND_PROVINCES = [
-  "กรุงเทพมหานคร", "สมุทรปราการ", "นนทบุรี", "ปทุมธานี", "พระนครศรีอยุธยา", "อ่างทอง", "ลพบุรี", "สิงห์บุรี", "ชัยนาท", "สระบุรี",
-  "ชลบุรี", "ระยอง", "จันทบุรี", "ตราด", "ฉะเชิงเทรา", "ปราจีนบุรี", "นครนายก", "สระแก้ว",
-  "นครราชสีมา", "บุรีรัมย์", "สุรินทร์", "ศรีสะเกษ", "อุบลราชธานี", "ยโสธร", "ชัยภูมิ", "อำนาจเจริญ", "หนองบัวลำภู", "ขอนแก่น", "อุดรธานี", "เลย", "หนองคาย", "มหาสารคาม", "ร้อยเอ็ด", "กาฬสินธุ์", "สกลนคร", "นครพนม", "มุกดาหาร", "บึงกาฬ",
-  "เชียงใหม่", "ลำพูน", "ลำปาง", "อุตรดิตถ์", "แพร่", "น่าน", "พะเยา", "เชียงราย", "แม่ฮ่องสอน",
-  "นครสวรรค์", "อุทัยธานี", "กำแพงเพชร", "ตาก", "สุโขทัย", "พิษณุโลก", "พิจิตร", "เพชรบูรณ์",
-  "ราชบุรี", "กาญจนบุรี", "สุพรรณบุรี", "นครปฐม", "สมุทรสาคร", "สมุทรสงคราม", "เพชรบุรี", "ประจวบคีรีขันธ์",
-  "นครศรีธรรมราช", "กระบี่", "พังงา", "ภูเก็ต", "สุราษฎร์ธานี", "ระนอง", "ชุมพร", "สงขลา", "สตูล", "ตรัง", "พัทลุง", "ปัตตานี", "ยะลา", "นราธิวาส"
-];
+interface ProvinceData {
+  name: string;
+  count: number;
+}
 
 export default function SearchBox() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredProvinces, setFilteredProvinces] = useState<string[]>([]);
+  const [filteredProvinces, setFilteredProvinces] = useState<ProvinceData[]>([]);
+  const [availableProvinces, setAvailableProvinces] = useState<ProvinceData[]>([]);
   const [selectedProvince, setSelectedProvince] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+
+  // ดึงข้อมูลจังหวัดที่มีข้อมูลจาก API
+  useEffect(() => {
+    const fetchProvinces = async () => {
+      try {
+        const response = await fetch('/api/provinces');
+        if (response.ok) {
+          const data = await response.json();
+          setAvailableProvinces(data.provinces || []);
+        }
+      } catch (error) {
+        console.error('Error fetching provinces:', error);
+        // Fallback to empty array if API fails
+        setAvailableProvinces([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProvinces();
+  }, []);
 
   const handleInputChange = (value: string) => {
     setSearchTerm(value);
     setSelectedProvince(value);
 
     if (value.length > 0) {
-      const filtered = THAILAND_PROVINCES.filter(province =>
-        province.includes(value)
+      const filtered = availableProvinces.filter((province: ProvinceData) =>
+        province.name.includes(value)
       );
       setFilteredProvinces(filtered);
     } else {
-      setFilteredProvinces(THAILAND_PROVINCES);
+      setFilteredProvinces(availableProvinces);
     }
     setShowDropdown(true);
   };
 
-  const handleProvinceSelect = (province: string) => {
-    setSelectedProvince(province);
-    setSearchTerm(province);
+  const handleProvinceSelect = (provinceName: string) => {
+    setSelectedProvince(provinceName);
+    setSearchTerm(provinceName);
     setShowDropdown(false);
   };
 
@@ -57,12 +75,12 @@ export default function SearchBox() {
 
   const handleInputFocus = () => {
     if (searchTerm.length > 0) {
-      const filtered = THAILAND_PROVINCES.filter(province =>
-        province.includes(searchTerm)
+      const filtered = availableProvinces.filter((province: ProvinceData) =>
+        province.name.includes(searchTerm)
       );
       setFilteredProvinces(filtered);
     } else {
-      setFilteredProvinces(THAILAND_PROVINCES);
+      setFilteredProvinces(availableProvinces);
     }
     setShowDropdown(true);
   };
@@ -83,29 +101,41 @@ export default function SearchBox() {
           onKeyPress={handleKeyPress}
           onFocus={handleInputFocus}
           onBlur={handleInputBlur}
-          placeholder="ระบุชื่อจังหวัด"
+          placeholder={isLoading ? "กำลังโหลดข้อมูล..." : "ระบุชื่อจังหวัด"}
+          disabled={isLoading}
           className="border-0 bg-white dark:text-[#000000] dark:bg-white focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 rounded-r-none"
         />
         <Button
           onClick={handleSearch}
           className="rounded-l-none cursor-pointer"
-          disabled={!selectedProvince.trim()}
+          disabled={!selectedProvince.trim() || isLoading}
         >
           ค้นหา
         </Button>
       </div>
 
-      {showDropdown && filteredProvinces.length > 0 && (
+      {showDropdown && filteredProvinces.length > 0 && !isLoading && (
         <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-50 overflow-y-auto">
           {filteredProvinces.map((province, index) => (
             <div
               key={index}
-              onClick={() => handleProvinceSelect(province)}
-              className="text-left px-4 py-2 hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0"
+              onClick={() => handleProvinceSelect(province.name)}
+              className="text-left  py-2 px-3  hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0"
             >
-              <p className="text-sm md:text-md dark:text-black">{province}</p>
+              <div className="flex flex-row justify-between items-center">
+                <p className="text-sm md:text-md dark:text-black">{province.name}</p>
+                <span className="text-xs text-gray-500 ml-2">(พบ {province.count} แคมป์)</span>
+              </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {showDropdown && filteredProvinces.length === 0 && !isLoading && searchTerm && (
+        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg">
+          <div className="text-left py-2 px-3">
+            <p className="text-sm md:text-md text-gray-500">ไม่พบข้อมูลแคมป์ที่ระบุ</p>
+          </div>
         </div>
       )}
     </div>

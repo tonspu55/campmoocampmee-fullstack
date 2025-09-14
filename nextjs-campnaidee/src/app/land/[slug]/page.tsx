@@ -12,7 +12,7 @@ import { Separator } from "@/components/ui/separator"
 import InfoAddress from "@/components/InfoAddress";
 import NavigationMobile from "@/components/NavigationMobile";
 import ExpandableContent from "@/components/ExpandableContent";
-import { transformGalleryData } from "@/lib/videoUtils";
+// import { transformGalleryData } from "@/lib/videoUtils";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -92,7 +92,7 @@ export default async function PostPage({ params }: PageProps) {
   const rawGalleryData: SanityGalleryRawItem[] = post.gallery || [];
 
   // แปลงข้อมูลสำหรับ TabGallery (รองรับทั้งรูปและวิดีโอ)
-  const tabGalleryData = transformGalleryData(rawGalleryData);
+  // const tabGalleryData = transformGalleryData(rawGalleryData);
 
   // สำหรับ ImageGallery (เฉพาะรูปภาพ)
   const ImageGalleryData = rawGalleryData
@@ -108,9 +108,9 @@ export default async function PostPage({ params }: PageProps) {
     })
     .filter(item => item.url);
 
-  console.log('Raw Gallery Data:', rawGalleryData);
-  console.log('Tab Gallery Data:', tabGalleryData);
-  console.log('Image Gallery Data:', ImageGalleryData);
+  // console.log('Raw Gallery Data:', rawGalleryData);
+  // console.log('Tab Gallery Data:', tabGalleryData);
+  // console.log('Image Gallery Data:', ImageGalleryData);
 
   return (
     <main className="container mx-auto max-w-6xl  mt-[60px] pb-6 lg:pb-10">
