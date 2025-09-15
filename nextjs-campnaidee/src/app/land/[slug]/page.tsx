@@ -52,7 +52,7 @@ const urlFor = (source: SanityImageSource) =>
     ? imageUrlBuilder({ projectId, dataset }).image(source)
     : null;
 
-const options = { next: { revalidate: 30 } };
+const options = { next: { revalidate: 900 } };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const post = await client.fetch<SanityDocument>(POST_QUERY, await params, options);

@@ -14,7 +14,7 @@ const POSTS_QUERY = `*[
 ]| order(publishedAt desc)[0...40]{_id, title, address, thumbnail, slug, tags}`;
 
 
-const options = { next: { revalidate: 60 } };
+const options = { next: { revalidate: 900 } }; //revalidate 15 minutes
 
 export default async function IndexPage() {
   const posts = await client.fetch<SanityDocument[]>(POSTS_QUERY, {}, options);
@@ -22,10 +22,10 @@ export default async function IndexPage() {
   // console.log("Fetched address:", posts.map(post => post.address));
 
 
-  // สร้าง seed จาก timestamp ทุก 60 วินาที
-  const sixtySecondInterval = Math.floor(Date.now() / (60 * 1000));
+  // สร้าง seed จาก timestamp ทุก 300 วินาที
+  const threeHundredSecondInterval = Math.floor(Date.now() / (300 * 1000));
 
-  // ใช้ seed เพื่อสุ่มแบบคงที่ในช่วง 60 วินาทีเดียวกัน
+  // ใช้ seed เพื่อสุ่มแบบคงที่ในช่วง 300 วินาทีเดียวกัน
   const shufflePosts = (array: SanityDocument[], seed: number) => {
     const shuffled = [...array];
     let currentIndex = shuffled.length;
@@ -51,7 +51,7 @@ export default async function IndexPage() {
     return shuffled;
   };
 
-  const shuffledPosts = shufflePosts(posts, sixtySecondInterval);
+  const shuffledPosts = shufflePosts(posts, threeHundredSecondInterval);
 
   return (
     <main className="pb-6 lg:pb-10">
