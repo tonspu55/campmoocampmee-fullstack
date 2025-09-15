@@ -11,7 +11,7 @@ const PROVINCES_QUERY = `*[
 
 export async function GET() {
   try {
-    const options = { next: { revalidate: 60 } }; // Cache for 60 seconds
+    const options = { next: { revalidate: 3600 } }; // Cache for 1 hour
 
     // ดึงข้อมูลจังหวัดทั้งหมดจาก posts
     const results = await client.fetch(PROVINCES_QUERY, {}, options);
