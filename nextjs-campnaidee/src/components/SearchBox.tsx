@@ -10,7 +10,7 @@ interface ProvinceData {
   count: number;
 }
 
-export default function SearchBox() {
+const SearchBox = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredProvinces, setFilteredProvinces] = useState<ProvinceData[]>([]);
   const [availableProvinces, setAvailableProvinces] = useState<ProvinceData[]>([]);
@@ -141,3 +141,5 @@ export default function SearchBox() {
     </div>
   );
 }
+
+export default SearchBox;
