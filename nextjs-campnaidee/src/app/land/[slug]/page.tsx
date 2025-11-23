@@ -8,7 +8,6 @@ import type { Metadata } from "next";
 import styles from "./style.module.css";
 import ShareToSocial from "@/components/ShareToSocial";
 import OtherBenefits from "@/components/OtherBenefits";
-import { Separator } from "@/components/ui/separator"
 import InfoAddress from "@/components/InfoAddress";
 import NavigationMobile from "@/components/NavigationMobile";
 import ExpandableContent from "@/components/ExpandableContent";
@@ -62,11 +61,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     : null;
 
   return {
-    title: `แคมป์ - ${post.title}`,
-    description: `รายละเอียด ${post.title}`,
+    title: `ลานกางเต็นท์ - ${post.title}`,
+    description: `ลานกางเต็นท์ ${post.title} ตั้งอยู่ที่ ${post.address?.province} ${post.address?.district} ${post.address?.subdistrict}`,
     openGraph: {
-      title: `แคมป์ - ${post.title}`,
-      description: `รายละเอียด ${post.title}`,
+      title: `ลานกางเต็นท์ - ${post.title}`,
+      description: `ลานกางเต็นท์ ${post.title} ตั้งอยู่ที่ ${post.address?.province} ${post.address?.district} ${post.address?.subdistrict}`,
       images: thumbnailImage ? [
         {
           url: thumbnailImage,
@@ -78,8 +77,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
     twitter: {
       card: 'summary_large_image',
-      title: `แคมป์ - ${post.title}`,
-      description: `รายละเอียดแคมป์ ${post.title}`,
+      title: `ลานกางเต็นท์ - ${post.title}`,
+      description: `ลานกางเต็นท์ ${post.title} ตั้งอยู่ที่ ${post.address?.province} ${post.address?.district} ${post.address?.subdistrict}`,
       images: thumbnailImage ? [thumbnailImage] : undefined,
     },
   };
@@ -124,17 +123,19 @@ export default async function PostPage({ params }: PageProps) {
             </div>
             <ShareToSocial title={post.title} slug={(await params).slug} />
           </div>
+          <OtherBenefits otherBenefits={post.otherBenefits} />
           <div className="text-description max-md:text-sm">
             <ExpandableContent maxHeight={200}>
               {Array.isArray(post.body) && <PortableText value={post.body} />}
             </ExpandableContent>
           </div>
-          <Separator className="my-4 lg:hidden" />
+
           <div className={`lg:hidden mt-4 `}>
             <ContactSocialLink socialContactLinks={post.socialContactLinks} />
           </div>
-          <Separator className="my-4 lg:my-8" />
-          <OtherBenefits otherBenefits={post.otherBenefits} />
+
+
+
         </div>
         <div className="px-2 max-lg:w-full basis-1/1 lg:pl-0  lg:basis-1/3 max-lg:pt-4 max-lg:hidden">
           <div className={`p-4 ${styles.contactInfo} dark:border-primary dark:border`}>

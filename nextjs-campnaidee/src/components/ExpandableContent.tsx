@@ -37,6 +37,7 @@ const ExpandableContent = ({ children, maxHeight = 200 }: ExpandableContentProps
         }}
       >
         <div className="[&_ul]:list-disc [&_ul]:ml-5 [&_ol]:list-decimal [&_ol]:ml-5">
+          <h4 className="text-lg font-bold my-4">รายละเอียดเพิ่มเติม</h4>
           {children}
         </div>
       </div>
