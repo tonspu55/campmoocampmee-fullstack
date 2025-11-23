@@ -1,6 +1,7 @@
 import { type SanityDocument } from "next-sanity";
 import { client } from "@/sanity/client";
 import CampThumbnail from "@/components/CampThumbnail";
+import type { Metadata } from "next";
 import {
   Pagination,
   PaginationContent,
@@ -16,6 +17,15 @@ interface SearchPageProps {
     province?: string;
     page?: string;
   }>;
+}
+
+export async function generateMetadata({ searchParams }: SearchPageProps): Promise<Metadata> {
+  const { province, } = await searchParams;
+
+  return {
+    title: `ค้นหาลานกางเต็นท์ในจังหวัด${province} `,
+    description: "ค้นหาและจองลานกางเต็นท์ ผ่านข้อมูลจากเจ้าของที่พักที่ถูกต้อง แผนที่-เส้นทาง อัพเดต 2025 ",
+  };
 }
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
@@ -157,10 +167,10 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         {province && (
           <>
             <h4 className="text-lg font-bold">
-              แคมป์ในจังหวัด {province}
+              ลานกางเต็นท์ในจังหวัด {province}
             </h4>
             <p className="text-gray-600">
-              พบทั้งหมด {filteredCount} แคมป์
+              พบทั้งหมด {filteredCount} ลานกางเต็นท์
             </p>
           </>
         )}
