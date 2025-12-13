@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/popover";
 import { Share, Link2, Check } from "lucide-react";
 import { useState, useCallback, useEffect } from "react";
+import { toast } from "sonner";
 
 interface ShareToSocialProps {
   title?: string;
@@ -39,6 +40,9 @@ const ShareToSocial = ({ title, slug }: ShareToSocialProps) => {
         await navigator.clipboard.writeText(currentUrl);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
+        toast.success('คัดลอก URL เรียบร้อย', {
+          duration: 2000,
+        });
       } else {
         // Fallback method สำหรับ browser ที่ไม่รองรับ clipboard API
         const textArea = document.createElement('textarea');
@@ -58,6 +62,9 @@ const ShareToSocial = ({ title, slug }: ShareToSocialProps) => {
           if (successful) {
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
+            toast.success('คัดลอก URL เรียบร้อย', {
+              duration: 2000,
+            });
           } else {
             console.error('execCommand copy failed');
           }
