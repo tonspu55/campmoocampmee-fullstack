@@ -54,7 +54,7 @@ const GalleryPage = async ({ params }: PageProps) => {
   console.log('Gallery Page - Tab Gallery Data:', tabGalleryData);
 
   return (
-    <div className="container mx-auto  max-w-[900px] py-6 md:py-10  px-2">
+    <div className="container mx-auto  max-w-225 py-6 md:py-10  px-2">
 
       <div className="flex flex-row  gap-2 items-center">
         <Button asChild className="flex h-9 w-9 items-center  justify-center rounded-full cursor-pointer" variant="default">
@@ -64,11 +64,6 @@ const GalleryPage = async ({ params }: PageProps) => {
         </Button>
         <h1 className="text-lg lg:text-2xl font-bold ">{post.title}</h1>
       </div>
-
-
-
-
-
       <GalleryWithInitialImage dataGallery={tabGalleryData as GalleryItem[]} />
     </div>
   );
