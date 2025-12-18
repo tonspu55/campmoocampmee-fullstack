@@ -1,6 +1,10 @@
-
-
+import { Metadata } from "next";
 import ContactForm from "@/components/ContactForm";
+
+export const metadata: Metadata = {
+  title: "ติดต่อลงข้อมูล | แคมป์หมูแคมป์หมี",
+  description: "ส่งรายละเอียดข้อมูลเบื้องต้นเพื่อให้ทางเราติดต่อกลับโดยเร็วที่สุด",
+};
 
 const ContactPage = () => {
   return (
