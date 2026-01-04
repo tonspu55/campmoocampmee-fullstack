@@ -119,7 +119,6 @@ const Header = () => {
       // Clean up 
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("scroll", handleScroll);
-      setMounted(false);
     };
   }, [setIsScrolled]);
 
@@ -148,15 +147,15 @@ const Header = () => {
 
   return (
     <nav suppressHydrationWarning
-      className={`flex items-center fixed top-0 left-0 right-0 z-50 h-[60px] ${mounted ? (isScrolled ? 'bg-white dark:bg-[var(--background)]' : 'bg-transparent') : 'bg-transparent'
+      className={`flex items-center fixed top-0 left-0 right-0 z-50 h-15 ${mounted ? (isScrolled ? 'bg-white dark:bg-background' : 'bg-transparent') : 'bg-transparent'
         }`}
     >
       <div className="container mx-auto flex items-center max-w-6xl px-2">
         <LogoSwitcher />
-        <div className={`${mounted ? (isScrolled ? 'bg-white dark:bg-[var(--background)]' : 'bg-transparent') : 'bg-transparent'
+        <div className={`${mounted ? (isScrolled ? 'bg-white dark:bg-background' : 'bg-transparent') : 'bg-transparent'
           } ${menuClasses}`} >
           {isMobileView ? (
-            <div className="bg-white dark:bg-[var(--background)] px-2 py-4">
+            <div className="bg-white dark:bg-background px-2 py-4">
               <div className="flex flex-row justify-between">
                 <div className="flex flex-col gap-2">
                   <NavLinkMobile
