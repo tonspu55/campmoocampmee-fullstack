@@ -24,7 +24,7 @@ export async function generateMetadata({ searchParams }: SearchPageProps): Promi
 
   return {
     title: `ค้นหาลานกางเต็นท์ในจังหวัด${province} `,
-    description: "ค้นหาและจองลานกางเต็นท์ ผ่านข้อมูลจากเจ้าของที่พักที่ถูกต้อง แผนที่-เส้นทาง อัพเดต 2025 ",
+    description: "ค้นหาและจองลานกางเต็นท์ ผ่านข้อมูลจากเจ้าของที่พักที่ถูกต้อง แผนที่-เส้นทาง อัพเดต 2026 ",
   };
 }
 

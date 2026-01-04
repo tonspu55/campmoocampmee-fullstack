@@ -86,7 +86,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className=" pt-6">
           <div className="flex flex-col md:flex-row justify-between items-center text-sm ">
-            <p>&copy; 2025 campmoocampmee</p>
+            <p>&copy; 2026 campmoocampmee</p>
           </div>
         </div>
       </div>
