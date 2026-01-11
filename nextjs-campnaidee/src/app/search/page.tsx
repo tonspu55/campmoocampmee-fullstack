@@ -68,7 +68,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         && defined(slug.current)
       ]| order(publishedAt desc)[${offset}...${offset + itemsPerPage}]{_id, title, address, thumbnail, slug, tags}`;
 
-  const options = { next: { revalidate: 900 } };
+  const options = { next: { revalidate: 300 } };
 
   // ดึงข้อมูลทั้งหมดและข้อมูลสำหรับหน้าปัจจุบัน
   const [totalCount, allPosts] = await Promise.all([

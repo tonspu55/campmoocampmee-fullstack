@@ -11,7 +11,7 @@ import OtherBenefits from "@/components/OtherBenefits";
 import InfoAddress from "@/components/InfoAddress";
 import NavigationMobile from "@/components/NavigationMobile";
 import ExpandableContent from "@/components/ExpandableContent";
-// import { transformGalleryData } from "@/lib/videoUtils";
+
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -51,7 +51,7 @@ const urlFor = (source: SanityImageSource) =>
     ? imageUrlBuilder({ projectId, dataset }).image(source)
     : null;
 
-const options = { next: { revalidate: 900 } };
+const options = { next: { revalidate: 300 } };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const post = await client.fetch<SanityDocument>(POST_QUERY, await params, options);
@@ -112,7 +112,7 @@ export default async function PostPage({ params }: PageProps) {
   // console.log('Image Gallery Data:', ImageGalleryData);
 
   return (
-    <main className="container mx-auto max-w-6xl  mt-[60px] pb-6 lg:pb-10">
+    <main className="container mx-auto max-w-6xl  mt-15 pb-6 lg:pb-10">
       {ImageGalleryData && <ImageGallery ImageGallery={ImageGalleryData} slug={(await params).slug} />}
       <div className="flex flex-col lg:flex-row gap-4 mt-4 lg:mt-6 items-start">
         <div className="basis-1/1 px-2 lg:pr-0 lg:pl-2 w-full">

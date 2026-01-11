@@ -30,7 +30,7 @@ const POST_QUERY = `*[_type == "post" && slug.current == $slug][0]{
   }
 }`;
 
-const options = { next: { revalidate: 900 } };
+const options = { next: { revalidate: 300 } };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const post = await client.fetch<SanityDocument>(POST_QUERY, await params, options);
