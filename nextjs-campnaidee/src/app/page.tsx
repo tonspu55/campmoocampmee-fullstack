@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 
 
 const POSTS_QUERY = `*[
-  _type == "post"
+  _type == "land"
   && !(_id in path("drafts.**"))
   && defined(slug.current)
   && "recommend" in tags
