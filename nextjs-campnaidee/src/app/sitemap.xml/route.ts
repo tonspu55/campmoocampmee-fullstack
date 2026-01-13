@@ -7,7 +7,7 @@ interface PostSlug {
   _updatedAt?: string;
 }
 
-const POSTS_QUERY = `*[_type == "post" && defined(slug.current)]{
+const POSTS_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && defined(slug.current)]{
   slug,
   _updatedAt
 }`;

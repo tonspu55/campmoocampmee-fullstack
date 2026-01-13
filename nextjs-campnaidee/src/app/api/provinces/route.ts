@@ -3,6 +3,7 @@ import { client } from "@/sanity/client";
 
 const PROVINCES_QUERY = `*[
   _type == "post"
+  && !(_id in path("drafts.**"))
   && defined(slug.current)
   && defined(address.province)
 ]{

@@ -40,6 +40,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const COUNT_QUERY = province
     ? `count(*[
         _type == "post"
+        && !(_id in path("drafts.**"))
         && defined(slug.current)
         && (
           address.province == "${province}" ||
@@ -49,6 +50,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       ])`
     : `count(*[
         _type == "post"
+        && !(_id in path("drafts.**"))
         && defined(slug.current)
       ])`;
 
@@ -56,6 +58,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const SEARCH_QUERY = province
     ? `*[
         _type == "post"
+        && !(_id in path("drafts.**"))
         && defined(slug.current)
         && (
           address.province == "${province}" ||
@@ -65,6 +68,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       ]| order(publishedAt desc)[${offset}...${offset + itemsPerPage}]{_id, title, address, thumbnail, slug, tags}`
     : `*[
         _type == "post"
+        && !(_id in path("drafts.**"))
         && defined(slug.current)
       ]| order(publishedAt desc)[${offset}...${offset + itemsPerPage}]{_id, title, address, thumbnail, slug, tags}`;
 
@@ -84,6 +88,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     // สำหรับการค้นหาตามจังหวัด เราต้องดึงข้อมูลทั้งหมดก่อนแล้วกรอง
     const ALL_POSTS_QUERY = `*[
       _type == "post"
+      && !(_id in path("drafts.**"))
       && defined(slug.current)
       && (
         address.province == "${province}" ||
@@ -162,7 +167,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   };
 
   return (
-    <main className="py-8 lg:py-10 mt-[60px]">
+    <main className="py-8 lg:py-10 mt-11.25 lg:mt-15">
       <div className="container mx-auto max-w-6xl px-2">
         {province && (
           <>
