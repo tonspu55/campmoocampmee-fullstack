@@ -4,10 +4,7 @@ import { type SanityDocument } from "next-sanity";
 import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { client } from "@/sanity/client";
-import InfoAddress from "@/components/InfoAddress";
-// import {
-//   Card,
-// } from "@/components/ui/card"
+
 
 interface CampRecommendProps {
   posts: SanityDocument[];
@@ -45,7 +42,7 @@ export default function CampRecommend({ posts, showTitle = true }: CampRecommend
                 )}
                 <div className="px-1">
                   <h3 className="max-lg:text-sm text-md font-semibold line-clamp-1">{post.title}</h3>
-                  <InfoAddress InfoAddress={post.address} />
+
                 </div>
               </div>
             </Link>

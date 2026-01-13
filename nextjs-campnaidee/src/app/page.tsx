@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 
 const POSTS_QUERY = `*[
   _type == "post"
+  && !(_id in path("drafts.**"))
   && defined(slug.current)
   && "recommend" in tags
 ]| order(publishedAt desc)[0...40]{_id, title, address, thumbnail, slug, tags}`;

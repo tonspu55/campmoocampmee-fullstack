@@ -12,7 +12,7 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-const POST_QUERY = `*[_type == "post" && slug.current == $slug][0]{
+const POST_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && slug.current == $slug][0]{
   ...,
   gallery[]{
     _type,
