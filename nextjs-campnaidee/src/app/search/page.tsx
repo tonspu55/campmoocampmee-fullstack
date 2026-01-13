@@ -39,7 +39,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   // Query สำหรับนับจำนวนรายการทั้งหมด (สำหรับ pagination)
   const COUNT_QUERY = province
     ? `count(*[
-        _type == "land"
+        _type == "post"
         && !(_id in path("drafts.**"))
         && defined(slug.current)
         && (
@@ -49,7 +49,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         )
       ])`
     : `count(*[
-        _type == "land"
+        _type == "post"
         && !(_id in path("drafts.**"))
         && defined(slug.current)
       ])`;
@@ -57,7 +57,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   // Query สำหรับดึงข้อมูลแบบ pagination
   const SEARCH_QUERY = province
     ? `*[
-        _type == "land"
+        _type == "post"
         && !(_id in path("drafts.**"))
         && defined(slug.current)
         && (
@@ -67,7 +67,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         )
       ]| order(publishedAt desc)[${offset}...${offset + itemsPerPage}]{_id, title, address, thumbnail, slug, tags}`
     : `*[
-        _type == "land"
+        _type == "post"
         && !(_id in path("drafts.**"))
         && defined(slug.current)
       ]| order(publishedAt desc)[${offset}...${offset + itemsPerPage}]{_id, title, address, thumbnail, slug, tags}`;
@@ -87,7 +87,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   if (province) {
     // สำหรับการค้นหาตามจังหวัด เราต้องดึงข้อมูลทั้งหมดก่อนแล้วกรอง
     const ALL_POSTS_QUERY = `*[
-      _type == "land"
+      _type == "post"
       && !(_id in path("drafts.**"))
       && defined(slug.current)
       && (
