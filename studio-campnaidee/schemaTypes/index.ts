@@ -1,5 +1,5 @@
-import {landType} from './landType'
+import {postType} from './postType'
 import {submitContactType} from './submitContactType'
 import {userType} from './userType'
 
-export const schemaTypes = [landType, submitContactType, userType]
+export const schemaTypes = [postType, submitContactType, userType]
