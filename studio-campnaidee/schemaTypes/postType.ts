@@ -81,7 +81,6 @@ export const postType = defineType({
           options: {
             hotspot: true,
             accept: 'image/*',
-            storeOriginalFilename: false,
           },
           fields: [
             defineField({

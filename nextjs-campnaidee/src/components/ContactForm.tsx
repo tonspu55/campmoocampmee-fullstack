@@ -98,7 +98,7 @@ export default function ContactForm() {
   }
 
   return (
-    <div className="max-w-md mx-auto pt-6">
+    <div className="max-w-md mx-auto pt-6 ">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField

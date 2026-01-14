@@ -13,7 +13,7 @@ export default function SignInForm() {
     const checkSession = async () => {
       const session = await getSession()
       if (session) {
-        router.push('/landowner')
+        router.push('/')
       }
     }
     checkSession()
@@ -23,7 +23,7 @@ export default function SignInForm() {
     setLoading(true)
     try {
       await signIn('google', {
-        callbackUrl: '/landowner',
+        callbackUrl: '/',
         redirect: true,
       })
     } catch (error) {
@@ -33,8 +33,8 @@ export default function SignInForm() {
   }
 
   return (
-    <main className="py-8 lg:py-10 mt-[60px]">
-      <div className="container mx-auto max-w-[600px] px-4">
+    <main className="py-8 lg:py-10 mt-15">
+      <div className="container mx-auto max-w-150 px-4">
         <div className=" p-8">
           <h2 className=" text-xl font-bold text-center ">
             สำหรับเจ้าของลานกางเต็นท์
