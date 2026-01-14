@@ -46,18 +46,14 @@ const handler = NextAuth({
             { email: session.user.email }
           );
           if (userData) {
-            (
-              session.user as typeof session.user & {
-                provider?: string;
-                providerId?: string;
-              }
-            ).provider = userData.provider;
-            (
-              session.user as typeof session.user & {
-                provider?: string;
-                providerId?: string;
-              }
-            ).providerId = userData.providerId;
+            (session.user as typeof session.user & {
+              provider?: string;
+              providerId?: string;
+            }).provider = userData.provider;
+            (session.user as typeof session.user & {
+              provider?: string;
+              providerId?: string;
+            }).providerId = userData.providerId;
           }
         } catch (error) {
           console.error("Error fetching user data:", error);
@@ -67,6 +63,14 @@ const handler = NextAuth({
     },
     async jwt({ token }) {
       return token;
+    },
+    async redirect({ url, baseUrl }) {
+      // ถ้ามี callbackUrl ใน URL ให้ไปตาม callbackUrl
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // ถ้า url เป็น absolute URL และเป็น domain เดียวกัน ให้ใช้ url นั้น
+      else if (new URL(url).origin === baseUrl) return url;
+      // ถ้าไม่ใช่ ให้กลับไปหน้าแรก
+      return baseUrl;
     },
   },
   pages: {

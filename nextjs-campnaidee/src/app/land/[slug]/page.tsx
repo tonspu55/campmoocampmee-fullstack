@@ -11,6 +11,7 @@ import OtherBenefits from "@/components/OtherBenefits";
 import InfoAddress from "@/components/InfoAddress";
 import NavigationMobile from "@/components/NavigationMobile";
 import ExpandableContent from "@/components/ExpandableContent";
+import ReviewSection from "@/components/ReviewSection";
 
 
 type PageProps = {
@@ -133,9 +134,6 @@ export default async function PostPage({ params }: PageProps) {
           <div className={`lg:hidden mt-4 `}>
             <ContactSocialLink socialContactLinks={post.socialContactLinks} />
           </div>
-
-
-
         </div>
         <div className="px-2 max-lg:w-full basis-1/1 lg:pl-0  lg:basis-1/3 max-lg:pt-4 max-lg:hidden">
           <div className={`p-4 ${styles.contactInfo} dark:border-primary dark:border`}>
@@ -143,6 +141,7 @@ export default async function PostPage({ params }: PageProps) {
           </div>
         </div>
       </div>
+      <ReviewSection postId={post._id} />
       <div className="end-page-detection lg:hidden"></div>
       <NavigationMobile socialContactLinks={post.socialContactLinks} />
     </main>
