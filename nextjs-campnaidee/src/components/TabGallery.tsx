@@ -2,11 +2,13 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/components/ui/button"
+import { ArrowLeft } from "lucide-react";
 import TabGalleryPopup from "./TabGalleryPopup";
 import type { GalleryItem, TabGalleryProps } from "@/types/gallery";
 
-const TabGallery = ({ dataGallery, initialImageIndex, onTabChange }: TabGalleryProps) => {
+const TabGallery = ({ dataGallery, initialImageIndex, onTabChange, slug }: TabGalleryProps) => {
   const categories = [...new Set(dataGallery.map((data) => data.category))].filter(Boolean) as string[];
   // กำหนดลำดับที่แสดงผลของหมวดหมู่
   const categoryOrder = ["ทั้งหมด", "วิว", "กิจกรรม", "ที่พัก", "ห้องน้ำ", "วิดีโอ"];
@@ -181,6 +183,15 @@ const TabGallery = ({ dataGallery, initialImageIndex, onTabChange }: TabGalleryP
           : 'relative'
           }`}
       >
+        {/* ปุ่มกลับที่แสดงเมื่อ tabs เป็น fixed */}
+        {isFixed && slug && (
+          <Button asChild className="flex h-9 w-9 items-center justify-center rounded-full cursor-pointer shrink-0" variant="default">
+            <Link href={`/land/${slug}`}>
+              <ArrowLeft className="w-4 h-4" />
+            </Link>
+          </Button>
+        )}
+
         {allCategories.map((category) => (
           <Button
             key={category}

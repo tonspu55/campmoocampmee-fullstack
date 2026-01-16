@@ -5,12 +5,12 @@ import TabGallery from './TabGallery';
 import { useGalleryStore } from '@/lib/store';
 import type { GalleryItem } from "@/types/gallery";
 
-// ใช้ type เดียวกับ TabGallery
 interface GalleryWithInitialImageProps {
   dataGallery: GalleryItem[];
+  slug?: string;
 }
 
-const GalleryWithInitialImage = ({ dataGallery }: GalleryWithInitialImageProps) => {
+const GalleryWithInitialImage = ({ dataGallery, slug }: GalleryWithInitialImageProps) => {
   const [initialImageIndex, setInitialImageIndex] = useState<number | undefined>(undefined);
   const selectedImageIndex = useGalleryStore((state) => state.selectedImageIndex);
   const setSelectedImageIndex = useGalleryStore((state) => state.setSelectedImageIndex);
@@ -29,7 +29,7 @@ const GalleryWithInitialImage = ({ dataGallery }: GalleryWithInitialImageProps) 
     setInitialImageIndex(undefined);
   };
 
-  return <TabGallery dataGallery={dataGallery} initialImageIndex={initialImageIndex} onTabChange={handleTabChange} />;
+  return <TabGallery dataGallery={dataGallery} initialImageIndex={initialImageIndex} onTabChange={handleTabChange} slug={slug} />;
 };
 
 export default GalleryWithInitialImage;

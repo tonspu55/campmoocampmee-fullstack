@@ -14,6 +14,7 @@ export interface TabGalleryProps {
   dataGallery: GalleryItem[];
   initialImageIndex?: number;
   onTabChange?: () => void;
+  slug?: string;
 }
 
 export interface SanityGalleryItem {
