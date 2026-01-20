@@ -62,11 +62,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     : null;
 
   return {
-    title: `ลานกางเต็นท์ - ${post.title}`,
-    description: `ลานกางเต็นท์ ${post.title} ตั้งอยู่ที่ ${post.address?.province} ${post.address?.district} ${post.address?.subdistrict}`,
+    title: `${post.title} - ลานกางเต็นท์จังหวัด${post.address?.province}`,
+    description: `${post.title} ตั้งอยู่ที่ ${post.address?.province} ${post.address?.district} ${post.address?.subdistrict}`,
     openGraph: {
-      title: `ลานกางเต็นท์ - ${post.title}`,
-      description: `ลานกางเต็นท์ ${post.title} ตั้งอยู่ที่ ${post.address?.province} ${post.address?.district} ${post.address?.subdistrict}`,
+      title: `${post.title} - ลานกางเต็นท์จังหวัด${post.address?.province}`,
+      description: `${post.title} ตั้งอยู่ที่ ${post.address?.province} ${post.address?.district} ${post.address?.subdistrict}`,
       images: thumbnailImage ? [
         {
           url: thumbnailImage,
@@ -78,8 +78,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
     twitter: {
       card: 'summary_large_image',
-      title: `ลานกางเต็นท์ - ${post.title}`,
-      description: `ลานกางเต็นท์ ${post.title} ตั้งอยู่ที่ ${post.address?.province} ${post.address?.district} ${post.address?.subdistrict}`,
+      title: `${post.title} - ลานกางเต็นท์จังหวัด${post.address?.province}`,
+      description: `${post.title} ตั้งอยู่ที่ ${post.address?.province} ${post.address?.district} ${post.address?.subdistrict}`,
       images: thumbnailImage ? [thumbnailImage] : undefined,
     },
   };
@@ -119,7 +119,7 @@ export default async function PostPage({ params }: PageProps) {
         <div className="basis-1/1 px-2 lg:pr-0 lg:pl-2 w-full">
           <div className="flex flex-row gap-4 justify-between items-start mb-4 lg:mb-6">
             <div className="flex flex-col">
-              <h2 className="text-2xl font-bold ">{post.title}</h2>
+              <h1 className="text-2xl font-bold ">{post.title}</h1>
               <InfoAddress InfoAddress={post.address} />
             </div>
             <ShareToSocial title={post.title} slug={(await params).slug} />
