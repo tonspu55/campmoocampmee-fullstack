@@ -23,7 +23,7 @@ const Footer = () => {
               <div className="flex flex-col gap-2">
                 <h3 className="text-md">แคมป์หมูแคมป์หมี</h3>
                 <p className=" text-sm">
-                  ค้นหาลานกางเต็นท์หรือแคมป์ปิ้งสำหรับการพักผ่อนที่ดีที่สุด
+                  ค้นหาลานกางเต็นท์ทั่วไทย
                 </p>
               </div>
             </div>
