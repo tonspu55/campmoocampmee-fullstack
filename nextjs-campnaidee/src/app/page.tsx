@@ -56,17 +56,18 @@ export default async function IndexPage() {
 
   return (
     <main className="pb-6 lg:pb-10">
-      <div className="flex relative h-[320px] md:h-[500px] flex-col">
+      <div className="flex relative h-80 md:h-125 flex-col">
         <HeroBanner />
       </div>
       <div className="container mx-auto px-2 max-w-6xl pt-6 lg:pt-10">
         <CampThumbnail posts={shuffledPosts} />
-        <div className={`${styles.contactBg} rounded-[20px] mt-6 lg:mt-10 flex flex-col h-[270px]!  lg:h-[400px]!`}>
+        <div className={`${styles.contactBg} rounded-[20px] mt-6 lg:mt-10 flex flex-col h-67.5!  lg:h-100!`}>
           <div className="flex flex-col items-start justify-start lg:justify-center h-full">
             <div className="w-[80%] lg:w-[50%]">
-              <div className="flex flex-col gap-4 items-start max-lg:pt-[16px] max-lg:px-[16px] lg:pl-[10%]">
-                <h4 className="text-white dark:text-white font-medium text-[14px] lg:text-[16px]">สำหรับเจ้าของธุรกิจลานกางเต็นท์หรือแคมป์ปิ้งที่สนใจลงข้อมูลเกี่ยวกับที่พักของท่านผ่านเว็บแคมป์หมูแคมป์หมี เพื่อนำหน้าเพจไปใช้โปรโมทผ่านช่องทางต่างๆฟรีโดยไม่มีค่าใช้จ่ายใดๆทั้งสิ้นในการลงข้อมูล</h4>
-                <Button asChild className="cursor-pointer" variant="default">
+              <div className="flex flex-col items-start max-lg:pt-4 max-lg:px-4 lg:pl-16">
+                <h4 className="text-white  text-[16px] lg:text-[18px] font-bold">เปลี่ยนลานกางเต็นท์ของคุณ ให้เป็นจุดหมายใหม่ของนักเดินทาง</h4>
+                <p className="text-white  font-medium text-[14px] lg:text-[16px] mt-2">สำหรับเจ้าของธุรกิจลที่สนใจลงข้อมูลเกี่ยวกับที่พักของท่านผ่านเว็บแคมป์หมูแคมป์หมี เพื่อนำหน้าเพจไปใช้โปรโมทผ่านช่องทางต่างๆฟรีโดยไม่มีค่าใช้จ่ายใดๆทั้งสิ้นในการลงข้อมูล</p>
+                <Button asChild className="cursor-pointer mt-4" variant="default">
                   <Link href="/contact">
                     ติดต่อลงข้อมูล
                   </Link>
