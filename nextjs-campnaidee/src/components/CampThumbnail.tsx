@@ -44,7 +44,7 @@ export default function CampRecommend({ posts, showTitle = true }: CampRecommend
                   <h3 className="max-lg:text-sm text-md font-semibold line-clamp-1">{post.title}</h3>
                   {post.otherBenefits?.priceOfStay && (
                     <p className="text-sm text-gray-700 dark:text-gray-200">
-                      {post.otherBenefits.priceOfStay} บาท / 1 ท่าน
+                      หัวละ {post.otherBenefits.priceOfStay} บาท / คืน
                     </p>
                   )}
                 </div>

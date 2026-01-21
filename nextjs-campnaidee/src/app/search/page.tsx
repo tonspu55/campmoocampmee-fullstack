@@ -95,7 +95,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         address.province match "${province}*" ||
         address.province match "*${province}*"
       )
-    ]| order(publishedAt desc){_id, title, address, thumbnail, slug, tags}`;
+    ]| order(publishedAt desc){_id, title, address, thumbnail, slug, tags, otherBenefits}`;
 
     const allMatchingPosts = await client.fetch<SanityDocument[]>(ALL_POSTS_QUERY, {}, options);
 
