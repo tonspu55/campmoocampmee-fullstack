@@ -12,7 +12,7 @@ const POSTS_QUERY = `*[
   && !(_id in path("drafts.**"))
   && defined(slug.current)
   && "recommend" in tags
-]| order(publishedAt desc)[0...40]{_id, title, address, thumbnail, slug, tags}`;
+]| order(publishedAt desc)[0...40]{_id, title, address, thumbnail, slug, tags, otherBenefits}`;
 
 
 const options = { next: { revalidate: 300 } };
