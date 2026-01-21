@@ -20,7 +20,7 @@ const urlFor = (source: SanityImageSource) =>
 export default function CampRecommend({ posts, showTitle = true }: CampRecommendProps) {
   return (
     <>
-      {showTitle && <h1 className="text-2xl font-bold mb-4">แคมป์ทั้งหมด</h1>}
+      {showTitle && <h2 className="text-2xl font-bold mb-4">แคมป์ทั้งหมด</h2>}
       <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-4">
         {posts.map((post) => {
           const postImageUrl = post.thumbnail
