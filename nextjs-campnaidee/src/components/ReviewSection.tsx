@@ -191,7 +191,7 @@ export default function ReviewSection({ postId }: ReviewSectionProps) {
       <div className="p-4 lg:p-6 rounded-lg border border-gray-200 dark:border-primary">
         {!session ? (
           <div className="text-center py-8">
-            <p className="text-gray-600 mb-4">กรุณาเข้าสู่ระบบเพื่อเขียนรีวิว</p>
+            <p className="text-gray-700 dark:text-gray-200 mb-4">กรุณาเข้าสู่ระบบเพื่อเขียนรีวิว</p>
             <div className="flex flex-col items-center">
               <Button
                 onClick={() => signIn("google", { callbackUrl: window.location.href })}

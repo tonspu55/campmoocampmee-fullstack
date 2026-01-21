@@ -174,7 +174,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             <h4 className="text-lg font-bold">
               ลานกางเต็นท์ในจังหวัด {province}
             </h4>
-            <p className="text-gray-600">
+            <p className="text-gray-700 dark:text-gray-200">
               พบทั้งหมด {filteredCount} ลานกางเต็นท์
             </p>
           </>
@@ -183,7 +183,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         {!province && (
           <div className="mb-4">
             <h4 className="text-lg font-bold">ค้นหาทั้งหมด</h4>
-            <p className="text-gray-600">
+            <p className="text-gray-700 dark:text-gray-200">
               พบทั้งหมด {filteredCount} แคมป์
             </p>
           </div>
