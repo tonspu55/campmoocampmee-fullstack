@@ -5,7 +5,7 @@ export type GalleryItem = {
   alt?: string | null;
   // สำหรับ video embed
   embedCode?: string | null;
-  platform?: "youtube" | null;
+  platform?: "youtube" | string | null;
   _type?: "image" | "video";
   title?: string | null;
 };
@@ -17,13 +17,17 @@ export interface TabGalleryProps {
   slug?: string;
 }
 
-export interface SanityGalleryItem {
-  _type: "image" | "video" | "videoUrl";
+export interface SanityImageItem {
+  _type: "image";
   asset?: { url: string };
   category?: string;
   alt?: string;
-  embedCode?: string;
-  platform?: string;
+}
+
+export interface SanityVideoItem {
+  _type: "videoUrl";
   url?: string;
+  platform?: string;
+  category?: string;
   title?: string;
 }

@@ -178,8 +178,8 @@ const TabGallery = ({ dataGallery, initialImageIndex, onTabChange, slug }: TabGa
       {/* Tabs */}
       <div
         ref={tabsRef}
-        className={`flex flex-wrap gap-2 py-4 transition-all duration-200 z-10 bg-white dark:bg-[var(--background)]  ${isFixed
-          ? 'fixed top-0 left-0 right-0 max-lg:px-2  py-4 container mx-auto max-w-[884px]'
+        className={`flex gap-2 py-4 transition-all duration-200 z-10 bg-white dark:bg-background overflow-x-auto scrollbar-hide ${isFixed
+          ? 'fixed top-0 left-0 right-0 max-lg:px-2 py-4 container mx-auto max-w-221'
           : 'relative'
           }`}
       >
@@ -196,7 +196,7 @@ const TabGallery = ({ dataGallery, initialImageIndex, onTabChange, slug }: TabGa
           <Button
             key={category}
             onClick={() => handleTabClick(category)}
-            className={`px-4 py-2 cursor-pointer ${activeTab === category
+            className={`px-4 py-2 cursor-pointer shrink-0 ${activeTab === category
               ? "primary"
               : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}

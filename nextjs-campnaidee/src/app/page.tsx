@@ -1,7 +1,8 @@
+import { Suspense } from "react";
 import { type SanityDocument } from "next-sanity";
 import { client } from "@/sanity/client";
 import HeroBanner from "@/components/HeroBanner";
-import CampThumbnail from "@/components/CampThumbnail";
+import CampThumbnail, { CampThumbnailSkeleton } from "@/components/CampThumbnail";
 import Link from "next/link";
 import styles from "@/app/homepage.module.css";
 import { Button } from "@/components/ui/button";
@@ -17,11 +18,9 @@ const POSTS_QUERY = `*[
 
 const options = { next: { revalidate: 300 } };
 
-export default async function IndexPage() {
+// Async component for fetching and rendering posts
+async function CampList() {
   const posts = await client.fetch<SanityDocument[]>(POSTS_QUERY, {}, options);
-
-  // console.log("Fetched address:", posts.map(post => post.address));
-
 
   // สร้าง seed จาก timestamp ทุก 300 วินาที
   const threeHundredSecondInterval = Math.floor(Date.now() / (300 * 1000));
@@ -54,13 +53,20 @@ export default async function IndexPage() {
 
   const shuffledPosts = shufflePosts(posts, threeHundredSecondInterval);
 
+  return <CampThumbnail posts={shuffledPosts} />;
+}
+
+export default function IndexPage() {
   return (
     <main className="pb-6 lg:pb-10">
       <div className="flex relative h-80 md:h-125 flex-col">
         <HeroBanner />
       </div>
       <div className="container mx-auto px-2 max-w-6xl pt-6 lg:pt-10">
-        <CampThumbnail posts={shuffledPosts} />
+        <h2 className="text-2xl font-bold mb-4">แคมป์ทั้งหมด</h2>
+        <Suspense fallback={<CampThumbnailSkeleton count={4} />}>
+          <CampList />
+        </Suspense>
         <div className={`${styles.contactBg} rounded-[20px] mt-6 lg:mt-10 flex flex-col h-67.5!  lg:h-100!`}>
           <div className="flex flex-col items-start justify-start lg:justify-center h-full">
             <div className="w-[80%] lg:w-[50%]">

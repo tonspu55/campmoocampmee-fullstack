@@ -16,17 +16,19 @@ const POST_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && slug.cur
   ...,
   gallery[]{
     _type,
-    // สำหรับ image
     asset->{
       _id,
       url
     },
     category,
-    alt,
-    // สำหรับ videoUrl
+    alt
+  },
+  videos[]{
+    _type,
     url,
-    title,
-    platform
+    platform,
+    category,
+    title
   }
 }`;
 
@@ -44,14 +46,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 const GalleryPage = async ({ params }: PageProps) => {
   const post = await client.fetch<SanityDocument>(POST_QUERY, await params, options);
 
-  // แปลงข้อมูล gallery รวมทั้งรูปภาพและวิดีโอ
+  // ดึงข้อมูล gallery (รูปภาพ) และ videos แยกกัน
   const rawGalleryData = post.gallery || [];
+  const rawVideosData = post.videos || [];
 
-  // แปลงข้อมูลสำหรับ TabGallery (รองรับทั้งรูปและวิดีโอ)
-  const tabGalleryData = transformGalleryData(rawGalleryData).filter(Boolean);
-
-  console.log('Gallery Page - Raw Data:', rawGalleryData);
-  console.log('Gallery Page - Tab Gallery Data:', tabGalleryData);
+  // แปลงข้อมูลสำหรับ TabGallery (รวม gallery และ videos)
+  const tabGalleryData = transformGalleryData(rawGalleryData, rawVideosData).filter(Boolean);
 
   return (
     <div className="container mx-auto  max-w-225 py-6 md:py-10  px-2">

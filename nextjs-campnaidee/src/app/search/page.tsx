@@ -1,6 +1,7 @@
+import { Suspense } from "react";
 import { type SanityDocument } from "next-sanity";
 import { client } from "@/sanity/client";
-import CampThumbnail from "@/components/CampThumbnail";
+import CampThumbnail, { CampThumbnailSkeleton } from "@/components/CampThumbnail";
 import type { Metadata } from "next";
 import {
   Pagination,
@@ -11,6 +12,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface SearchPageProps {
   searchParams: Promise<{
@@ -28,9 +30,10 @@ export async function generateMetadata({ searchParams }: SearchPageProps): Promi
   };
 }
 
-export default async function SearchPage({ searchParams }: SearchPageProps) {
-  const { province, page } = await searchParams;
+const options = { next: { revalidate: 300 } };
 
+// Async component for fetching and rendering search results
+async function SearchResults({ province, page }: { province?: string; page?: string }) {
   // Pagination settings
   const itemsPerPage = 10;
   const currentPage = parseInt(page || '1', 10);
@@ -71,8 +74,6 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         && !(_id in path("drafts.**"))
         && defined(slug.current)
       ]| order(publishedAt desc)[${offset}...${offset + itemsPerPage}]{_id, title, address, thumbnail, slug, tags}`;
-
-  const options = { next: { revalidate: 300 } };
 
   // ดึงข้อมูลทั้งหมดและข้อมูลสำหรับหน้าปัจจุบัน
   const [totalCount, allPosts] = await Promise.all([
@@ -120,15 +121,6 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const hasNextPage = currentPage < totalPages;
   const hasPrevPage = currentPage > 1;
 
-  // Debug log
-  // console.log("Search province:", province);
-  // console.log("Search query:", SEARCH_QUERY);
-  // console.log("Found posts (after filtering):", posts.length);
-  // console.log("Posts addresses:", posts.map(post => ({
-  //   title: post.title,
-  //   province: post.address?.province
-  // })));
-
   // สร้าง URL สำหรับ pagination
   const createPageUrl = (pageNumber: number) => {
     const params = new URLSearchParams();
@@ -167,80 +159,105 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   };
 
   return (
+    <>
+      {province && (
+        <>
+          <h4 className="text-lg font-bold">
+            ลานกางเต็นท์ในจังหวัด {province}
+          </h4>
+          <p className="text-gray-700 dark:text-gray-200">
+            พบทั้งหมด {filteredCount} ลานกางเต็นท์
+          </p>
+        </>
+      )}
+
+      {!province && (
+        <div className="mb-4">
+          <h4 className="text-lg font-bold">ค้นหาทั้งหมด</h4>
+          <p className="text-gray-700 dark:text-gray-200">
+            พบทั้งหมด {filteredCount} แคมป์
+          </p>
+        </div>
+      )}
+
+      {posts.length > 0 ? (
+        <>
+          <div className="mt-4">
+            <CampThumbnail posts={posts} />
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="mt-8 flex justify-center">
+              <Pagination>
+                <PaginationContent>
+                  {hasPrevPage && (
+                    <PaginationItem>
+                      <PaginationPrevious href={createPageUrl(currentPage - 1)} />
+                    </PaginationItem>
+                  )}
+
+                  {getPaginationNumbers().map((page, index) => (
+                    <PaginationItem key={index}>
+                      {page === '...' ? (
+                        <PaginationEllipsis />
+                      ) : (
+                        <PaginationLink
+                          href={createPageUrl(Number(page))}
+                          isActive={currentPage === page}
+                        >
+                          {page}
+                        </PaginationLink>
+                      )}
+                    </PaginationItem>
+                  ))}
+
+                  {hasNextPage && (
+                    <PaginationItem >
+                      <PaginationNext href={createPageUrl(currentPage + 1)} />
+                    </PaginationItem>
+                  )}
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
+        </>
+      ) : (
+        <div className="text-center py-10">
+          <p className="text-gray-500 text-lg">
+            {province
+              ? `ไม่พบแคมป์ในจังหวัด ${province}`
+              : "ไม่พบข้อมูลแคมป์"
+            }
+          </p>
+        </div>
+      )}
+    </>
+  );
+}
+
+// Skeleton component for search results
+function SearchResultsSkeleton() {
+  return (
+    <>
+      {/* <Skeleton className="h-6 w-64 mb-2" />
+      <Skeleton className="h-5 w-40 mb-4" /> */}
+      <div className="mt-4">
+        <CampThumbnailSkeleton count={4} />
+      </div>
+    </>
+  );
+}
+
+export default async function SearchPage({ searchParams }: SearchPageProps) {
+  const { province, page } = await searchParams;
+
+  return (
     <main className="py-8 lg:py-10 mt-11.25 lg:mt-15">
       <div className="container mx-auto max-w-6xl px-2">
-        {province && (
-          <>
-            <h4 className="text-lg font-bold">
-              ลานกางเต็นท์ในจังหวัด {province}
-            </h4>
-            <p className="text-gray-700 dark:text-gray-200">
-              พบทั้งหมด {filteredCount} ลานกางเต็นท์
-            </p>
-          </>
-        )}
-
-        {!province && (
-          <div className="mb-4">
-            <h4 className="text-lg font-bold">ค้นหาทั้งหมด</h4>
-            <p className="text-gray-700 dark:text-gray-200">
-              พบทั้งหมด {filteredCount} แคมป์
-            </p>
-          </div>
-        )}
-
-        {posts.length > 0 ? (
-          <>
-            <div className="mt-4">
-              <CampThumbnail posts={posts} showTitle={false} />
-            </div>
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="mt-8 flex justify-center">
-                <Pagination>
-                  <PaginationContent>
-                    {hasPrevPage && (
-                      <PaginationItem>
-                        <PaginationPrevious href={createPageUrl(currentPage - 1)} />
-                      </PaginationItem>
-                    )}
-
-                    {getPaginationNumbers().map((page, index) => (
-                      <PaginationItem key={index}>
-                        {page === '...' ? (
-                          <PaginationEllipsis />
-                        ) : (
-                          <PaginationLink
-                            href={createPageUrl(Number(page))}
-                            isActive={currentPage === page}
-                          >
-                            {page}
-                          </PaginationLink>
-                        )}
-                      </PaginationItem>
-                    ))}
-
-                    {hasNextPage && (
-                      <PaginationItem >
-                        <PaginationNext href={createPageUrl(currentPage + 1)} />
-                      </PaginationItem>
-                    )}
-                  </PaginationContent>
-                </Pagination>
-              </div>
-            )}
-          </>
-        ) : (
-          <div className="text-center py-10">
-            <p className="text-gray-500 text-lg">
-              {province
-                ? `ไม่พบแคมป์ในจังหวัด ${province}`
-                : "ไม่พบข้อมูลแคมป์"
-              }
-            </p>
-          </div>
-        )}
+        <Suspense fallback={<SearchResultsSkeleton />}>
+          <SearchResults province={province} page={page} />
+        </Suspense>
       </div>
     </main>
   );

@@ -1,5 +1,5 @@
-import SignInForm from '@/components/SignInForm'
+import SignInFormForLandOwner from '@/components/SignInFormForLandOwner'
 
 export default function SignIn() {
-  return <SignInForm />
+  return <SignInFormForLandOwner />
 }
