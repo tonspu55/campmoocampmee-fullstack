@@ -18,31 +18,38 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-interface SanityGalleryRawItem {
-  _type: 'image' | 'videoUrl';
+interface SanityImageItem {
+  _type: 'image';
   asset?: { _id: string; url: string };
   category?: string;
   alt?: string;
+}
+
+interface SanityVideoItem {
+  _type: 'videoUrl';
   url?: string;
   platform?: string;
   title?: string;
+  category?: string;
 }
 
 const POST_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && slug.current == $slug][0]{
   ...,
   gallery[]{
     _type,
-    // สำหรับ image
     asset->{
       _id,
       url
     },
     category,
-    alt,
-    // สำหรับ videoUrl
+    alt
+  },
+  videos[]{
+    _type,
     url,
-    title,
-    platform
+    platform,
+    category,
+    title
   }
 }`;
 
@@ -88,15 +95,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function PostPage({ params }: PageProps) {
   const post = await client.fetch<SanityDocument>(POST_QUERY, await params, options);
 
-  // แปลงข้อมูล gallery รวมทั้งรูปภาพและวิดีโอ
-  const rawGalleryData: SanityGalleryRawItem[] = post.gallery || [];
-
-  // แปลงข้อมูลสำหรับ TabGallery (รองรับทั้งรูปและวิดีโอ)
-  // const tabGalleryData = transformGalleryData(rawGalleryData);
+  // ดึงข้อมูล gallery (รูปภาพ) และ videos แยกกัน
+  const rawGalleryData: SanityImageItem[] = post.gallery || [];
+  const rawVideosData: SanityVideoItem[] = post.videos || [];
 
   // สำหรับ ImageGallery (เฉพาะรูปภาพ)
   const ImageGalleryData = rawGalleryData
-    .filter((item): item is SanityGalleryRawItem & { _type: 'image'; asset: { url: string } } =>
+    .filter((item): item is SanityImageItem & { asset: { url: string } } =>
       item._type === 'image' && !!item.asset?.url
     )
     .map(item => {

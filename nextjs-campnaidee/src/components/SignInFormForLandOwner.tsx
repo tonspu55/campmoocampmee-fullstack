@@ -13,7 +13,7 @@ export default function SignInForm() {
     const checkSession = async () => {
       const session = await getSession()
       if (session) {
-        router.push('/')
+        router.push('/landowner')
       }
     }
     checkSession()
@@ -23,7 +23,7 @@ export default function SignInForm() {
     setLoading(true)
     try {
       await signIn('google', {
-        callbackUrl: '/',
+        callbackUrl: '/landowner',
         redirect: true,
       })
     } catch (error) {

@@ -34,7 +34,7 @@ export const processVideoUrl = (url: string, platform: string) => {
 export const createVideoIframe = (
   url: string,
   platform: string,
-  title?: string
+  title?: string,
 ) => {
   const processedUrl = processVideoUrl(url, platform);
   if (!processedUrl) return null;
@@ -58,57 +58,53 @@ export const createVideoIframe = (
 };
 
 // ฟังก์ชันแปลงข้อมูลจาก Sanity เป็นรูปแบบที่ TabGallery ใช้ได้
-interface SanityGalleryItem {
-  _type: "image" | "video" | "videoUrl";
+interface SanityImageItem {
+  _type: "image";
   asset?: { url: string };
   category?: string;
   alt?: string;
-  embedCode?: string;
-  platform?: string;
+}
+
+interface SanityVideoItem {
+  _type: "videoUrl";
   url?: string;
+  platform?: string;
+  category?: string;
   title?: string;
 }
 
-export const transformGalleryData = (sanityGallery: SanityGalleryItem[]) => {
-  return sanityGallery
-    .map((item) => {
-      // รูปภาพ
-      if (item._type === "image") {
-        return {
-          _type: "image",
-          url: item.asset?.url,
-          category: item.category,
-          alt: item.alt,
-        };
-      }
+export const transformGalleryData = (
+  galleryImages: SanityImageItem[],
+  videos: SanityVideoItem[] = [],
+) => {
+  // แปลงข้อมูลรูปภาพ
+  const imageItems = galleryImages.map((item) => {
+    if (item._type === "image" && item.asset?.url) {
+      return {
+        _type: "image" as const,
+        url: item.asset.url,
+        category: item.category || "วิว",
+        alt: item.alt,
+      };
+    }
+    return null;
+  });
 
-      // Video embed code (แบบเดิม)
-      if (item._type === "video" && item.embedCode) {
-        return {
-          _type: "video",
-          embedCode: item.embedCode,
-          platform: item.platform,
-          category: item.category || "วิดีโอ",
-        };
-      }
+  // แปลงข้อมูลวิดีโอ
+  const videoItems = videos.map((item) => {
+    if (item._type === "videoUrl" && item.url && item.platform) {
+      const embedCode = createVideoIframe(item.url, item.platform, item.title);
+      return {
+        _type: "video" as const,
+        embedCode: embedCode,
+        platform: item.platform,
+        category: item.category || "วิดีโอ",
+        title: item.title,
+      };
+    }
+    return null;
+  });
 
-      // Video URL (แบบใหม่)
-      if (item._type === "videoUrl" && item.url && item.platform) {
-        const embedCode = createVideoIframe(
-          item.url,
-          item.platform,
-          item.title
-        );
-        return {
-          _type: "video" as const,
-          embedCode: embedCode,
-          platform: item.platform,
-          category: item.category || "วิดีโอ",
-          title: item.title,
-        };
-      }
-
-      return null;
-    })
-    .filter(Boolean);
+  // รวมข้อมูลทั้งหมด
+  return [...imageItems, ...videoItems].filter(Boolean);
 };

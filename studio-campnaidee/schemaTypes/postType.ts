@@ -6,6 +6,12 @@ export const postType = defineType({
   type: 'document',
   fields: [
     defineField({
+      name: 'providerId',
+      title: 'Provider ID',
+      type: 'string',
+      description: 'ID ของเจ้าของลานจาก Google Provider (สำหรับการยืนยันสิทธิ์)',
+    }),
+    defineField({
       name: 'title',
       type: 'string',
       validation: (rule) => rule.required(),
@@ -73,21 +79,21 @@ export const postType = defineType({
     }),
     defineField({
       name: 'gallery',
-      title: 'Gallery',
+      title: 'Gallery (รูปภาพ)',
+      description: 'สามารถลากหลายรูปมาวางพร้อมกันได้ และสามารถลากเรียงลำดับรูปได้',
       type: 'array',
       of: [
         {
           type: 'image',
           options: {
             hotspot: true,
-            accept: 'image/*',
           },
           fields: [
             defineField({
               name: 'category',
               title: 'Category',
               type: 'string',
-              validation: (rule) => rule.required().error('กรุณาเลือกหมวดหมู่'),
+              initialValue: 'วิว',
               options: {
                 list: [
                   {title: 'วิว', value: 'วิว'},
@@ -97,7 +103,6 @@ export const postType = defineType({
                 ],
                 layout: 'dropdown',
               },
-              initialValue: 'วิว',
             }),
             defineField({
               name: 'alt',
@@ -105,7 +110,32 @@ export const postType = defineType({
               type: 'string',
             }),
           ],
+          preview: {
+            select: {
+              media: 'asset',
+              category: 'category',
+              alt: 'alt',
+            },
+            prepare({media, category, alt}) {
+              return {
+                title: category || 'วิว',
+                subtitle: alt || '',
+                media: media,
+              }
+            },
+          },
         },
+      ],
+      options: {
+        layout: 'grid',
+      },
+      validation: (Rule) => Rule.min(1).error('ต้องมีรูปภาพอย่างน้อย 1 รายการ'),
+    }),
+    defineField({
+      name: 'videos',
+      title: 'Videos (วิดีโอ)',
+      type: 'array',
+      of: [
         {
           type: 'object',
           name: 'videoUrl',
@@ -155,10 +185,6 @@ export const postType = defineType({
           },
         },
       ],
-      options: {
-        layout: 'grid',
-      },
-      validation: (Rule) => Rule.min(1).error('ต้องมีรูปภาพหรือวิดีโออย่างน้อย 1 รายการ'),
     }),
     defineField({
       name: 'body',
