@@ -7,6 +7,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import ConditionalLayout from "@/components/ConditionalLayout";
 import AuthProvider from "@/components/AuthProvider";
+import CookieConsent from "@/components/CookieConsent";
 
 const notoSansThai = Noto_Sans_Thai({
 
@@ -72,6 +73,7 @@ export default function RootLayout({
             </ConditionalLayout>
           </AuthProvider>
           <Toaster />
+          <CookieConsent />
         </ThemeProvider>
 
       </body>
