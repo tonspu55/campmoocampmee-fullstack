@@ -2,13 +2,19 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { client } from "@/sanity/client";
 
+// Disable static generation for this route
+export const dynamic = "force-dynamic";
+
 // ดึงข้อมูล post ทั้งหมดของเจ้าของลาน
 export async function GET() {
   try {
     const session = await getServerSession();
 
     if (!session?.user?.email) {
-      return NextResponse.json({ error: "กรุณาเข้าสู่ระบบ" }, { status: 401 });
+      return NextResponse.json(
+        { error: "กรุณาเข้าสู่ระบบ", posts: [], providerId: null },
+        { status: 401 },
+      );
     }
 
     // ดึง providerId จาก user
@@ -18,7 +24,10 @@ export async function GET() {
     );
 
     if (!userData?.providerId) {
-      return NextResponse.json({ error: "ไม่พบข้อมูลผู้ใช้" }, { status: 404 });
+      return NextResponse.json(
+        { error: "ไม่พบข้อมูลผู้ใช้", posts: [], providerId: null },
+        { status: 404 },
+      );
     }
 
     // ดึง posts ที่ providerId ตรงกัน
@@ -36,11 +45,19 @@ export async function GET() {
       { providerId: userData.providerId },
     );
 
-    return NextResponse.json({ posts });
+    return NextResponse.json(
+      { posts: posts || [], providerId: userData.providerId },
+      {
+        status: 200,
+        headers: {
+          "Cache-Control": "no-store, max-age=0",
+        },
+      },
+    );
   } catch (error) {
     console.error("Error fetching posts:", error);
     return NextResponse.json(
-      { error: "เกิดข้อผิดพลาดในการดึงข้อมูล" },
+      { error: "เกิดข้อผิดพลาดในการดึงข้อมูล", posts: [], providerId: null },
       { status: 500 },
     );
   }

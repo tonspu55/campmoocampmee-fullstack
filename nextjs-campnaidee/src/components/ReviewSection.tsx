@@ -252,7 +252,7 @@ export default function ReviewSection({ postId }: ReviewSectionProps) {
                 type="button"
                 variant="outline"
                 onClick={() => signOut({ callbackUrl: window.location.href })}
-                className="basis-1/2 cursor-pointer border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                className="basis-1/2 cursor-pointer border-primary text-primary dark:text-primary-foreground"
               >
                 ออกจากระบบ
               </Button>
