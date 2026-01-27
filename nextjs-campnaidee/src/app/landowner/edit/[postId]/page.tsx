@@ -8,7 +8,7 @@ export default async function EditPostPage({ params }: PageProps) {
   const { postId } = await params;
 
   return (
-    <main className="py-14 lg:py-18">
+    <main className="py-8 lg:py-10 mt-10 lg:mt-12">
       <EditPostForm postId={postId} />
     </main>
   );

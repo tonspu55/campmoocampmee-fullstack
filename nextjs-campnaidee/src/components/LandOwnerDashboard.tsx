@@ -4,10 +4,11 @@ import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link';
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { MapPin, ImageIcon, Video, Edit, LogOut } from 'lucide-react'
+import { MapPin, ImageIcon, Video, Tent } from 'lucide-react'
 import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { client } from "@/sanity/client";
@@ -39,6 +40,7 @@ export default function LandOwnerDashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [posts, setPosts] = useState<Post[]>([])
+  const [providerId, setProviderId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -53,10 +55,22 @@ export default function LandOwnerDashboard() {
     fetchPosts()
   }, [session, status, router])
 
-  const fetchPosts = async () => {
+  const fetchPosts = async (retryCount = 0) => {
+    const MAX_RETRIES = 2
+
     try {
       setLoading(true)
-      const response = await fetch('/api/landowner/posts')
+      setError(null)
+
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 15000) // 15 second timeout
+
+      const response = await fetch('/api/landowner/posts', {
+        signal: controller.signal,
+        cache: 'no-store',
+      })
+
+      clearTimeout(timeoutId)
 
       if (!response.ok) {
         const data = await response.json()
@@ -64,9 +78,21 @@ export default function LandOwnerDashboard() {
       }
 
       const data = await response.json()
-      setPosts(data.posts)
+      setPosts(data.posts || [])
+      setProviderId(data.providerId || null)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'เกิดข้อผิดพลาด')
+      // Retry on network errors
+      if (retryCount < MAX_RETRIES && err instanceof Error && (err.name === 'AbortError' || err.message.includes('fetch'))) {
+        console.log(`Retrying... (${retryCount + 1}/${MAX_RETRIES})`)
+        setTimeout(() => fetchPosts(retryCount + 1), 1000 * (retryCount + 1))
+        return
+      }
+
+      if (err instanceof Error && err.name === 'AbortError') {
+        setError('การเชื่อมต่อหมดเวลา กรุณาลองใหม่อีกครั้ง')
+      } else {
+        setError(err instanceof Error ? err.message : 'เกิดข้อผิดพลาด')
+      }
     } finally {
       setLoading(false)
     }
@@ -85,15 +111,15 @@ export default function LandOwnerDashboard() {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="container mx-auto max-w-6xl px-2 py-8">
-        <Skeleton className="h-24 w-full mb-6 rounded-lg" />
+      <div className="container mx-auto max-w-4xl px-2 ">
         <div className="mb-6">
           <Skeleton className="h-8 w-64 mb-2" />
           <Skeleton className="h-4 w-96" />
         </div>
+        <Skeleton className="h-24 w-full mb-6 rounded-lg" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[1, 2, 3].map((i) => (
-            <Card key={i} className="overflow-hidden">
+          {[1].map((i) => (
+            <Card key={i} className="overflow-hidden border-0 pt-0">
               <Skeleton className="h-48 w-full" />
               <CardHeader>
                 <Skeleton className="h-6 w-3/4 mb-2" />
@@ -108,8 +134,8 @@ export default function LandOwnerDashboard() {
 
   if (error) {
     return (
-      <div className="container mx-auto max-w-6xl px-2 py-8">
-        <Card className="border-destructive">
+      <div className="container mx-auto max-w-4xl px-2 ">
+        <Card className="border-0">
           <CardHeader>
             <CardTitle className="text-destructive">เกิดข้อผิดพลาด</CardTitle>
             <CardDescription>{error}</CardDescription>
@@ -120,11 +146,22 @@ export default function LandOwnerDashboard() {
   }
 
   return (
-    <div className="container mx-auto max-w-6xl px-2 py-8">
-      {/* User Info Section */}
-      <Card className="mb-6">
-        <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div className="container mx-auto max-w-4xl px-2 ">
+
+
+
+      <div className="mb-4 lg:mb-6">
+        <div className="flex flex-col">
+          <div className="flex flex-col">
+            <h1 className="text-xl  font-bold mb-2">
+              จัดการข้อมูลลานกางเต็นท์
+            </h1>
+            <p className="text-muted-foreground">
+              คุณสามารถแก้ไขข้อมูลลานกางเต็นท์ของคุณได้ที่นี่
+            </p>
+          </div>
+          {/* User Info Section */}
+          <div className="flex flex-row items-end  justify-between gap-2 mt-4 lg:mt-6">
             <div className="flex items-center gap-3">
               {session?.user?.image && (
                 <Image
@@ -136,42 +173,44 @@ export default function LandOwnerDashboard() {
                 />
               )}
               <div>
-                <p className="font-semibold text-lg">
+                <p className="font-semibold text-md">
                   {session?.user?.name || 'เจ้าของลาน'}
                 </p>
                 <p className="text-sm text-muted-foreground">
                   {session?.user?.email}
                 </p>
+                {providerId && posts.length > 0 ? (
+                  <span className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 text-xs font-medium bg-primary/10 text-primary rounded-full dark:bg-white">
+                    <MapPin className="w-3 h-3" />
+                    เจ้าของลาน
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 text-xs font-medium bg-secondary text-secondary-foreground rounded-full">
+                    <Tent className="w-3 h-3" />
+                    นักท่องเที่ยว
+                  </span>
+                )}
               </div>
             </div>
             <Button
               onClick={handleSignOut}
               variant="outline"
               size="sm"
-              className="gap-2"
+              className="border-primary text-primary dark:text-primary-foreground"
             >
-              <LogOut className="w-4 h-4" />
               ออกจากระบบ
             </Button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
 
-      <div className="mb-6">
-        <h1 className="text-xl  font-bold mb-2">
-          จัดการข้อมูลลานกางเต็นท์
-        </h1>
-        <p className="text-muted-foreground">
-          คุณสามารถแก้ไขข้อมูลลานกางเต็นท์ของคุณได้ที่นี่
-        </p>
       </div>
 
       {posts.length === 0 ? (
-        <Card>
+        <Card className='border-0'>
           <CardHeader>
             <CardTitle>ไม่พบข้อมูลลาน</CardTitle>
             <CardDescription>
-              คุณยังไม่มีลานกางเต็นท์ที่เชื่อมโยงกับบัญชีของคุณ
+              คุณยังไม่มีลานกางเต็นท์ที่เชื่อมโยงกับบัญชีของคุณ หากคุณต้องการยืนยันว่าเป็นเจ้าของลานกรุณาติดต่อทีมงานที่เพจ <Link href="https://www.facebook.com/profile.php?id=100080127966873" target="_blank" className="text-primary underline">แคมป์หมูแคมป์หมี</Link> เพื่อยืนยันตัวตน
             </CardDescription>
           </CardHeader>
         </Card>
@@ -228,10 +267,10 @@ export default function LandOwnerDashboard() {
                 <CardContent className="pt-0">
                   <Button
                     onClick={() => handleEdit(post._id)}
-                    className="w-full gap-2"
+                    className="w-full"
                     variant="default"
                   >
-                    <Edit className="w-4 h-4" />
+
                     แก้ไขข้อมูล
                   </Button>
                 </CardContent>

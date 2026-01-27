@@ -67,7 +67,7 @@ export default function IndexPage() {
         <Suspense fallback={<CampThumbnailSkeleton count={4} />}>
           <CampList />
         </Suspense>
-        <div className={`${styles.contactBg} rounded-[20px] mt-6 lg:mt-10 flex flex-col h-67.5!  lg:h-100!`}>
+        <div className={`${styles.contactBg} rounded-[20px] mt-6 lg:mt-8 flex flex-col h-67.5!  lg:h-100!`}>
           <div className="flex flex-col items-start justify-start lg:justify-center h-full">
             <div className="w-[80%] lg:w-[50%]">
               <div className="flex flex-col items-start max-lg:pt-4 max-lg:px-4 lg:pl-16">

@@ -21,6 +21,7 @@ interface NavLinkMobileProps {
 
 const NavLink = ({ path, children }: NavLinkProps) => {
   const pathname = usePathname();
+  // Zustand store to check scroll state
   const isScrolled = useScrollStore((state) => state.isScrolled);
   const [mounted, setMounted] = useState(false);
   // const isExternal = path.startsWith('http://') || path.startsWith('https://') || path.startsWith('www.');
@@ -137,7 +138,7 @@ const Header = () => {
       return [
         "hidden",
         "md:flex",
-        "md:flex-1",
+        "md:flex-row",
         "md:items-center",
         "md:justify-center",
         "md:gap-x-8",
@@ -170,6 +171,12 @@ const Header = () => {
                   >
                     ติดต่อลงข้อมูล
                   </NavLinkMobile>
+                  <NavLinkMobile
+                    onCloseNav={() => setIsOpen(false)}
+                    path="/landowner"
+                  >
+                    สำหรับเจ้าของลาน
+                  </NavLinkMobile>
                 </div>
                 <div className="flex flex-col items-end gap-2">
 
@@ -181,6 +188,7 @@ const Header = () => {
             <>
               <NavLink path="/">หน้าหลัก</NavLink>
               <NavLink path="/contact">ติดต่อลงข้อมูล</NavLink>
+              <NavLink path="/landowner">สำหรับเจ้าของลาน</NavLink>
             </>
           )}
         </div>

@@ -432,7 +432,7 @@ export default function EditPostForm({ postId }: { postId: string }) {
 
   if (status === 'loading' || loading) {
     return (
-      <div className="container mx-auto max-w-4xl px-2 py-8">
+      <div className="container mx-auto max-w-4xl px-2 ">
         <Skeleton className="h-8 w-64 mb-6" />
         <div className="space-y-6">
           {[1, 2, 3, 4, 5].map((i) => (
@@ -454,8 +454,8 @@ export default function EditPostForm({ postId }: { postId: string }) {
 
   if (error || !post) {
     return (
-      <div className="container mx-auto max-w-4xl px-2 py-8">
-        <Card className="border-destructive">
+      <div className="container mx-auto max-w-4xl px-2 ">
+        <Card className="border-0">
           <CardHeader>
             <CardTitle className="text-destructive">เกิดข้อผิดพลาด</CardTitle>
             <CardDescription>{error || 'ไม่พบข้อมูล'}</CardDescription>
@@ -472,7 +472,7 @@ export default function EditPostForm({ postId }: { postId: string }) {
   }
 
   return (
-    <div className="container mx-auto max-w-4xl px-2 py-8">
+    <div className="container mx-auto max-w-4xl px-2 ">
       <div className="flex items-center gap-4 mb-6">
         <Button
           onClick={() => router.push('/landowner')}
@@ -746,6 +746,7 @@ export default function EditPostForm({ postId }: { postId: string }) {
             <div className="space-y-2">
               <Label htmlFor="googleMap">Google Map</Label>
               <Input
+                disabled
                 id="googleMap"
                 type="url"
                 value={socialLinks.googleMap}
@@ -794,7 +795,7 @@ export default function EditPostForm({ postId }: { postId: string }) {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="priceOfStay">ราคาค่าที่พัก</Label>
+              <Label htmlFor="priceOfStay">ราคาที่พัก</Label>
               <Input
                 id="priceOfStay"
                 value={benefits.priceOfStay}
@@ -808,7 +809,7 @@ export default function EditPostForm({ postId }: { postId: string }) {
                 id="cabin"
                 value={benefits.cabin}
                 onChange={(e) => setBenefits({ ...benefits, cabin: e.target.value })}
-                placeholder="เช่น มี (500 บาท/คืน)"
+                placeholder="เช่น เครื่องนอน พัดลม เต็นท์"
               />
             </div>
             <div className="space-y-2">
@@ -835,11 +836,11 @@ export default function EditPostForm({ postId }: { postId: string }) {
                 id="petFriendly"
                 value={benefits.petFriendly}
                 onChange={(e) => setBenefits({ ...benefits, petFriendly: e.target.value })}
-                placeholder="เช่น อนุญาต"
+                placeholder="เช่น อนุญาตให้นำสัตว์เลี้ยงเข้าพัก"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="nature">ธรรมชาติ</Label>
+              <Label htmlFor="nature">วิว</Label>
               <Textarea
                 id="nature"
                 value={benefits.nature}
@@ -849,7 +850,7 @@ export default function EditPostForm({ postId }: { postId: string }) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="noNoise">ความเงียบ</Label>
+              <Label htmlFor="noNoise">เวลาที่ต้องงดส่งเสียงดัง</Label>
               <Input
                 id="noNoise"
                 value={benefits.noNoise}

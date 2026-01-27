@@ -26,6 +26,7 @@ interface ImageGalleryProps {
 const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const displayImages = ImageGallery.slice(0, 5);
+  // Zustand store to set selected image index
   const setSelectedImageIndex = useGalleryStore((state) => state.setSelectedImageIndex);
   const router = useRouter();
 
@@ -138,7 +139,7 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
       {/* Mobile View - Swiper */}
       <div className="md:hidden">
         <Swiper
-          spaceBetween={10}
+          spaceBetween={0}
           slidesPerView={1}
           className="h-75 [&_.swiper-pagination]:bottom-6! [&_.swiper-pagination-bullet-active]:bg-white! [&_.swiper-pagination-bullet]:bg-white! [&_.swiper-pagination-bullet]:opacity-100!"
           modules={[Pagination]}
