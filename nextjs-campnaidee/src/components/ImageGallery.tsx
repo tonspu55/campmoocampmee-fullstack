@@ -140,7 +140,7 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
         <Swiper
           spaceBetween={10}
           slidesPerView={1}
-          className="h-[300px] [&_.swiper-pagination-bullet-active]:bg-white! [&_.swiper-pagination-bullet]:bg-white! [&_.swiper-pagination-bullet]:opacity-100!"
+          className="h-75 [&_.swiper-pagination]:bottom-6! [&_.swiper-pagination-bullet-active]:bg-white! [&_.swiper-pagination-bullet]:bg-white! [&_.swiper-pagination-bullet]:opacity-100!"
           modules={[Pagination]}
           pagination={{
             dynamicBullets: true,
@@ -159,7 +159,7 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
                   className="object-cover "
                 />
                 {index === 4 && (
-                  <div className="absolute bottom-0 right-0">
+                  <div className="absolute bottom-4 md:bottom-0 right-0">
                     <div className="flex flex-col items-end pr-2 ">
                       <Button
                         onClick={(e) => {

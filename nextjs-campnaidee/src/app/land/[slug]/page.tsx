@@ -3,6 +3,7 @@ import { PortableText, type SanityDocument } from "next-sanity";
 import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import ImageGallery from "@/components/ImageGallery";
+import MobileParallaxGallery from "@/components/MobileParallaxGallery";
 import ContactSocialLink from "@/components/ContactSocialLink";
 import type { Metadata } from "next";
 import styles from "./style.module.css";
@@ -25,13 +26,7 @@ interface SanityImageItem {
   alt?: string;
 }
 
-interface SanityVideoItem {
-  _type: 'videoUrl';
-  url?: string;
-  platform?: string;
-  title?: string;
-  category?: string;
-}
+
 
 const POST_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && slug.current == $slug][0]{
   ...,
@@ -97,7 +92,6 @@ export default async function PostPage({ params }: PageProps) {
 
   // ดึงข้อมูล gallery (รูปภาพ) และ videos แยกกัน
   const rawGalleryData: SanityImageItem[] = post.gallery || [];
-  const rawVideosData: SanityVideoItem[] = post.videos || [];
 
   // สำหรับ ImageGallery (เฉพาะรูปภาพ)
   const ImageGalleryData = rawGalleryData
@@ -118,35 +112,45 @@ export default async function PostPage({ params }: PageProps) {
   // console.log('Image Gallery Data:', ImageGalleryData);
 
   return (
-    <main className="container mx-auto max-w-6xl  mt-15 pb-6 lg:pb-10">
-      {ImageGalleryData && <ImageGallery ImageGallery={ImageGalleryData} slug={(await params).slug} />}
-      <div className="flex flex-col lg:flex-row gap-4 mt-4 lg:mt-6 items-start">
-        <div className="basis-1/1 px-2 lg:pr-0 lg:pl-2 w-full">
-          <div className="flex flex-row gap-4 justify-between items-start mb-4 lg:mb-6">
-            <div className="flex flex-col">
-              <h1 className="text-2xl font-bold ">{post.title}</h1>
-              <InfoAddress InfoAddress={post.address} />
-            </div>
-            <ShareToSocial title={post.title} slug={(await params).slug} />
-          </div>
-          <OtherBenefits otherBenefits={post.otherBenefits} />
-          <div className="text-description max-md:text-sm">
-            <ExpandableContent maxHeight={200}>
-              {Array.isArray(post.body) && <PortableText value={post.body} />}
-            </ExpandableContent>
-          </div>
+    <main className="container mx-auto max-w-6xl mt-15 pb-6 lg:pb-10">
+      {/* Mobile: Fixed ImageGallery with parallax effect */}
+      {ImageGalleryData && <MobileParallaxGallery ImageGallery={ImageGalleryData} slug={(await params).slug} />}
 
-          <div className={`lg:hidden mt-4 `}>
-            <ContactSocialLink socialContactLinks={post.socialContactLinks} />
-          </div>
-        </div>
-        <div className="px-2 max-lg:w-full basis-1/1 lg:pl-0  lg:basis-1/3 max-lg:pt-4 max-lg:hidden">
-          <div className={`p-4 ${styles.contactInfo} dark:border-primary dark:border`}>
-            <ContactSocialLink socialContactLinks={post.socialContactLinks} />
-          </div>
-        </div>
+      {/* Desktop: Normal ImageGallery */}
+      <div className="hidden md:block">
+        {ImageGalleryData && <ImageGallery ImageGallery={ImageGalleryData} slug={(await params).slug} />}
       </div>
-      <ReviewSection postId={post._id} />
+
+      {/* Content section - scrolls over ImageGallery on mobile */}
+      <div className="relative z-10 bg-background md:bg-transparent rounded-t-2xl md:rounded-none -mt-4 md:mt-0 pt-4 md:pt-0">
+        <div className="flex flex-col lg:flex-row gap-4 mt-0 md:mt-4 lg:mt-6 items-start">
+          <div className="basis-1/1 px-2 lg:pr-0 lg:pl-2 w-full">
+            <div className="flex flex-row gap-4 justify-between items-start mb-4 lg:mb-6">
+              <div className="flex flex-col">
+                <h1 className="text-2xl font-bold ">{post.title}</h1>
+                <InfoAddress InfoAddress={post.address} />
+              </div>
+              <ShareToSocial title={post.title} slug={(await params).slug} />
+            </div>
+            <OtherBenefits otherBenefits={post.otherBenefits} />
+            <div className="text-description max-md:text-sm">
+              <ExpandableContent maxHeight={200}>
+                {Array.isArray(post.body) && <PortableText value={post.body} />}
+              </ExpandableContent>
+            </div>
+
+            <div className={`lg:hidden mt-4 `}>
+              <ContactSocialLink socialContactLinks={post.socialContactLinks} />
+            </div>
+          </div>
+          <div className="px-2 max-lg:w-full basis-1/1 lg:pl-0  lg:basis-1/3 max-lg:pt-4 max-lg:hidden">
+            <div className={`p-4 ${styles.contactInfo} dark:border-primary dark:border`}>
+              <ContactSocialLink socialContactLinks={post.socialContactLinks} />
+            </div>
+          </div>
+        </div>
+        <ReviewSection postId={post._id} />
+      </div>
       <div className="end-page-detection lg:hidden"></div>
       <NavigationMobile socialContactLinks={post.socialContactLinks} />
     </main>
