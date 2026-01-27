@@ -36,9 +36,11 @@ const Footer = () => {
                 <Link href="/" className="text-md max-lg:text-sm hover:opacity-70">
                   หน้าหลัก
                 </Link>
-
                 <Link href="/contact" className="text-md max-lg:text-sm hover:opacity-70">
                   ติดต่อลงข้อมูล
+                </Link>
+                <Link href="/landowner" className="text-md max-lg:text-sm hover:opacity-70">
+                  สำหรับเจ้าของลาน
                 </Link>
               </nav>
             </div>
