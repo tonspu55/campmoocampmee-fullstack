@@ -125,7 +125,7 @@ export default function ReviewSection({ postId }: ReviewSectionProps) {
   };
 
   return (
-    <div className="my-8 space-y-6 max-lg:px-2">
+    <div className="mt-8 space-y-6 px-2">
       {/* สรุปคะแนนรีวิว */}
       <h3 className="text-xl font-semibold mb-4">รีวิวจากผู้เข้าพัก</h3>
       <div className=" p-6 rounded-lg border border-gray-200 dark:border-primary">
