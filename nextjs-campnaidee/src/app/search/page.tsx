@@ -24,17 +24,18 @@ export async function generateMetadata({ searchParams }: SearchPageProps): Promi
   const { province, } = await searchParams;
 
   return {
-    title: `ค้นหาลานกางเต็นท์ในจังหวัด${province} `,
-    description: "ค้นหาและจองลานกางเต็นท์ ผ่านข้อมูลจากเจ้าของที่พักที่ถูกต้อง แผนที่-เส้นทาง อัพเดต 2026 ",
+    title: `ค้นหาลานกางเต็นท์ ${province} `,
+    description: "ค้นหาลานกางเต็นท์ ผ่านข้อมูลจากเจ้าของที่พักที่ถูกต้อง แผนที่-เส้นทาง อัพเดต 2026 ",
   };
 }
-
+//  ตัวเลือกสำหรับการดึงข้อมูลจาก Sanity
 const options = { next: { revalidate: 300 } };
 
 // Async component for fetching and rendering search results
 async function SearchResults({ province, page }: { province?: string; page?: string }) {
   // Pagination settings
   const itemsPerPage = 10;
+  // Calculate current page and offset
   const currentPage = parseInt(page || '1', 10);
   const offset = (currentPage - 1) * itemsPerPage;
 

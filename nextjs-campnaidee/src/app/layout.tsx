@@ -15,11 +15,11 @@ const notoSansThai = Noto_Sans_Thai({
 });
 
 export const metadata: Metadata = {
-  title: "แคมป์หมูแคมป์หมี ค้นหาลานกางเต็นท์ทั่วไทย",
-  description: "ค้นหาและจองลานกางเต็นท์ ผ่านข้อมูลจากเจ้าของที่พักที่ถูกต้อง แผนที่-เส้นทาง อัพเดต 2026 ",
+  title: "ค้นหาลานกางเต็นท์ ที่พักแคมป์ปิ้งทั่วไทย - แคมป์หมูแคมป์หมี",
+  description: "ค้นหาลานกางเต็นท์ ที่พักแคมป์ปิ้งทั่วไทย พร้อมข้อมูลจากเจ้าของที่พัก แผนที่-เส้นทาง อัพเดต 2026",
   openGraph: {
-    title: "แคมป์หมูแคมป์หมี ค้นหาลานกางเต็นท์ทั่วไทย",
-    description: "ค้นหาและจองลานกางเต็นท์ ผ่านข้อมูลจากเจ้าของที่พักที่ถูกต้อง แผนที่-เส้นทาง อัพเดต 2026 ",
+    title: "ค้นหาลานกางเต็นท์ ที่พักแคมป์ปิ้งทั่วไทย - แคมป์หมูแคมป์หมี",
+    description: "ค้นหาลานกางเต็นท์ ที่พักแคมป์ปิ้งทั่วไทย พร้อมข้อมูลจากเจ้าของที่พัก แผนที่-เส้นทาง อัพเดต 2026",
     images: [
       {
         url: "/assets/images/banner-desktop.jpg",
@@ -37,7 +37,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="th" suppressHydrationWarning>
       <meta name="google-site-verification" content="1ux37MJZu2__Qw7RM8WVtQNTV9lVcUI3xklRWoXaFdo" />
       <link rel="icon" href="/assets/images/favicon/favicon.ico" sizes="any" />
       <link rel="apple-touch-icon" href="/assets/images/favicon/apple-touch-icon.png" />
