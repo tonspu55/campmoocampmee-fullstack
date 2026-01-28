@@ -404,6 +404,78 @@ import { Pagination } from "@/components/ui/pagination";
 
 ---
 
+### UserInfo Component
+
+**Path**: `src/components/UserInfo.tsx`
+
+Component สำหรับแสดงข้อมูลผู้ใช้งาน รองรับทั้งเจ้าของลานและนักท่องเที่ยว
+
+#### Props
+
+| Prop                | Type                        | Default  | Description                              |
+| ------------------- | --------------------------- | -------- | ---------------------------------------- |
+| `user`              | `{ name?, email?, image? }` | required | ข้อมูลผู้ใช้                             |
+| `isLandOwner`       | `boolean`                   | `false`  | แสดง badge เจ้าของลาน หรือ นักท่องเที่ยว |
+| `onSignOut`         | `() => void`                | -        | callback เมื่อกดออกจากระบบ               |
+| `showSignOutButton` | `boolean`                   | `true`   | แสดง/ซ่อนปุ่มออกจากระบบ                  |
+| `className`         | `string`                    | `''`     | เพิ่ม class เพิ่มเติม                    |
+
+#### Basic Usage
+
+```tsx
+import UserInfo from "@/components/UserInfo";
+
+<UserInfo
+  user={{
+    name: session?.user?.name,
+    email: session?.user?.email,
+    image: session?.user?.image,
+  }}
+  isLandOwner={true}
+  onSignOut={() => signOut()}
+/>;
+```
+
+#### Without Sign Out Button
+
+```tsx
+<UserInfo
+  user={{
+    name: "ชื่อผู้ใช้",
+    email: "email@example.com",
+    image: "/avatar.jpg",
+  }}
+  isLandOwner={false}
+  showSignOutButton={false}
+/>
+```
+
+#### Default Styles
+
+```css
+/* Container */
+flex flex-row items-end justify-between gap-2
+
+/* Avatar */
+rounded-full (48x48px)
+
+/* Name */
+font-semibold text-md
+
+/* Email */
+text-sm text-muted-foreground
+
+/* Badge - เจ้าของลาน */
+inline-flex items-center gap-1 mt-1 px-2 py-0.5 text-xs font-medium
+bg-primary/10 text-primary rounded-full dark:bg-white
+
+/* Badge - นักท่องเที่ยว */
+inline-flex items-center gap-1 mt-1 px-2 py-0.5 text-xs font-medium
+bg-secondary text-secondary-foreground rounded-full
+```
+
+---
+
 ## 🖼️ Images
 
 ### Next.js Image Component
@@ -763,7 +835,7 @@ import { cn } from "@/lib/utils";
   className={cn(
     "base-class",
     condition && "conditional-class",
-    className // Props override
+    className, // Props override
   )}
 />;
 ```
@@ -924,5 +996,5 @@ import { Share, Link2, Check, LogOut } from "lucide-react";
 
 ---
 
-**Last Updated**: December 16, 2025
-**Version**: 1.0.0
+**Last Updated**: January 28, 2026
+**Version**: 1.1.0

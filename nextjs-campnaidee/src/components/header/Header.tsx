@@ -2,11 +2,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect, useMemo, ReactNode } from "react";
-import { ThemeSwitcher } from "@/components/header/ThemeSwitcher";
 import { LogoSwitcher } from "@/components/header/LogoSwitcher";
 import { AlignJustify, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useScrollStore } from "@/lib/store";
+import UserDialog from "@/components/UserDialog";
 
 interface NavLinkProps {
   path: string;
@@ -179,8 +179,7 @@ const Header = () => {
                   </NavLinkMobile>
                 </div>
                 <div className="flex flex-col items-end gap-2">
-
-                  <ThemeSwitcher />
+                  <UserDialog />
                 </div>
               </div>
             </div>
@@ -193,8 +192,7 @@ const Header = () => {
           )}
         </div>
         <div className="hidden md:flex md:flex-1 md:items-center md:justify-end md:gap-4">
-
-          <ThemeSwitcher />
+          <UserDialog />
         </div>
         <div className="flex items-center md:hidden">
           <Button

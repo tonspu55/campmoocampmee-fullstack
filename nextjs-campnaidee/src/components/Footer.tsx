@@ -1,6 +1,7 @@
 'use client'
 import Link from 'next/link';
 import Image from 'next/image';
+import { ThemeSwitcher } from '@/components/header/ThemeSwitcher';
 
 const Footer = () => {
   return (
@@ -8,20 +9,13 @@ const Footer = () => {
     <footer className='bg-gray-100 dark:bg-[#0a0a0a]'>
       <div className='container mx-auto max-w-6xl px-2 '>
         <div className="py-6 lg:py-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
             {/* Logo and Description */}
-            <div className="flex flex-col space-y-2">
+            <div className="flex flex-col ">
               <div className="flex flex-col items-start gap-4">
-                <Image
-                  priority
-                  src="/assets/images/logo.svg"
-                  alt="แคมป์หมูแคมป์หมี Logo"
-                  width={50}
-                  height={50}
-                ></Image>
-                <div className="flex flex-col gap-2">
-
-                  <p className=" text-sm">
+                <ThemeSwitcher />
+                <div className="flex flex-col ">
+                  <p className="text-sm">
                     แคมป์หมูแคมป์หมี ค้นหาลานกางเต็นท์ทั่วไทย
                   </p>
                 </div>
