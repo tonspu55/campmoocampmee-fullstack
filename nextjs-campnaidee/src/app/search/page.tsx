@@ -12,7 +12,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Skeleton } from "@/components/ui/skeleton";
 
 interface SearchPageProps {
   searchParams: Promise<{
@@ -236,12 +235,11 @@ async function SearchResults({ province, page }: { province?: string; page?: str
   );
 }
 
-// Skeleton component for search results
+
 function SearchResultsSkeleton() {
   return (
     <>
-      {/* <Skeleton className="h-6 w-64 mb-2" />
-      <Skeleton className="h-5 w-40 mb-4" /> */}
+
       <div className="mt-4">
         <CampThumbnailSkeleton count={4} />
       </div>

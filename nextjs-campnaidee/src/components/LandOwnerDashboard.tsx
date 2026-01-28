@@ -2,13 +2,15 @@
 
 import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link';
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { MapPin, ImageIcon, Video, Tent } from 'lucide-react'
+import { MapPin, ImageIcon, Video } from 'lucide-react'
+import UserInfo from '@/components/UserInfo'
+import { useLandOwnerStore } from '@/lib/store'
 import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { client } from "@/sanity/client";
@@ -19,30 +21,12 @@ const urlFor = (source: SanityImageSource) =>
     ? imageUrlBuilder({ projectId, dataset }).image(source)
     : null;
 
-interface Post {
-  _id: string
-  title: string
-  slug: {
-    current: string
-  }
-  thumbnail: SanityImageSource
-  publishedAt: string
-  address: {
-    province?: string
-    district?: string
-    subdistrict?: string
-  }
-  imageCount: number
-  videoCount: number
-}
-
 export default function LandOwnerDashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
-  const [posts, setPosts] = useState<Post[]>([])
-  const [providerId, setProviderId] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+
+  // ใช้ Zustand store
+  const { posts, isLandOwner, loading, error, fetchPosts, reset } = useLandOwnerStore()
 
   useEffect(() => {
     if (status === 'loading') return
@@ -53,56 +37,15 @@ export default function LandOwnerDashboard() {
     }
 
     fetchPosts()
-  }, [session, status, router])
-
-  const fetchPosts = async (retryCount = 0) => {
-    const MAX_RETRIES = 2
-
-    try {
-      setLoading(true)
-      setError(null)
-
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 15000) // 15 second timeout
-
-      const response = await fetch('/api/landowner/posts', {
-        signal: controller.signal,
-        cache: 'no-store',
-      })
-
-      clearTimeout(timeoutId)
-
-      if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || 'เกิดข้อผิดพลาด')
-      }
-
-      const data = await response.json()
-      setPosts(data.posts || [])
-      setProviderId(data.providerId || null)
-    } catch (err) {
-      // Retry on network errors
-      if (retryCount < MAX_RETRIES && err instanceof Error && (err.name === 'AbortError' || err.message.includes('fetch'))) {
-        console.log(`Retrying... (${retryCount + 1}/${MAX_RETRIES})`)
-        setTimeout(() => fetchPosts(retryCount + 1), 1000 * (retryCount + 1))
-        return
-      }
-
-      if (err instanceof Error && err.name === 'AbortError') {
-        setError('การเชื่อมต่อหมดเวลา กรุณาลองใหม่อีกครั้ง')
-      } else {
-        setError(err instanceof Error ? err.message : 'เกิดข้อผิดพลาด')
-      }
-    } finally {
-      setLoading(false)
-    }
-  }
+  }, [session, status, router, fetchPosts])
 
   const handleEdit = (postId: string) => {
     router.push(`/landowner/edit/${postId}`)
   }
 
   const handleSignOut = () => {
+    // Reset store เมื่อ sign out
+    reset()
     signOut({
       callbackUrl: '/landowner',
       redirect: true,
@@ -161,46 +104,16 @@ export default function LandOwnerDashboard() {
             </p>
           </div>
           {/* User Info Section */}
-          <div className="flex flex-row items-end  justify-between gap-2 mt-4 lg:mt-6">
-            <div className="flex items-center gap-3">
-              {session?.user?.image && (
-                <Image
-                  src={session.user.image}
-                  alt={session.user.name || 'User'}
-                  width={48}
-                  height={48}
-                  className="rounded-full"
-                />
-              )}
-              <div>
-                <p className="font-semibold text-md">
-                  {session?.user?.name || 'เจ้าของลาน'}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {session?.user?.email}
-                </p>
-                {providerId && posts.length > 0 ? (
-                  <span className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 text-xs font-medium bg-primary/10 text-primary rounded-full dark:bg-white">
-                    <MapPin className="w-3 h-3" />
-                    เจ้าของลาน
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 text-xs font-medium bg-secondary text-secondary-foreground rounded-full">
-                    <Tent className="w-3 h-3" />
-                    นักท่องเที่ยว
-                  </span>
-                )}
-              </div>
-            </div>
-            <Button
-              onClick={handleSignOut}
-              variant="outline"
-              size="sm"
-              className="border-primary text-primary dark:text-primary-foreground"
-            >
-              ออกจากระบบ
-            </Button>
-          </div>
+          <UserInfo
+            user={{
+              name: session?.user?.name,
+              email: session?.user?.email,
+              image: session?.user?.image,
+            }}
+            isLandOwner={isLandOwner}
+            onSignOut={handleSignOut}
+            className="mt-4 lg:mt-6"
+          />
         </div>
 
       </div>
