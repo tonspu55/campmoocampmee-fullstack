@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect, useMemo, ReactNode } from "react";
+import { useState, useEffect, useCallback, ReactNode } from "react";
 import { LogoSwitcher } from "@/components/header/LogoSwitcher";
 import { AlignJustify, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import UserDialog from "@/components/UserDialog";
 interface NavLinkProps {
   path: string;
   children: ReactNode;
+  isHomepageTop?: boolean;
 }
 
 interface NavLinkMobileProps {
@@ -19,42 +20,16 @@ interface NavLinkMobileProps {
   onCloseNav: () => void;
 }
 
-const NavLink = ({ path, children }: NavLinkProps) => {
+const NavLink = ({ path, children, isHomepageTop = false }: NavLinkProps) => {
   const pathname = usePathname();
-  // Zustand store to check scroll state
-  const isScrolled = useScrollStore((state) => state.isScrolled);
-  const [mounted, setMounted] = useState(false);
-  // const isExternal = path.startsWith('http://') || path.startsWith('https://') || path.startsWith('www.');
-
-  useEffect(() => {
-    setMounted(true);
-    // Clean up function to reset mounted state
-    return () => {
-      setMounted(false);
-    };
-  }, []);
-
-  // เช็คว่าอยู่ที่หน้าหลักและไม่ได้ scroll (เฉพาะเมื่อ mounted แล้ว)
-  const isHomepageTop = mounted && pathname === "/" && !isScrolled;
-  const textColorWhite = isHomepageTop ? "text-white" : "";
-
-  // if (isExternal) {
-  //   return (
-  //     <a
-  //       className={`hover:opacity-75 font-medium ${textColorWhite}`}
-  //       href={path.startsWith('www.') ? `https://${path}` : path}
-  //       target="_blank"
-  //       rel="noopener noreferrer"
-  //     >
-  //       {children}
-  //     </a>
-  //   );
-  // }
 
   return (
     <Link
-      className={`${pathname === path ? "border-b-2 border-[#085953]" : ""
-        } hover:opacity-75 font-medium ${textColorWhite}`}
+      className={`
+        ${pathname === path ? "border-b-2 border-primary" : ""} 
+        hover:opacity-75 font-medium transition-colors duration-200
+        ${isHomepageTop ? "text-white" : "text-foreground"}
+      `}
       href={path}
     >
       {children}
@@ -64,25 +39,16 @@ const NavLink = ({ path, children }: NavLinkProps) => {
 
 const NavLinkMobile = ({ path, children, onCloseNav }: NavLinkMobileProps) => {
   const pathname = usePathname();
-  // const isExternal = path.startsWith('http://') || path.startsWith('https://') || path.startsWith('www.');
-
-  // if (isExternal) {
-  //   return (
-  //     <a
-  //       className="hover:opacity-75 font-medium"
-  //       href={path.startsWith('www.') ? `https://${path}` : path}
-  //       target="_blank"
-  //       rel="noopener noreferrer"
-  //       onClick={onCloseNav}
-  //     >
-  //       {children}
-  //     </a>
-  //   );
-  // }
 
   return (
     <Link
-      className={pathname === path ? " text-[#085953]" : ""}
+      className={`
+        py-2 px-3 rounded-md transition-colors duration-200
+        ${pathname === path
+          ? "text-primary bg-primary/10 font-medium"
+          : "text-foreground hover:bg-muted"
+        }
+      `}
       href={path}
       onClick={onCloseNav}
     >
@@ -93,10 +59,25 @@ const NavLinkMobile = ({ path, children, onCloseNav }: NavLinkMobileProps) => {
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isMobileView, setIsMobileView] = useState(false);
   const [mounted, setMounted] = useState(false);
   const isScrolled = useScrollStore((state) => state.isScrolled);
   const setIsScrolled = useScrollStore((state) => state.setIsScrolled);
+  const pathname = usePathname();
+
+  // เช็คว่าอยู่ที่หน้าหลักและไม่ได้ scroll
+  const isHomepageTop = mounted && pathname === "/" && !isScrolled;
+
+  // ปิด mobile menu เมื่อ resize ไป desktop
+  const handleResize = useCallback(() => {
+    if (window.innerWidth >= 768 && isOpen) {
+      setIsOpen(false);
+    }
+  }, [isOpen]);
+
+  // ปิด mobile menu เมื่อเปลี่ยนหน้า
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     setMounted(true);
@@ -105,107 +86,121 @@ const Header = () => {
       setIsScrolled(window.scrollY > 0);
     };
 
-    const handleResize = () => {
-      setIsMobileView(window.innerWidth < 768);
-    };
-
-    handleResize();
     handleScroll();
 
     window.addEventListener("resize", handleResize);
-    window.addEventListener("scroll", handleScroll);
-
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
-      // Clean up 
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [setIsScrolled]);
+  }, [setIsScrolled, handleResize]);
 
-  const menuClasses = useMemo(() => {
+  // ป้องกัน body scroll เมื่อ mobile menu เปิด
+  useEffect(() => {
     if (isOpen) {
-      return [
-        "flex",
-        "absolute",
-        "top-[60px]",
-        "w-[100%]",
-        "gap-2",
-        "flex-col",
-        "right-0",
-      ].join(" ");
+      document.body.style.overflow = 'hidden';
     } else {
-      return [
-        "hidden",
-        "md:flex",
-        "md:flex-row",
-        "md:items-center",
-        "md:justify-center",
-        "md:gap-x-8",
-      ].join(" ");
+      document.body.style.overflow = '';
     }
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [isOpen]);
 
+  const handleCloseNav = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+
   return (
-    <nav suppressHydrationWarning
-      className={`flex items-center fixed top-0 left-0 right-0 z-50 h-15 ${mounted ? (isScrolled ? 'bg-white dark:bg-background' : 'bg-transparent') : 'bg-transparent'
-        }`}
-    >
-      <div className="container mx-auto flex items-center max-w-6xl px-2">
-        <LogoSwitcher />
-        <div className={`${mounted ? (isScrolled ? 'bg-white dark:bg-background' : 'bg-transparent') : 'bg-transparent'
-          } ${menuClasses}`} >
-          {isMobileView ? (
-            <div className="bg-white dark:bg-background px-2 py-4">
-              <div className="flex flex-row justify-between">
-                <div className="flex flex-col gap-2">
-                  <NavLinkMobile
-                    onCloseNav={() => setIsOpen(false)}
-                    path="/"
-                  >
-                    หน้าหลัก
-                  </NavLinkMobile>
-                  <NavLinkMobile
-                    onCloseNav={() => setIsOpen(false)}
-                    path="/contact"
-                  >
-                    ติดต่อลงข้อมูล
-                  </NavLinkMobile>
-                  <NavLinkMobile
-                    onCloseNav={() => setIsOpen(false)}
-                    path="/landowner"
-                  >
-                    สำหรับเจ้าของลาน
-                  </NavLinkMobile>
-                </div>
-                <div className="flex flex-col items-end gap-2">
-                  <UserDialog />
-                </div>
-              </div>
-            </div>
-          ) : (
-            <>
-              <NavLink path="/">หน้าหลัก</NavLink>
-              <NavLink path="/contact">ติดต่อลงข้อมูล</NavLink>
-              <NavLink path="/landowner">สำหรับเจ้าของลาน</NavLink>
-            </>
-          )}
+    <>
+      <nav
+        suppressHydrationWarning
+        className={`
+          flex items-center fixed top-0 left-0 right-0 z-50 h-15
+          transition-all duration-300 ease-in-out
+          ${mounted
+            ? (isScrolled || isOpen
+              ? 'bg-white/95 dark:bg-background/95 backdrop-blur-md shadow-sm'
+              : 'bg-transparent')
+            : 'bg-transparent'
+          }
+        `}
+      >
+        <div className="container mx-auto flex items-center max-w-6xl px-2">
+          <LogoSwitcher />
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex md:flex-row md:items-center md:justify-center md:gap-x-8">
+            <NavLink path="/" isHomepageTop={isHomepageTop}>หน้าหลัก</NavLink>
+            <NavLink path="/contact" isHomepageTop={isHomepageTop}>ติดต่อลงข้อมูล</NavLink>
+            <NavLink path="/landowner" isHomepageTop={isHomepageTop}>สำหรับเจ้าของลาน</NavLink>
+          </div>
+
+          {/* Desktop User Dialog */}
+          <div className="hidden md:flex md:flex-1 md:items-center md:justify-end md:gap-4">
+            <UserDialog />
+          </div>
+
+          {/* Mobile Menu Button */}
+          <div className="flex items-center gap-2 md:hidden ml-auto">
+            <UserDialog />
+            <Button
+              className="flex h-9 w-9 items-center justify-center rounded-full cursor-pointer"
+              variant={isHomepageTop && !isOpen ? "default" : "outline"}
+              onClick={() => setIsOpen(!isOpen)}
+              aria-expanded={isOpen}
+              aria-label={isOpen ? "ปิดเมนู" : "เปิดเมนู"}
+            >
+              <span className={`transition-transform duration-200 ${isOpen ? 'rotate-90' : ''}`}>
+                {!isOpen ? <AlignJustify className="h-5 w-5" /> : <X className="h-5 w-5" />}
+              </span>
+            </Button>
+          </div>
         </div>
-        <div className="hidden md:flex md:flex-1 md:items-center md:justify-end md:gap-4">
-          <UserDialog />
-        </div>
-        <div className="flex items-center md:hidden">
-          <Button
-            className="flex h-9 w-9 items-center justify-center rounded-full cursor-pointer "
-            onClick={() => setIsOpen(!isOpen)}
-            aria-expanded={isOpen}
-            aria-label={isOpen ? "Close menu" : "Open menu"}
-          >
-            {!isOpen ? <AlignJustify /> : <X />}
-          </Button>
+      </nav>
+
+      {/* Mobile Menu Overlay */}
+      <div
+        className={`
+          fixed inset-0 z-40 bg-black/50 md:hidden
+          transition-opacity duration-300
+          ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
+        `}
+        onClick={handleCloseNav}
+        aria-hidden="true"
+      />
+
+      {/* Mobile Menu Panel */}
+      <div
+        className={`
+          fixed top-15 left-0 right-0 z-40 md:hidden
+          bg-white dark:bg-background
+          border-b border-border
+          shadow-lg
+          transition-all duration-300 ease-in-out
+          ${isOpen
+            ? 'opacity-100 translate-y-0'
+            : 'opacity-0 -translate-y-4 pointer-events-none'
+          }
+        `}
+      >
+        <div className="container mx-auto max-w-6xl px-4 py-4">
+          <div className="flex flex-col gap-1">
+            <NavLinkMobile onCloseNav={handleCloseNav} path="/">
+              หน้าหลัก
+            </NavLinkMobile>
+            <NavLinkMobile onCloseNav={handleCloseNav} path="/contact">
+              ติดต่อลงข้อมูล
+            </NavLinkMobile>
+            <NavLinkMobile onCloseNav={handleCloseNav} path="/landowner">
+              สำหรับเจ้าของลาน
+            </NavLinkMobile>
+          </div>
         </div>
       </div>
-    </nav>
+    </>
   );
 };
 
