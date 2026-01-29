@@ -162,10 +162,10 @@ async function SearchResults({ province, page }: { province?: string; page?: str
     <>
       {province && (
         <>
-          <h1 className="text-lg font-bold">
+          <h1 className="text-xl md:text-2xl font-semibold">
             ลานกางเต็นท์ในจังหวัด{province}
           </h1>
-          <p className="text-gray-700 dark:text-gray-200">
+          <p >
             พบทั้งหมด {filteredCount} ลานกางเต็นท์
           </p>
         </>
@@ -173,8 +173,8 @@ async function SearchResults({ province, page }: { province?: string; page?: str
 
       {!province && (
         <div className="mb-4">
-          <h1 className="text-lg font-bold">ค้นหาทั้งหมด</h1>
-          <p className="text-gray-700 dark:text-gray-200">
+          <h1 className="text-xl md:text-2xl font-semibold">ค้นหาทั้งหมด</h1>
+          <p>
             พบทั้งหมด {filteredCount} แคมป์
           </p>
         </div>
@@ -224,10 +224,10 @@ async function SearchResults({ province, page }: { province?: string; page?: str
         </>
       ) : (
         <div className="text-center py-10">
-          <p className="text-gray-500 text-lg">
+          <p className="text-gray-500 text-xl md:text-2xl">
             {province
-              ? `ไม่พบแคมป์ในจังหวัด ${province}`
-              : "ไม่พบข้อมูลแคมป์"
+              ? `ไม่พบลานกางเต็นท์ในจังหวัด${province}`
+              : "ไม่พบข้อมูลลานกางเต็นท์"
             }
           </p>
         </div>

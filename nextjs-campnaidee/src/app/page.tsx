@@ -63,7 +63,7 @@ export default function IndexPage() {
         <HeroBanner />
       </div>
       <div className="container mx-auto px-2 max-w-6xl pt-6 lg:pt-10">
-        <h2 className="text-2xl font-bold mb-4">แคมป์ทั้งหมด</h2>
+        <h2 className="text-xl md:text-2xl font-semibold mb-4">แคมป์ทั้งหมด</h2>
         <Suspense fallback={<CampThumbnailSkeleton count={4} />}>
           <CampList />
         </Suspense>

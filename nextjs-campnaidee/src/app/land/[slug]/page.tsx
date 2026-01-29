@@ -127,13 +127,13 @@ export default async function PostPage({ params }: PageProps) {
           <div className="basis-1/1 px-2 lg:pr-0 lg:pl-2 w-full">
             <div className="flex flex-row gap-4 justify-between items-start mb-4 lg:mb-6">
               <div className="flex flex-col">
-                <h1 className="text-2xl font-bold ">{post.title}</h1>
+                <h1 className="text-xl md:text-2xl font-semibold ">{post.title}</h1>
                 <InfoAddress InfoAddress={post.address} />
               </div>
               <ShareToSocial title={post.title} slug={(await params).slug} />
             </div>
             <OtherBenefits otherBenefits={post.otherBenefits} />
-            <div className="text-description max-md:text-sm">
+            <div className="">
               <ExpandableContent maxHeight={200}>
                 {Array.isArray(post.body) && <PortableText value={post.body} />}
               </ExpandableContent>

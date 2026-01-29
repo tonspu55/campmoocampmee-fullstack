@@ -20,7 +20,7 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
 
   return (
     <>
-      <h4 className="text-lg font-bold mb-4">รายละเอียด</h4>
+      <h4 className="text-lg md:text-xl font-semibold mb-4">รายละเอียด</h4>
       <div className="grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-4 ">
         {otherBenefits.priceOfStay && (
           <div className="flex flex-row  gap-4 items-center">

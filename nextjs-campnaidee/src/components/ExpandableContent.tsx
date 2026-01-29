@@ -37,15 +37,15 @@ const ExpandableContent = ({ children, maxHeight = 200 }: ExpandableContentProps
         }}
       >
         <div className="[&_ul]:list-disc [&_ul]:ml-5 [&_ol]:list-decimal [&_ol]:ml-5">
-          <h4 className="text-lg font-bold my-4">รายละเอียดเพิ่มเติม</h4>
-          {children}
+          <h4 className="text-lg md:text-xl font-semibold my-4">รายละเอียดเพิ่มเติม</h4>
+          <div className="text-description max-md:text-sm">{children}</div>
         </div>
       </div>
 
       {shouldShowButton && (
 
         <div className={`${!isExpanded ? `absolute bottom-0 left-0 right-0 ${styles.topBlur}` : 'relative pt-4'}`}>
-          <div className="flex justify-center bg-white dark:bg-[var(--background)] relative">
+          <div className="flex justify-center bg-white dark:bg-background relative">
 
             <Button
               onClick={toggleExpanded}
