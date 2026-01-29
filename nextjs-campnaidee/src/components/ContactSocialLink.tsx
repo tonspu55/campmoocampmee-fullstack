@@ -23,7 +23,7 @@ const ContactSocialLink = ({ socialContactLinks }: ContactSocialLinkProps) => {
 
   return (
     <>
-      <h4 className="text-lg font-bold mb-4">ช่องทางการติดต่อ</h4>
+      <h4 className="text-lg md:text-xl font-semibold mb-4">ช่องทางการติดต่อ</h4>
       <div className="flex flex-col gap-4">
         <div className='flex  gap-2 flex-row justify-between items-center'>
 

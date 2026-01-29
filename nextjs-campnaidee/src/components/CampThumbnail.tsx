@@ -73,7 +73,7 @@ export default function CampCard({
                 </div>
               )}
               <div className="px-1">
-                <h3 className="max-lg:text-sm text-md font-semibold line-clamp-1">{post.title}</h3>
+                <h3 className="text-sm font-semibold line-clamp-1">{post.title}</h3>
                 {post.otherBenefits?.priceOfStay && (
                   <p className="text-sm text-gray-700 dark:text-gray-200">
                     หัวละ {post.otherBenefits.priceOfStay} บาท / คืน

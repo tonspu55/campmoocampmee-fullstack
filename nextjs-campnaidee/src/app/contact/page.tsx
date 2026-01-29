@@ -11,7 +11,7 @@ const ContactPage = () => {
   return (
     <main className="py-8 lg:py-10 mt-8 lg:mt-10">
       <div className="container mx-auto max-w-225 ">
-        <h1 className="text-lg lg:text-2xl font-bold text-center">ติดต่อลงข้อมูล</h1>
+        <h1 className="text-lg lg:text-2xl font-semibold text-center">ติดต่อลงข้อมูล</h1>
         <div className={`${styles.contactBg} lg:rounded-[20px] mt-4 lg:mt-6 flex flex-col h-55!  lg:h-75!`}>
           <div className="flex flex-col items-start justify-center h-full">
             <div className="w-[80%] lg:w-[45%]">

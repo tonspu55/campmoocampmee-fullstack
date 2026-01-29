@@ -127,7 +127,7 @@ export default function ReviewSection({ postId }: ReviewSectionProps) {
   return (
     <div id="review-section" className="mt-8 space-y-6 px-2">
       {/* สรุปคะแนนรีวิว */}
-      <h3 className="text-xl font-semibold mb-4">รีวิวจากผู้เข้าพัก</h3>
+      <h3 className="text-lg md:text-xl font-semibold mb-4">รีวิวจากผู้เข้าพัก</h3>
       <div className=" p-6 rounded-lg border border-gray-200 dark:border-primary">
 
         {totalReviews > 0 ? (
@@ -150,7 +150,7 @@ export default function ReviewSection({ postId }: ReviewSectionProps) {
       {/* แสดงรีวิวทั้งหมด */}
       {reviews.length > 0 && (
         <div className="space-y-4">
-          <h3 className="text-xl font-semibold">รีวิวทั้งหมด</h3>
+          <h3 className="text-lg md:text-xl font-semibold">รีวิวทั้งหมด</h3>
           <div className="flex flex-col lg:flex-row gap-4">
             {reviews.map((review) => (
               <div key={review._id} className=" lg:basis-1/3 p-6 rounded-lg border border-gray-200 dark:border-primary">
@@ -187,7 +187,7 @@ export default function ReviewSection({ postId }: ReviewSectionProps) {
       )}
 
       {/* ฟอร์มเขียนรีวิว */}
-      <h3 className="text-xl font-semibold mb-4">เขียนรีวิว</h3>
+      <h3 className="text-lg md:text-xl font-semibold mb-4">เขียนรีวิว</h3>
       <div className="p-4 lg:p-6 rounded-lg border border-gray-200 dark:border-primary">
         {!session ? (
           <div className="text-center py-8">
