@@ -17,9 +17,10 @@ import { useLandOwnerStore } from '@/lib/store'
 
 interface UserDialogProps {
   className?: string
+  onOpen?: () => void
 }
 
-export default function UserDialog({ className = '' }: UserDialogProps) {
+export default function UserDialog({ className = '', onOpen }: UserDialogProps) {
   const { data: session, status } = useSession()
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
@@ -30,8 +31,11 @@ export default function UserDialog({ className = '' }: UserDialogProps) {
   // เช็คว่าเป็นเจ้าของลานหรือไม่เมื่อ dialog เปิดและมี session
   const handleOpenChange = (isOpen: boolean) => {
     setOpen(isOpen)
-    if (isOpen && session) {
-      fetchPosts()
+    if (isOpen) {
+      onOpen?.()
+      if (session) {
+        fetchPosts()
+      }
     }
   }
 
@@ -66,7 +70,7 @@ export default function UserDialog({ className = '' }: UserDialogProps) {
           <User />
         </Button>
       </DialogTrigger>
-      <DialogContent className="p-4 sm:max-w-md">
+      <DialogContent className="p-4 sm:max-w-md z-999">
         {status === 'loading' || checkingLandOwner ? (
           <>
             <DialogHeader>
@@ -110,7 +114,7 @@ export default function UserDialog({ className = '' }: UserDialogProps) {
               <Button
                 onClick={handleGoogleSignIn}
                 disabled={loading}
-                className="flex items-center gap-3 w-full bg-red-600 hover:bg-red-700 text-white cursor-pointer"
+                className="flex items-center gap-3 w-full bg-primary text-white cursor-pointer"
               >
                 {loading ? (
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />

@@ -10,7 +10,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Share, Link2, Check } from "lucide-react";
+import { Share2, Link2, Check } from "lucide-react";
 import { useState, useCallback, useEffect } from "react";
 import { toast } from "sonner";
 
@@ -85,7 +85,7 @@ const ShareToSocial = ({ title, slug }: ShareToSocialProps) => {
     <>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button className="flex h-9 w-9 items-center  justify-center rounded-full cursor-pointer" variant="default"><Share /></Button>
+          <Button className="flex h-9 w-9 items-center  justify-center rounded-full cursor-pointer" variant="default"><Share2 /></Button>
         </PopoverTrigger>
         <PopoverContent className="w-34 border-none" >
           <div className="flex flex-row gap-2 justify-center" >
@@ -95,7 +95,7 @@ const ShareToSocial = ({ title, slug }: ShareToSocialProps) => {
                 setOpen(true);
               }}
               variant="default"
-              className="flex justify-center rounded-full cursor-pointer h-[30px] w-[30px]"
+              className="flex justify-center rounded-full cursor-pointer h-7.5 w-7.5"
             >
               {copied ? (
                 <Check />

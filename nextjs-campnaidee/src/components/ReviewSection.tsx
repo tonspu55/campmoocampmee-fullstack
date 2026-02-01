@@ -195,7 +195,7 @@ export default function ReviewSection({ postId }: ReviewSectionProps) {
             <div className="flex flex-col items-center">
               <Button
                 onClick={() => signIn("google", { callbackUrl: window.location.href })}
-                className="flex items-center gap-3 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors cursor-pointer"
+                className="flex items-center gap-3 px-6 py-3 bg-primary text-white rounded-lg transition-colors cursor-pointer"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path

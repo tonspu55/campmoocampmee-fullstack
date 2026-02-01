@@ -12,7 +12,7 @@ interface CampCardProps {
   loading?: boolean;
   skeletonCount?: number;
 }
-
+// สร้าง URL สำหรับรูปภาพจาก Sanity
 const { projectId, dataset } = client.config();
 const urlFor = (source: SanityImageSource) =>
   projectId && dataset
@@ -23,24 +23,23 @@ const urlFor = (source: SanityImageSource) =>
 function CampThumbnailSkeleton({ count, }: { count: number; }) {
   return (
     <>
-      <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-4">
-        {Array.from({ length: count }).map((_, i) => (
-          <div key={i} className="flex flex-col gap-2">
-            <Skeleton className="aspect-video rounded-[20px] w-full h-43.75 lg:h-58.75" />
-            <div className="px-1 space-y-2">
-              <Skeleton className="h-5 w-3/4" />
-              <Skeleton className="h-4 w-1/2" />
-            </div>
-          </div>
-        ))}
-      </div>
+
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} className="flex flex-col gap-2">
+          <Skeleton className="aspect-video rounded-[20px] w-full h-43.75 lg:h-58.75" />
+          {/* <div className="px-1 space-y-2">
+            <Skeleton className="h-5 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
+          </div> */}
+        </div>
+      ))}
+
     </>
   );
 }
 
 export default function CampCard({
   posts = [],
-
   loading = false,
   skeletonCount = 8
 }: CampCardProps) {
@@ -51,8 +50,9 @@ export default function CampCard({
 
 
   return (
-    <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-4">
-      {posts.map((post) => {
+    <>
+      {posts.filter(Boolean).map((post) => {
+        if (!post) return null;
         const postImageUrl = post.thumbnail
           ? urlFor(post.thumbnail)?.width(550).height(300).url()
           : null;
@@ -76,7 +76,7 @@ export default function CampCard({
                 <h3 className="text-sm font-semibold line-clamp-1">{post.title}</h3>
                 {post.otherBenefits?.priceOfStay && (
                   <p className="text-sm text-gray-700 dark:text-gray-200">
-                    หัวละ {post.otherBenefits.priceOfStay} บาท / คืน
+                    ฿{post.otherBenefits.priceOfStay} / คน / คืน
                   </p>
                 )}
               </div>
@@ -84,7 +84,7 @@ export default function CampCard({
           </Link>
         );
       })}
-    </div>
+    </>
   );
 }
 

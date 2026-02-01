@@ -1,17 +1,9 @@
 import { Suspense } from "react";
 import { type SanityDocument } from "next-sanity";
 import { client } from "@/sanity/client";
-import CampThumbnail, { CampThumbnailSkeleton } from "@/components/CampThumbnail";
+import { CampThumbnailSkeleton } from "@/components/CampThumbnail";
 import type { Metadata } from "next";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+import SearchMapWrapper from "@/components/SearchMapWrapper";
 
 interface SearchPageProps {
   searchParams: Promise<{
@@ -68,12 +60,12 @@ async function SearchResults({ province, page }: { province?: string; page?: str
           address.province match "${province}*" ||
           address.province match "*${province}*"
         )
-      ]| order(publishedAt desc)[${offset}...${offset + itemsPerPage}]{_id, title, address, thumbnail, slug, tags}`
+      ]| order(publishedAt desc)[${offset}...${offset + itemsPerPage}]{_id, title, address, thumbnail, slug, tags, location, otherBenefits}`
     : `*[
         _type == "post"
         && !(_id in path("drafts.**"))
         && defined(slug.current)
-      ]| order(publishedAt desc)[${offset}...${offset + itemsPerPage}]{_id, title, address, thumbnail, slug, tags}`;
+      ]| order(publishedAt desc)[${offset}...${offset + itemsPerPage}]{_id, title, address, thumbnail, slug, tags, location, otherBenefits}`;
 
   // ดึงข้อมูลทั้งหมดและข้อมูลสำหรับหน้าปัจจุบัน
   const [totalCount, allPosts] = await Promise.all([
@@ -96,7 +88,7 @@ async function SearchResults({ province, page }: { province?: string; page?: str
         address.province match "${province}*" ||
         address.province match "*${province}*"
       )
-    ]| order(publishedAt desc){_id, title, address, thumbnail, slug, tags, otherBenefits}`;
+    ]| order(publishedAt desc){_id, title, address, thumbnail, slug, tags, otherBenefits, location}`;
 
     const allMatchingPosts = await client.fetch<SanityDocument[]>(ALL_POSTS_QUERY, {}, options);
 
@@ -118,110 +110,17 @@ async function SearchResults({ province, page }: { province?: string; page?: str
 
   // คำนวณ pagination
   const totalPages = Math.ceil(filteredCount / itemsPerPage);
-  const hasNextPage = currentPage < totalPages;
-  const hasPrevPage = currentPage > 1;
-
-  // สร้าง URL สำหรับ pagination
-  const createPageUrl = (pageNumber: number) => {
-    const params = new URLSearchParams();
-    if (province) params.set('province', province);
-    params.set('page', pageNumber.toString());
-    return `/search?${params.toString()}`;
-  };
-
-  // สร้างรายการหน้าที่จะแสดงใน pagination
-  const getPaginationNumbers = () => {
-    const delta = 2; // จำนวนหน้าที่แสดงข้างๆ หน้าปัจจุบัน
-    const range = [];
-    const rangeWithDots = [];
-
-    for (let i = Math.max(2, currentPage - delta);
-      i <= Math.min(totalPages - 1, currentPage + delta);
-      i++) {
-      range.push(i);
-    }
-
-    if (currentPage - delta > 2) {
-      rangeWithDots.push(1, '...');
-    } else {
-      rangeWithDots.push(1);
-    }
-
-    rangeWithDots.push(...range);
-
-    if (currentPage + delta < totalPages - 1) {
-      rangeWithDots.push('...', totalPages);
-    } else if (totalPages > 1) {
-      rangeWithDots.push(totalPages);
-    }
-
-    return rangeWithDots;
-  };
 
   return (
     <>
-      {province && (
-        <>
-          <h1 className="text-xl md:text-2xl font-semibold">
-            ลานกางเต็นท์ในจังหวัด{province}
-          </h1>
-          <p >
-            พบทั้งหมด {filteredCount} ลานกางเต็นท์
-          </p>
-        </>
-      )}
-
-      {!province && (
-        <div className="mb-4">
-          <h1 className="text-xl md:text-2xl font-semibold">ค้นหาทั้งหมด</h1>
-          <p>
-            พบทั้งหมด {filteredCount} แคมป์
-          </p>
-        </div>
-      )}
-
       {posts.length > 0 ? (
-        <>
-          <div className="mt-4">
-            <CampThumbnail posts={posts} />
-          </div>
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="mt-8 flex justify-center">
-              <Pagination>
-                <PaginationContent>
-                  {hasPrevPage && (
-                    <PaginationItem>
-                      <PaginationPrevious href={createPageUrl(currentPage - 1)} />
-                    </PaginationItem>
-                  )}
-
-                  {getPaginationNumbers().map((page, index) => (
-                    <PaginationItem key={index}>
-                      {page === '...' ? (
-                        <PaginationEllipsis />
-                      ) : (
-                        <PaginationLink
-                          href={createPageUrl(Number(page))}
-                          isActive={currentPage === page}
-                        >
-                          {page}
-                        </PaginationLink>
-                      )}
-                    </PaginationItem>
-                  ))}
-
-                  {hasNextPage && (
-                    <PaginationItem >
-                      <PaginationNext href={createPageUrl(currentPage + 1)} />
-                    </PaginationItem>
-                  )}
-                </PaginationContent>
-              </Pagination>
-            </div>
-          )}
-        </>
+        <SearchMapWrapper
+          posts={posts}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          province={province}
+          totalCount={filteredCount}
+        />
       ) : (
         <div className="text-center py-10">
           <p className="text-gray-500 text-xl md:text-2xl">
@@ -239,12 +138,9 @@ async function SearchResults({ province, page }: { province?: string; page?: str
 
 function SearchResultsSkeleton() {
   return (
-    <>
-
-      <div className="mt-4">
-        <CampThumbnailSkeleton count={4} />
-      </div>
-    </>
+    <div className="mt-4">
+      <CampThumbnailSkeleton count={1} />
+    </div>
   );
 }
 
@@ -252,8 +148,8 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const { province, page } = await searchParams;
 
   return (
-    <main className="py-8 lg:py-10 mt-11.25 lg:mt-15">
-      <div className="container mx-auto max-w-6xl px-2">
+    <main className="max-lg:pb-6 max-lg:pt-12 lg:py-10">
+      <div className="container mx-auto px-2 max-w-6xl pt-6 lg:pt-10">
         <Suspense fallback={<SearchResultsSkeleton />}>
           <SearchResults province={province} page={page} />
         </Suspense>

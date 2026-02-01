@@ -31,7 +31,7 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               width={35}
               height={35}
             />
-            <p className="max-md:text-sm">หัวละ {otherBenefits.priceOfStay} บาท / คืน</p>
+            <p className="max-md:text-sm">฿{otherBenefits.priceOfStay} / คน / คืน</p>
           </div>
         )}
         {otherBenefits.checkIn && (
