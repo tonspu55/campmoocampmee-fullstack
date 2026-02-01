@@ -69,7 +69,7 @@ const Header = () => {
 
   // ปิด mobile menu เมื่อ resize ไป desktop
   const handleResize = useCallback(() => {
-    if (window.innerWidth >= 768 && isOpen) {
+    if (window.innerWidth >= 1024 && isOpen) {
       setIsOpen(false);
     }
   }, [isOpen]);
@@ -132,26 +132,26 @@ const Header = () => {
           <LogoSwitcher />
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex md:flex-row md:items-center md:justify-center md:gap-x-8">
+          <div className="hidden lg:flex lg:flex-row lg:items-center lg:justify-center lg:gap-x-8">
             <NavLink path="/" isHomepageTop={isHomepageTop}>หน้าหลัก</NavLink>
             <NavLink path="/contact" isHomepageTop={isHomepageTop}>ติดต่อลงข้อมูล</NavLink>
             <NavLink path="/landowner" isHomepageTop={isHomepageTop}>สำหรับเจ้าของลาน</NavLink>
           </div>
 
           {/* Desktop User Dialog */}
-          <div className="hidden md:flex md:flex-1 md:items-center md:justify-end md:gap-4">
+          <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:gap-4">
             <UserDialog />
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="flex items-center gap-2 md:hidden ml-auto">
-            <UserDialog />
+          <div className="flex items-center gap-2 lg:hidden ml-auto">
+            <UserDialog onOpen={handleCloseNav} />
             <Button
               className="flex h-9 w-9 items-center justify-center rounded-full cursor-pointer"
-              variant={isHomepageTop && !isOpen ? "default" : "outline"}
               onClick={() => setIsOpen(!isOpen)}
               aria-expanded={isOpen}
               aria-label={isOpen ? "ปิดเมนู" : "เปิดเมนู"}
+
             >
               <span className={`transition-transform duration-200 ${isOpen ? 'rotate-90' : ''}`}>
                 {!isOpen ? <AlignJustify className="h-5 w-5" /> : <X className="h-5 w-5" />}
@@ -164,7 +164,7 @@ const Header = () => {
       {/* Mobile Menu Overlay */}
       <div
         className={`
-          fixed inset-0 z-40 bg-black/50 md:hidden
+          fixed inset-0 z-40 bg-black/50 lg:hidden
           transition-opacity duration-300
           ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
         `}
@@ -175,18 +175,18 @@ const Header = () => {
       {/* Mobile Menu Panel */}
       <div
         className={`
-          fixed top-15 left-0 right-0 z-40 md:hidden
+          fixed top-15 left-0 right-0  lg:hidden
           bg-white dark:bg-background
           border-b border-border
           shadow-lg
           transition-all duration-300 ease-in-out
           ${isOpen
-            ? 'opacity-100 translate-y-0'
+            ? 'opacity-100 translate-y-0 z-444'
             : 'opacity-0 -translate-y-4 pointer-events-none'
           }
         `}
       >
-        <div className="container mx-auto max-w-6xl px-4 py-4">
+        <div className="container mx-auto max-w-6xl px-4 py-4 ">
           <div className="flex flex-col gap-1">
             <NavLinkMobile onCloseNav={handleCloseNav} path="/">
               หน้าหลัก

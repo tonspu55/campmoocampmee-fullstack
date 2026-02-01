@@ -50,7 +50,7 @@ export default function SignInForm() {
             <Button
               onClick={handleGoogleSignIn}
               disabled={loading}
-              className="flex items-center gap-3 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors cursor-pointer"
+              className="flex items-center gap-3 px-6 py-3 bg-primary text-white rounded-lg transition-colors cursor-pointer"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>

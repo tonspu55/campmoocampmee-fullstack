@@ -15,30 +15,30 @@ const POSTS_QUERY = `*[
   && "recommend" in tags
 ]| order(publishedAt desc)[0...40]{_id, title, address, thumbnail, slug, tags, otherBenefits}`;
 
-
+// Set revalidation time for ISR
 const options = { next: { revalidate: 300 } };
 
 // Async component for fetching and rendering posts
 async function CampList() {
   const posts = await client.fetch<SanityDocument[]>(POSTS_QUERY, {}, options);
 
-  // สร้าง seed จาก timestamp ทุก 300 วินาที
+  // ใช้เวลาปัจจุบันหารด้วย 300 วินาที (5 นาที) เพื่อสร้าง seed ที่เปลี่ยนทุก 5 นาที
   const threeHundredSecondInterval = Math.floor(Date.now() / (300 * 1000));
 
-  // ใช้ seed เพื่อสุ่มแบบคงที่ในช่วง 300 วินาทีเดียวกัน
+  // ฟังก์ชันสำหรับสลับที่รายการแบบสุ่มโดยใช้ seed
   const shufflePosts = (array: SanityDocument[], seed: number) => {
     const shuffled = [...array];
     let currentIndex = shuffled.length;
     let randomIndex;
 
-    // สร้าง pseudo-random number generator จาก seed
+    // ฟังก์ชันสร้างตัวเลขสุ่มจาก seed
     const seededRandom = (seed: number) => {
       const x = Math.sin(seed) * 10000;
       return x - Math.floor(x);
     };
 
     let seedValue = seed;
-
+    // Fisher-Yates shuffle algorithm
     while (currentIndex !== 0) {
       seedValue = seedValue * 1103515245 + 12345;
       randomIndex = Math.floor(seededRandom(seedValue) * currentIndex);
@@ -50,7 +50,7 @@ async function CampList() {
 
     return shuffled;
   };
-
+  // สลับที่โพสต์โดยใช้ seed ที่สร้างขึ้น
   const shuffledPosts = shufflePosts(posts, threeHundredSecondInterval);
 
   return <CampThumbnail posts={shuffledPosts} />;
@@ -64,8 +64,11 @@ export default function IndexPage() {
       </div>
       <div className="container mx-auto px-2 max-w-6xl pt-6 lg:pt-10">
         <h2 className="text-xl md:text-2xl font-semibold mb-4">แคมป์ทั้งหมด</h2>
-        <Suspense fallback={<CampThumbnailSkeleton count={4} />}>
-          <CampList />
+        <Suspense fallback={<CampThumbnailSkeleton count={1} />}>
+          <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-4">
+            <CampList />
+          </div>
+
         </Suspense>
         <div className={`${styles.contactBg} rounded-[20px] mt-6 lg:mt-8 flex flex-col h-67.5!  lg:h-100!`}>
           <div className="flex flex-col items-start justify-start lg:justify-center h-full">

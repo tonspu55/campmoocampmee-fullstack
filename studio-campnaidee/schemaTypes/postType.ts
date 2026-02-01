@@ -78,6 +78,12 @@ export const postType = defineType({
       ],
     }),
     defineField({
+      name: 'location',
+      title: 'Location (พิกัด GPS)',
+      type: 'geopoint',
+      description: 'ใส่พิกัด GPS สำหรับแสดงบนแผนที่ (ละติจูด, ลองจิจูด)',
+    }),
+    defineField({
       name: 'gallery',
       title: 'Gallery (รูปภาพ)',
       description: 'สามารถลากหลายรูปมาวางพร้อมกันได้ และสามารถลากเรียงลำดับรูปได้',

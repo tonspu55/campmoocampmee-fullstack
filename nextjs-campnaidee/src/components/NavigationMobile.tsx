@@ -57,7 +57,7 @@ const NavigationMobile = ({ socialContactLinks }: ContactSocialLinkProps) => {
   return (
     <div className={`${isAtBottom
       ? 'relative hidden'
-      : 'fixed bottom-0 left-0 right-0 z-50 w-full'
+      : 'fixed bottom-0 left-0 right-0 z-10 w-full'
       } lg:hidden bg-white dark:bg-background transition-all px-2`}>
       <div className='py-2 flex flex-row gap-2 items-center'>
         <div className="basis-1/2">
