@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import { Map, List } from "lucide-react";
 import CampThumbnail from "@/components/CampThumbnail";
 import SearchPagination from "@/components/SearchPagination";
+import { getThaiProvinceName } from "@/lib/provinces";
 
 // Dynamically import the map component to avoid SSR issues
 const CampMap = dynamic(() => import("@/components/CampMap"), {
@@ -34,6 +35,9 @@ export default function SearchMapWrapper({
 }: SearchMapWrapperProps) {
   const [showMap, setShowMap] = useState(false);
 
+  // แปลง slug เป็นชื่อจังหวัดภาษาไทย
+  const provinceTh = province ? getThaiProvinceName(province) : undefined;
+
   // Always show map section
   const showMapSection = true;
 
@@ -49,10 +53,10 @@ export default function SearchMapWrapper({
   const Header = () => (
     <div className="mb-4">
       <h1 className="text-xl md:text-2xl font-semibold">
-        {province ? `ลานกางเต็นท์ในจังหวัด${province}` : 'ค้นหาทั้งหมด'}
+        {provinceTh ? `ลานกางเต็นท์ในจังหวัด${provinceTh}` : 'ค้นหาทั้งหมด'}
       </h1>
       <p>
-        พบทั้งหมด {totalCount} {province ? 'ลานกางเต็นท์' : 'แคมป์'}
+        พบทั้งหมด {totalCount} {provinceTh ? 'ลานกางเต็นท์' : 'แคมป์'}
       </p>
     </div>
   );
