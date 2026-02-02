@@ -4,6 +4,7 @@ import { client } from "@/sanity/client";
 import { CampThumbnailSkeleton } from "@/components/CampThumbnail";
 import type { Metadata } from "next";
 import SearchMapWrapper from "@/components/SearchMapWrapper";
+import { getThaiProvinceName } from "@/lib/provinces";
 
 interface SearchPageProps {
   searchParams: Promise<{
@@ -13,18 +14,25 @@ interface SearchPageProps {
 }
 
 export async function generateMetadata({ searchParams }: SearchPageProps): Promise<Metadata> {
-  const { province, } = await searchParams;
+  const { province: provinceSlug } = await searchParams;
+
+  // แปลง slug เป็นชื่อจังหวัดภาษาไทย
+  const provinceTh = provinceSlug ? getThaiProvinceName(provinceSlug) : undefined;
 
   return {
-    title: `ค้นหาลานกางเต็นท์ ${province} `,
+    title: `ค้นหาลานกางเต็นท์ ${provinceTh || provinceSlug || ''} `,
     description: "ค้นหาลานกางเต็นท์ ผ่านข้อมูลจากเจ้าของที่พักที่ถูกต้อง แผนที่-เส้นทาง อัพเดต 2026 ",
   };
 }
+
 //  ตัวเลือกสำหรับการดึงข้อมูลจาก Sanity
 const options = { next: { revalidate: 300 } };
 
 // Async component for fetching and rendering search results
-async function SearchResults({ province, page }: { province?: string; page?: string }) {
+async function SearchResults({ provinceSlug, page }: { provinceSlug?: string; page?: string }) {
+  // แปลง slug เป็นชื่อจังหวัดภาษาไทยสำหรับ query
+  const province = provinceSlug ? getThaiProvinceName(provinceSlug) : undefined;
+
   // Pagination settings
   const itemsPerPage = 10;
   // Calculate current page and offset
@@ -118,7 +126,7 @@ async function SearchResults({ province, page }: { province?: string; page?: str
           posts={posts}
           currentPage={currentPage}
           totalPages={totalPages}
-          province={province}
+          province={provinceSlug}
           totalCount={filteredCount}
         />
       ) : (
@@ -126,7 +134,9 @@ async function SearchResults({ province, page }: { province?: string; page?: str
           <p className="text-gray-500 text-xl md:text-2xl">
             {province
               ? `ไม่พบลานกางเต็นท์ในจังหวัด${province}`
-              : "ไม่พบข้อมูลลานกางเต็นท์"
+              : provinceSlug
+                ? `ไม่พบลานกางเต็นท์ในจังหวัด${provinceSlug}`
+                : "ไม่พบข้อมูลลานกางเต็นท์"
             }
           </p>
         </div>
@@ -151,7 +161,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     <main className="max-lg:pb-6 max-lg:pt-12 lg:py-10">
       <div className="container mx-auto px-2 max-w-6xl pt-6 lg:pt-10">
         <Suspense fallback={<SearchResultsSkeleton />}>
-          <SearchResults province={province} page={page} />
+          <SearchResults provinceSlug={province} page={page} />
         </Suspense>
       </div>
     </main>

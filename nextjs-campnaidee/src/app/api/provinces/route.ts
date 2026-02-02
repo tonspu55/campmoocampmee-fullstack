@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { client } from "@/sanity/client";
+import { getProvinceSlug } from "@/lib/provinces";
 
 const PROVINCES_QUERY = `*[
   _type == "post"
@@ -32,6 +33,9 @@ export async function GET() {
     const provincesWithCount = Object.entries(provinceCount)
       .map(([province, count]) => ({
         name: province,
+        slug:
+          getProvinceSlug(province) ||
+          province.toLowerCase().replace(/\s+/g, "-"),
         count: count,
       }))
       .sort((a, b) => a.name.localeCompare(b.name));
@@ -44,7 +48,7 @@ export async function GET() {
     console.error("Error fetching provinces:", error);
     return NextResponse.json(
       { error: "เกิดข้อผิดพลาดในการดึงข้อมูลจังหวัด" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
