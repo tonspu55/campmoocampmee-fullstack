@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 
 interface ProvinceData {
   name: string;
+  slug: string;
   count: number;
 }
 
@@ -14,7 +15,7 @@ const SearchBox = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredProvinces, setFilteredProvinces] = useState<ProvinceData[]>([]);
   const [availableProvinces, setAvailableProvinces] = useState<ProvinceData[]>([]);
-  const [selectedProvince, setSelectedProvince] = useState("");
+  const [selectedProvince, setSelectedProvince] = useState<ProvinceData | null>(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
@@ -42,7 +43,7 @@ const SearchBox = () => {
 
   const handleInputChange = (value: string) => {
     setSearchTerm(value);
-    setSelectedProvince(value);
+    setSelectedProvince(null);
 
     if (value.length > 0) {
       const filtered = availableProvinces.filter((province: ProvinceData) =>
@@ -55,15 +56,21 @@ const SearchBox = () => {
     setShowDropdown(true);
   };
 
-  const handleProvinceSelect = (provinceName: string) => {
-    setSelectedProvince(provinceName);
-    setSearchTerm(provinceName);
+  const handleProvinceSelect = (province: ProvinceData) => {
+    setSelectedProvince(province);
+    setSearchTerm(province.name);
     setShowDropdown(false);
   };
 
   const handleSearch = () => {
-    if (selectedProvince.trim()) {
-      router.push(`/search?province=${encodeURIComponent(selectedProvince)}`);
+    if (selectedProvince) {
+      router.push(`/search?province=${selectedProvince.slug}`);
+    } else if (searchTerm.trim()) {
+      // ถ้าพิมพ์เองไม่ได้เลือก ให้หา slug จากชื่อที่ตรงกัน
+      const matchedProvince = availableProvinces.find(p => p.name === searchTerm.trim());
+      if (matchedProvince) {
+        router.push(`/search?province=${matchedProvince.slug}`);
+      }
     }
   };
 
@@ -108,7 +115,7 @@ const SearchBox = () => {
         <Button
           onClick={handleSearch}
           className="rounded-l-none cursor-pointer"
-          disabled={!selectedProvince.trim() || isLoading}
+          disabled={!selectedProvince && !searchTerm.trim() || isLoading}
         >
           ค้นหา
         </Button>
@@ -119,7 +126,7 @@ const SearchBox = () => {
           {filteredProvinces.map((province, index) => (
             <div
               key={index}
-              onClick={() => handleProvinceSelect(province.name)}
+              onClick={() => handleProvinceSelect(province)}
               className="text-left  py-2 px-3  hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0"
             >
               <div className="flex flex-row justify-between items-center">
