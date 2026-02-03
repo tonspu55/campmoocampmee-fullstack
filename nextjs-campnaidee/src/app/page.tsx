@@ -8,12 +8,20 @@ import styles from "@/app/homepage.module.css";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
+// const POSTS_QUERY = `*[
+//   _type == "post"
+//   && !(_id in path("drafts.**"))
+//   && defined(slug.current)
+//   && "recommend" in tags
+// ]| order(publishedAt desc)[]{_id, title, address, thumbnail, slug, tags, otherBenefits}`;
+
 const POSTS_QUERY = `*[
   _type == "post"
   && !(_id in path("drafts.**"))
   && defined(slug.current)
-  && "recommend" in tags
 ]| order(publishedAt desc)[]{_id, title, address, thumbnail, slug, tags, otherBenefits}`;
+
+console.log("POSTS_QUERY:", POSTS_QUERY);
 
 // Set revalidation time for ISR
 const options = { next: { revalidate: 300 } };
@@ -21,7 +29,6 @@ const options = { next: { revalidate: 300 } };
 // Async component for fetching and rendering posts
 async function CampList() {
   const posts = await client.fetch<SanityDocument[]>(POSTS_QUERY, {}, options);
-
   // ใช้เวลาปัจจุบันหารด้วย 300 วินาที (5 นาที) เพื่อสร้าง seed ที่เปลี่ยนทุก 5 นาที
   const threeHundredSecondInterval = Math.floor(Date.now() / (300 * 1000));
 
@@ -51,7 +58,7 @@ async function CampList() {
     return shuffled;
   };
   // สลับที่โพสต์โดยใช้ seed ที่สร้างขึ้น และดึงมาแสดงแค่ 8 รายการ
-  const shuffledPosts = shufflePosts(posts, threeHundredSecondInterval).slice(0, 8);
+  const shuffledPosts = shufflePosts(posts, threeHundredSecondInterval).slice(0, 9);
 
   return <CampThumbnail posts={shuffledPosts} />;
 }
