@@ -6,14 +6,14 @@ import CampThumbnail, { CampThumbnailSkeleton } from "@/components/CampThumbnail
 import Link from "next/link";
 import styles from "@/app/homepage.module.css";
 import { Button } from "@/components/ui/button";
-
+import { ArrowRight } from "lucide-react";
 
 const POSTS_QUERY = `*[
   _type == "post"
   && !(_id in path("drafts.**"))
   && defined(slug.current)
   && "recommend" in tags
-]| order(publishedAt desc)[0...40]{_id, title, address, thumbnail, slug, tags, otherBenefits}`;
+]| order(publishedAt desc)[]{_id, title, address, thumbnail, slug, tags, otherBenefits}`;
 
 // Set revalidation time for ISR
 const options = { next: { revalidate: 300 } };
@@ -50,8 +50,8 @@ async function CampList() {
 
     return shuffled;
   };
-  // สลับที่โพสต์โดยใช้ seed ที่สร้างขึ้น
-  const shuffledPosts = shufflePosts(posts, threeHundredSecondInterval);
+  // สลับที่โพสต์โดยใช้ seed ที่สร้างขึ้น และดึงมาแสดงแค่ 8 รายการ
+  const shuffledPosts = shufflePosts(posts, threeHundredSecondInterval).slice(0, 8);
 
   return <CampThumbnail posts={shuffledPosts} />;
 }
@@ -63,7 +63,14 @@ export default function IndexPage() {
         <HeroBanner />
       </div>
       <div className="container mx-auto px-2 max-w-6xl pt-6 lg:pt-10">
-        <h2 className="text-xl md:text-2xl font-semibold mb-4">แคมป์ทั้งหมด</h2>
+        <div className="flex flex-row gap-2 items-center mb-4">
+          <h2 className="text-xl md:text-2xl font-semibold ">ลานกางเต็นท์ทั้งหมด</h2> <Button asChild className="flex h-7 w-7 items-center  justify-center rounded-full cursor-pointer" variant="default">
+            <Link href={`/search`} >
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </Button>
+        </div>
+
         <Suspense fallback={<CampThumbnailSkeleton count={1} />}>
           <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-4">
             <CampList />
