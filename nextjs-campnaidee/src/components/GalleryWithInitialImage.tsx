@@ -8,9 +8,10 @@ import type { GalleryItem } from "@/types/gallery";
 interface GalleryWithInitialImageProps {
   dataGallery: GalleryItem[];
   slug?: string;
+  postTitle?: string;
 }
 
-const GalleryWithInitialImage = ({ dataGallery, slug }: GalleryWithInitialImageProps) => {
+const GalleryWithInitialImage = ({ dataGallery, slug, postTitle }: GalleryWithInitialImageProps) => {
   const [initialImageIndex, setInitialImageIndex] = useState<number | undefined>(undefined);
   const selectedImageIndex = useGalleryStore((state) => state.selectedImageIndex);
   const setSelectedImageIndex = useGalleryStore((state) => state.setSelectedImageIndex);
@@ -29,7 +30,7 @@ const GalleryWithInitialImage = ({ dataGallery, slug }: GalleryWithInitialImageP
     setInitialImageIndex(undefined);
   };
 
-  return <TabGallery dataGallery={dataGallery} initialImageIndex={initialImageIndex} onTabChange={handleTabChange} slug={slug} />;
+  return <TabGallery dataGallery={dataGallery} initialImageIndex={initialImageIndex} onTabChange={handleTabChange} slug={slug} postTitle={postTitle} />;
 };
 
 export default GalleryWithInitialImage;

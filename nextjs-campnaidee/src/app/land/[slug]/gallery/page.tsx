@@ -64,7 +64,7 @@ const GalleryPage = async ({ params }: PageProps) => {
         </Button>
         <h1 className="text-lg lg:text-2xl font-bold ">{post.title}</h1>
       </div>
-      <GalleryWithInitialImage dataGallery={tabGalleryData as GalleryItem[]} slug={(await params).slug} />
+      <GalleryWithInitialImage dataGallery={tabGalleryData as GalleryItem[]} slug={(await params).slug} postTitle={post.title} />
     </div>
   );
 };

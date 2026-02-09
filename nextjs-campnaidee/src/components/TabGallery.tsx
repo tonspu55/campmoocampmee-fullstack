@@ -8,7 +8,7 @@ import { ArrowLeft } from "lucide-react";
 import TabGalleryPopup from "./TabGalleryPopup";
 import type { GalleryItem, TabGalleryProps } from "@/types/gallery";
 
-const TabGallery = ({ dataGallery, initialImageIndex, onTabChange, slug }: TabGalleryProps) => {
+const TabGallery = ({ dataGallery, initialImageIndex, onTabChange, slug, postTitle }: TabGalleryProps) => {
   const categories = [...new Set(dataGallery.map((data) => data.category))].filter(Boolean) as string[];
   // กำหนดลำดับที่แสดงผลของหมวดหมู่
   const categoryOrder = ["ทั้งหมด", "วิว", "กิจกรรม", "ที่พัก", "ห้องน้ำ", "วิดีโอ"];
@@ -232,7 +232,7 @@ const TabGallery = ({ dataGallery, initialImageIndex, onTabChange, slug }: TabGa
               >
                 <Image
                   src={item.url}
-                  alt={item.alt || `Gallery image ${index + 1}`}
+                  alt={item.alt || `${postTitle || 'Gallery'} รูปที่ ${index + 1}`}
                   fill
                   className="object-cover"
                 />

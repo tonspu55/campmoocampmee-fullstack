@@ -15,6 +15,7 @@ export interface TabGalleryProps {
   initialImageIndex?: number;
   onTabChange?: () => void;
   slug?: string;
+  postTitle?: string;
 }
 
 export interface SanityImageItem {
