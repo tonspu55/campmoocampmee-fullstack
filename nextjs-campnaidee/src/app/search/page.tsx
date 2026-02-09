@@ -34,7 +34,7 @@ async function SearchResults({ provinceSlug, page }: { provinceSlug?: string; pa
   const province = provinceSlug ? getThaiProvinceName(provinceSlug) : undefined;
 
   // Pagination settings
-  const itemsPerPage = 10;
+  const itemsPerPage = 20;
   // Calculate current page and offset
   const currentPage = parseInt(page || '1', 10);
   const offset = (currentPage - 1) * itemsPerPage;
