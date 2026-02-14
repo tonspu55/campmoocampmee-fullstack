@@ -7,6 +7,7 @@ import { Map, List } from "lucide-react";
 import CampThumbnail from "@/components/CampThumbnail";
 import SearchPagination from "@/components/SearchPagination";
 import { getThaiProvinceName } from "@/lib/provinces";
+import { getThaiRegionName } from "@/lib/regions";
 
 // Dynamically import the map component to avoid SSR issues
 const CampMap = dynamic(() => import("@/components/CampMap"), {
@@ -23,6 +24,7 @@ interface SearchMapWrapperProps {
   currentPage: number;
   totalPages: number;
   province?: string;
+  region?: string;
   totalCount: number;
 }
 
@@ -31,12 +33,14 @@ export default function SearchMapWrapper({
   currentPage,
   totalPages,
   province,
+  region,
   totalCount
 }: SearchMapWrapperProps) {
   const [showMap, setShowMap] = useState(false);
 
-  // แปลง slug เป็นชื่อจังหวัดภาษาไทย
+  // แปลง slug เป็นชื่อจังหวัด/ภาคภาษาไทย
   const provinceTh = province ? getThaiProvinceName(province) : undefined;
+  const regionTh = region ? getThaiRegionName(region) : undefined;
 
   // Always show map section
   const showMapSection = true;
@@ -45,18 +49,26 @@ export default function SearchMapWrapper({
   const createPageUrl = (pageNumber: number) => {
     const params = new URLSearchParams();
     if (province) params.set('province', province);
+    if (region) params.set('region', region);
     params.set('page', pageNumber.toString());
     return `/search?${params.toString()}`;
   };
+
+  // สร้าง label สำหรับ header
+  const headerLabel = provinceTh
+    ? `ลานกางเต็นท์ในจังหวัด${provinceTh}`
+    : regionTh
+      ? `ลานกางเต็นท์ใน${regionTh}`
+      : 'ค้นหาทั้งหมด';
 
   // Header Component
   const Header = () => (
     <div className="mb-4">
       <h1 className="text-xl md:text-2xl font-semibold">
-        {provinceTh ? `ลานกางเต็นท์ในจังหวัด${provinceTh}` : 'ค้นหาทั้งหมด'}
+        {headerLabel}
       </h1>
       <p>
-        พบทั้งหมด {totalCount} {provinceTh ? 'ลานกางเต็นท์' : 'แคมป์'}
+        พบทั้งหมด {totalCount} {(provinceTh || regionTh) ? 'ลานกางเต็นท์' : 'แคมป์'}
       </p>
     </div>
   );

@@ -135,7 +135,7 @@ const Header = () => {
           <div className="hidden lg:flex lg:flex-row lg:items-center lg:justify-center lg:gap-x-8">
             <NavLink path="/" isHomepageTop={isHomepageTop}>หน้าหลัก</NavLink>
             <NavLink path="/contact" isHomepageTop={isHomepageTop}>ติดต่อลงข้อมูล</NavLink>
-            <NavLink path="/landowner" isHomepageTop={isHomepageTop}>สำหรับเจ้าของลาน</NavLink>
+            {/* <NavLink path="/landowner" isHomepageTop={isHomepageTop}>สำหรับเจ้าของลาน</NavLink> */}
           </div>
 
           {/* Desktop User Dialog */}
@@ -194,9 +194,9 @@ const Header = () => {
             <NavLinkMobile onCloseNav={handleCloseNav} path="/contact">
               ติดต่อลงข้อมูล
             </NavLinkMobile>
-            <NavLinkMobile onCloseNav={handleCloseNav} path="/landowner">
+            {/* <NavLinkMobile onCloseNav={handleCloseNav} path="/landowner">
               สำหรับเจ้าของลาน
-            </NavLinkMobile>
+            </NavLinkMobile> */}
           </div>
         </div>
       </div>
