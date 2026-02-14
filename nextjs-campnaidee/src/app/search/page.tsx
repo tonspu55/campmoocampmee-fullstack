@@ -5,22 +5,27 @@ import { CampThumbnailSkeleton } from "@/components/CampThumbnail";
 import type { Metadata } from "next";
 import SearchMapWrapper from "@/components/SearchMapWrapper";
 import { getThaiProvinceName } from "@/lib/provinces";
+import { getThaiRegionName } from "@/lib/regions";
 
 interface SearchPageProps {
   searchParams: Promise<{
     province?: string;
+    region?: string;
     page?: string;
   }>;
 }
 
 export async function generateMetadata({ searchParams }: SearchPageProps): Promise<Metadata> {
-  const { province: provinceSlug } = await searchParams;
+  const { province: provinceSlug, region: regionSlug } = await searchParams;
 
-  // แปลง slug เป็นชื่อจังหวัดภาษาไทย
+  // แปลง slug เป็นชื่อจังหวัด/ภาคภาษาไทย
   const provinceTh = provinceSlug ? getThaiProvinceName(provinceSlug) : undefined;
+  const regionTh = regionSlug ? getThaiRegionName(regionSlug) : undefined;
+
+  const locationLabel = provinceTh || provinceSlug || regionTh || regionSlug || '';
 
   return {
-    title: `ค้นหาลานกางเต็นท์ ${provinceTh || provinceSlug || ''} `,
+    title: `ค้นหาลานกางเต็นท์ ${locationLabel} `,
     description: "ค้นหาลานกางเต็นท์ ผ่านข้อมูลจากเจ้าของที่พักที่ถูกต้อง แผนที่-เส้นทาง อัพเดต 2026 ",
   };
 }
@@ -29,9 +34,10 @@ export async function generateMetadata({ searchParams }: SearchPageProps): Promi
 const options = { next: { revalidate: 300 } };
 
 // Async component for fetching and rendering search results
-async function SearchResults({ provinceSlug, page }: { provinceSlug?: string; page?: string }) {
-  // แปลง slug เป็นชื่อจังหวัดภาษาไทยสำหรับ query
+async function SearchResults({ provinceSlug, regionSlug, page }: { provinceSlug?: string; regionSlug?: string; page?: string }) {
+  // แปลง slug เป็นชื่อภาษาไทยสำหรับ query
   const province = provinceSlug ? getThaiProvinceName(provinceSlug) : undefined;
+  const regionTh = regionSlug ? getThaiRegionName(regionSlug) : undefined;
 
   // Pagination settings
   const itemsPerPage = 20;
@@ -51,7 +57,14 @@ async function SearchResults({ provinceSlug, page }: { provinceSlug?: string; pa
           address.province match "*${province}*"
         )
       ])`
-    : `count(*[
+    : regionSlug
+      ? `count(*[
+        _type == "post"
+        && !(_id in path("drafts.**"))
+        && defined(slug.current)
+        && address.region == "${regionSlug}"
+      ])`
+      : `count(*[
         _type == "post"
         && !(_id in path("drafts.**"))
         && defined(slug.current)
@@ -69,7 +82,14 @@ async function SearchResults({ provinceSlug, page }: { provinceSlug?: string; pa
           address.province match "*${province}*"
         )
       ]| order(publishedAt desc)[${offset}...${offset + itemsPerPage}]{_id, title, address, thumbnail, slug, tags, location, otherBenefits}`
-    : `*[
+    : regionSlug
+      ? `*[
+        _type == "post"
+        && !(_id in path("drafts.**"))
+        && defined(slug.current)
+        && address.region == "${regionSlug}"
+      ]| order(publishedAt desc)[${offset}...${offset + itemsPerPage}]{_id, title, address, thumbnail, slug, tags, location, otherBenefits}`
+      : `*[
         _type == "post"
         && !(_id in path("drafts.**"))
         && defined(slug.current)
@@ -114,6 +134,19 @@ async function SearchResults({ provinceSlug, page }: { provinceSlug?: string; pa
 
     filteredCount = filteredPosts.length;
     posts = filteredPosts.slice(offset, offset + itemsPerPage);
+  } else if (regionSlug) {
+    // สำหรับการค้นหาตามภาค - query ตรงด้วย slug เช่น "northern", "central"
+    const ALL_POSTS_QUERY = `*[
+      _type == "post"
+      && !(_id in path("drafts.**"))
+      && defined(slug.current)
+      && address.region == "${regionSlug}"
+    ]| order(publishedAt desc){_id, title, address, thumbnail, slug, tags, otherBenefits, location}`;
+
+    const allMatchingPosts = await client.fetch<SanityDocument[]>(ALL_POSTS_QUERY, {}, options);
+
+    filteredCount = allMatchingPosts.length;
+    posts = allMatchingPosts.slice(offset, offset + itemsPerPage);
   }
 
   // คำนวณ pagination
@@ -127,6 +160,7 @@ async function SearchResults({ provinceSlug, page }: { provinceSlug?: string; pa
           currentPage={currentPage}
           totalPages={totalPages}
           province={provinceSlug}
+          region={regionSlug}
           totalCount={filteredCount}
         />
       ) : (
@@ -134,9 +168,13 @@ async function SearchResults({ provinceSlug, page }: { provinceSlug?: string; pa
           <p className="text-gray-500 text-xl md:text-2xl">
             {province
               ? `ไม่พบลานกางเต็นท์ในจังหวัด${province}`
-              : provinceSlug
-                ? `ไม่พบลานกางเต็นท์ในจังหวัด${provinceSlug}`
-                : "ไม่พบข้อมูลลานกางเต็นท์"
+              : regionTh
+                ? `ไม่พบลานกางเต็นท์ใน${regionTh}`
+                : provinceSlug
+                  ? `ไม่พบลานกางเต็นท์ในจังหวัด${provinceSlug}`
+                  : regionSlug
+                    ? `ไม่พบลานกางเต็นท์ในภาค${regionSlug}`
+                    : "ไม่พบข้อมูลลานกางเต็นท์"
             }
           </p>
         </div>
@@ -155,13 +193,13 @@ function SearchResultsSkeleton() {
 }
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
-  const { province, page } = await searchParams;
+  const { province, region, page } = await searchParams;
 
   return (
     <main className="max-lg:pb-6 max-lg:pt-12 lg:py-10">
       <div className="container mx-auto px-2 max-w-6xl pt-6 lg:pt-10">
         <Suspense fallback={<SearchResultsSkeleton />}>
-          <SearchResults provinceSlug={province} page={page} />
+          <SearchResults provinceSlug={province} regionSlug={region} page={page} />
         </Suspense>
       </div>
     </main>
