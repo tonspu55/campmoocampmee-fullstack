@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { type SanityDocument } from "next-sanity";
 import dynamic from "next/dynamic";
 import { Map, List } from "lucide-react";
@@ -8,6 +8,7 @@ import CampThumbnail from "@/components/CampThumbnail";
 import SearchPagination from "@/components/SearchPagination";
 import { getThaiProvinceName } from "@/lib/provinces";
 import { getThaiRegionName } from "@/lib/regions";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 // Dynamically import the map component to avoid SSR issues
 const CampMap = dynamic(() => import("@/components/CampMap"), {
@@ -37,13 +38,33 @@ export default function SearchMapWrapper({
   totalCount
 }: SearchMapWrapperProps) {
   const [showMap, setShowMap] = useState(false);
+  const [activeTab, setActiveTab] = useState("list");
+  // track ว่าเคยเปิด map tab หรือยัง เพื่อ lazy load
+  const [mapLoaded, setMapLoaded] = useState(false);
+  // ใช้ ref + IntersectionObserver จับว่า tab หลุดจากจอหรือยัง
+  const [isSticky, setIsSticky] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // เมื่อ sentinel หายไปจาก viewport = tab ควร sticky
+        setIsSticky(!entry.isIntersecting);
+      },
+      { threshold: 0 }
+    );
+
+    observer.observe(sentinel);
+    // Clean up the observer on unmount
+    return () => observer.disconnect();
+  }, []);
 
   // แปลง slug เป็นชื่อจังหวัด/ภาคภาษาไทย
   const provinceTh = province ? getThaiProvinceName(province) : undefined;
   const regionTh = region ? getThaiRegionName(region) : undefined;
-
-  // Always show map section
-  const showMapSection = true;
 
   // สร้าง URL สำหรับ pagination
   const createPageUrl = (pageNumber: number) => {
@@ -61,6 +82,13 @@ export default function SearchMapWrapper({
       ? `ลานกางเต็นท์ใน${regionTh}`
       : 'ค้นหาทั้งหมด';
 
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    if (value === "map" && !mapLoaded) {
+      setMapLoaded(true);
+    }
+  };
+
   // Header Component
   const Header = () => (
     <div className="mb-4">
@@ -76,7 +104,7 @@ export default function SearchMapWrapper({
   // Content Component
   const Content = () => (
     <>
-      <div className="grid grid-cols-2 gap-2 md:grid-cols-2 md:gap-4 ">
+      <div className="grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-4 ">
         <CampThumbnail posts={posts} />
       </div>
       <SearchPagination
@@ -90,19 +118,35 @@ export default function SearchMapWrapper({
   return (
     <>
       <Header />
-      {/* Desktop Layout */}
-      <div className="hidden lg:flex lg:flex-row lg:gap-4">
-        {/* Left side - Camp list with scroll */}
-        <div className={`${showMapSection && 'basis-1/2'} `}>
-          <Content />
-        </div>
 
-        {/* Right side - Sticky Map */}
-        {showMapSection && (
-          <div className="basis-1/2 sticky top-24 h-[calc(100vh-120px)] rounded-xl overflow-hidden self-start">
-            <CampMap posts={posts} className="w-full h-full" />
-          </div>
-        )}
+      {/* Desktop Layout - Tabs */}
+      <div className="hidden lg:block">
+        {/* Sentinel element - เมื่อหายไปจาก viewport จะทำให้ tab sticky */}
+        <div ref={sentinelRef} className="h-0" />
+        <Tabs value={activeTab} onValueChange={handleTabChange}>
+          <TabsList className={`rounded-none! w-full sticky top-15 z-30 transition-shadow ${isSticky ? "shadow-none" : ""} bg-white dark:bg-gray-900 `}>
+            <TabsTrigger value="list" className={`cursor-pointer ${activeTab === "list" ? "bg-primary! text-white!" : ""}`}>
+              <List className="w-4 h-4" />
+              แบบรายการ
+            </TabsTrigger>
+            <TabsTrigger value="map" className={`cursor-pointer ${activeTab === "map" ? "bg-primary! text-white!" : ""}`}>
+              <Map className="w-4 h-4" />
+              แบบแผนที่
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="list">
+            <Content />
+          </TabsContent>
+
+          <TabsContent value="map">
+            {mapLoaded && (
+              <div className="h-[calc(100vh-200px)] rounded-xl overflow-hidden">
+                <CampMap posts={posts} className="w-full h-full" />
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
 
       {/* Mobile Layout - Toggle between list and map */}
