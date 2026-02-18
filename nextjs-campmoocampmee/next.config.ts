@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   turbopack: {
-    root: "/Users/tosaponwaikitja/Desktop/freelance/campnaidee-fullstack/nextjs-campnaidee",
+    root: "/Users/tosaponwaikitja/Desktop/freelance/campmoocampmee-fullstack/nextjs-campmoocampmee",
   },
   images: {
     remotePatterns: [
