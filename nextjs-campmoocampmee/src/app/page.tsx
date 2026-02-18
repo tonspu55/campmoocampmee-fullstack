@@ -55,11 +55,6 @@ async function CampList() {
     <>
       <div className="flex flex-row gap-2 items-center -mb-2">
         <h2 className="text-xl md:text-2xl font-semibold ">ลานกางเต็นท์แนะนำ</h2>
-        <Button asChild className="flex h-7 w-7 items-center justify-center rounded-full cursor-pointer" variant="default">
-          <Link href={`/search`}>
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </Button>
       </div>
       <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-4">
         <CampThumbnail posts={shuffledPosts} />
