@@ -3,8 +3,21 @@ import ContactForm from "@/components/ContactForm";
 import styles from "@/app/homepage.module.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.campmoocampmee.com"),
   title: "ติดต่อลงข้อมูล | แคมป์หมูแคมป์หมี",
   description: "ส่งรายละเอียดข้อมูลเบื้องต้นเพื่อให้ทางเราติดต่อกลับโดยเร็วที่สุด",
+  openGraph: {
+    title: "หาลานกางเต็นท์ ที่พักแคมป์ปิ้งทั่วไทย - แคมป์หมูแคมป์หมี",
+    description: "หาลานกางเต็นท์ ที่พักแคมป์ปิ้งทั่วไทย พร้อมข้อมูลจากเจ้าของที่พัก แผนที่-เส้นทาง อัพเดต 2026",
+    images: [
+      {
+        url: "/assets/images/banner-desktop.jpg",
+        width: 1200,
+        height: 630,
+        alt: "แคมป์หมูแคมป์หมี",
+      },
+    ],
+  },
 };
 
 const ContactPage = () => {
