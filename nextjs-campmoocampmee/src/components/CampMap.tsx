@@ -224,16 +224,17 @@ export default function CampMap({ posts, className = "" }: CampMapProps) {
 }
 
 // Info Card for desktop (inside InfoWindow)
+// หมายเหตุ: InfoWindow default styles (padding/radius/close btn) ถูก override ใน globals.css
 function CampInfoCard({ camp }: { camp: SanityDocument }) {
   const imageUrl = camp.thumbnail
-    ? urlFor(camp.thumbnail)?.width(280).height(180).url()
+    ? urlFor(camp.thumbnail)?.width(280).height(158).url()
     : null;
 
   return (
-    <div className="w-55 p-0 bg-white  overflow-hidden">
-      <Link href={`/land/${camp.slug?.current}`} className="block">
+    <div className="w-55 p-0">
+      <Link href={`/land/${camp.slug?.current}`} className="flex flex-col gap-2">
         {/* Image */}
-        <div className="relative w-full h-30 bg-gray-100">
+        <div className="relative w-full aspect-video bg-muted  overflow-hidden">
           {imageUrl ? (
             <Image
               src={imageUrl}
@@ -244,26 +245,19 @@ function CampInfoCard({ camp }: { camp: SanityDocument }) {
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <span className="text-gray-400 text-sm">ไม่มีรูปภาพ</span>
+              <span className="text-muted-foreground text-sm">ไม่มีรูปภาพ</span>
             </div>
           )}
         </div>
 
         {/* Content */}
-        <div className="p-3">
-          <h3 className="font-semibold text-sm text-gray-900 line-clamp-1">
+        <div className="px-2 pb-2">
+          <h3 className="text-sm font-semibold line-clamp-1">
             {camp.title}
           </h3>
-          {camp.address?.province && (
-            <p className="text-xs text-gray-500 mt-0.5">
-              {camp.address.district && `${camp.address.district}, `}
-              {camp.address.province}
-            </p>
-          )}
           {camp.otherBenefits?.priceOfStay && (
-            <p className="text-sm font-semibold text-gray-900 mt-1">
-              ฿{camp.otherBenefits.priceOfStay}{" "}
-              <span className="font-normal text-gray-500">/ คน / คืน</span>
+            <p className="text-sm text-gray-700">
+              <strong className="font-bold!">฿{camp.otherBenefits.priceOfStay}</strong> / คน / คืน
             </p>
           )}
         </div>

@@ -1,9 +1,8 @@
 import { Suspense } from "react";
-import { type SanityDocument } from "next-sanity";
 import { client } from "@/sanity/client";
 import { CampThumbnailSkeleton } from "@/components/CampThumbnail";
 import type { Metadata } from "next";
-import SearchMapWrapper from "@/components/SearchMapWrapper";
+import SearchMapWrapper, { type CampPost } from "@/components/SearchMapWrapper";
 import { getThaiProvinceName } from "@/lib/provinces";
 import { getThaiRegionName } from "@/lib/regions";
 
@@ -18,139 +17,92 @@ interface SearchPageProps {
 export async function generateMetadata({ searchParams }: SearchPageProps): Promise<Metadata> {
   const { province: provinceSlug, region: regionSlug } = await searchParams;
 
-  // แปลง slug เป็นชื่อจังหวัด/ภาคภาษาไทย
   const provinceTh = provinceSlug ? getThaiProvinceName(provinceSlug) : undefined;
   const regionTh = regionSlug ? getThaiRegionName(regionSlug) : undefined;
 
   const locationLabel = provinceTh || provinceSlug || regionTh || regionSlug || '';
+  const titleSuffix = locationLabel ? ` ${locationLabel}` : '';
 
   return {
-    title: `ค้นหาลานกางเต็นท์ ${locationLabel} `,
+    title: `ค้นหาลานกางเต็นท์${titleSuffix}`,
     description: "ค้นหาลานกางเต็นท์ ผ่านข้อมูลจากเจ้าของที่พักที่ถูกต้อง แผนที่-เส้นทาง อัพเดต 2026 ",
   };
 }
 
-//  ตัวเลือกสำหรับการดึงข้อมูลจาก Sanity
 const options = { next: { revalidate: 300 } };
+const ITEMS_PER_PAGE = 12;
+
+// Helper functions for building GROQ queries
+function buildFilterConditions(province?: string, regionSlug?: string): string {
+  if (province) {
+    // ใช้ GROQ param $province แทน string interpolation
+    // address.province เก็บชื่อไทยตรงๆ จาก Sanity → exact match เพียงพอ
+    // หลีกเลี่ยง match operator ที่มี leading * ซึ่งไม่ใช่ GROQ standard และอาจ match ทุก document
+    return `&& address.province == $province`;
+  }
+
+  if (regionSlug) {
+    // ใช้ GROQ param เพื่อป้องกัน injection จาก raw URL param
+    return `&& address.region == $region`;
+  }
+
+  return '';
+}
+
+function buildBaseFilter(province?: string, regionSlug?: string): string {
+  const filterConditions = buildFilterConditions(province, regionSlug);
+
+  return `*[
+    _type == "post"
+    && !(_id in path("drafts.**"))
+    && defined(slug.current)
+    ${filterConditions}
+  ]`;
+}
+
+function buildCountQuery(province?: string, regionSlug?: string): string {
+  return `count(${buildBaseFilter(province, regionSlug)})`;
+}
+
+function buildSearchQuery(offset: number, limit: number, province?: string, regionSlug?: string): string {
+  const baseFilter = buildBaseFilter(province, regionSlug);
+
+  return `${baseFilter} | order(publishedAt desc)[${offset}...${offset + limit}]{
+    _id,
+    title,
+    address,
+    thumbnail,
+    slug,
+    tags,
+    location,
+    otherBenefits
+  }`;
+}
 
 // Async component for fetching and rendering search results
 async function SearchResults({ provinceSlug, regionSlug, page }: { provinceSlug?: string; regionSlug?: string; page?: string }) {
-  // แปลง slug เป็นชื่อภาษาไทยสำหรับ query
   const province = provinceSlug ? getThaiProvinceName(provinceSlug) : undefined;
   const regionTh = regionSlug ? getThaiRegionName(regionSlug) : undefined;
 
-  // Pagination settings
-  const itemsPerPage = 20;
-  // Calculate current page and offset
-  const currentPage = parseInt(page || '1', 10);
-  const offset = (currentPage - 1) * itemsPerPage;
+  const currentPage = Math.max(1, parseInt(page || '1', 10) || 1);
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
-  // Query สำหรับนับจำนวนรายการทั้งหมด (สำหรับ pagination)
-  const COUNT_QUERY = province
-    ? `count(*[
-        _type == "post"
-        && !(_id in path("drafts.**"))
-        && defined(slug.current)
-        && (
-          address.province == "${province}" ||
-          address.province match "${province}*" ||
-          address.province match "*${province}*"
-        )
-      ])`
-    : regionSlug
-      ? `count(*[
-        _type == "post"
-        && !(_id in path("drafts.**"))
-        && defined(slug.current)
-        && address.region == "${regionSlug}"
-      ])`
-      : `count(*[
-        _type == "post"
-        && !(_id in path("drafts.**"))
-        && defined(slug.current)
-      ])`;
+  // Build queries using helper functions
+  const countQuery = buildCountQuery(province, regionSlug);
+  const searchQuery = buildSearchQuery(offset, ITEMS_PER_PAGE, province, regionSlug);
 
-  // Query สำหรับดึงข้อมูลแบบ pagination
-  const SEARCH_QUERY = province
-    ? `*[
-        _type == "post"
-        && !(_id in path("drafts.**"))
-        && defined(slug.current)
-        && (
-          address.province == "${province}" ||
-          address.province match "${province}*" ||
-          address.province match "*${province}*"
-        )
-      ]| order(publishedAt desc)[${offset}...${offset + itemsPerPage}]{_id, title, address, thumbnail, slug, tags, location, otherBenefits}`
-    : regionSlug
-      ? `*[
-        _type == "post"
-        && !(_id in path("drafts.**"))
-        && defined(slug.current)
-        && address.region == "${regionSlug}"
-      ]| order(publishedAt desc)[${offset}...${offset + itemsPerPage}]{_id, title, address, thumbnail, slug, tags, location, otherBenefits}`
-      : `*[
-        _type == "post"
-        && !(_id in path("drafts.**"))
-        && defined(slug.current)
-      ]| order(publishedAt desc)[${offset}...${offset + itemsPerPage}]{_id, title, address, thumbnail, slug, tags, location, otherBenefits}`;
+  // ส่ง province และ region เป็น GROQ params ทั้งคู่ (ไม่ interpolate ลงใน query string)
+  const queryParams: Record<string, string> = {};
+  if (province) queryParams.province = province;
+  if (regionSlug) queryParams.region = regionSlug;
 
-  // ดึงข้อมูลทั้งหมดและข้อมูลสำหรับหน้าปัจจุบัน
-  const [totalCount, allPosts] = await Promise.all([
-    client.fetch<number>(COUNT_QUERY, {}, options),
-    client.fetch<SanityDocument[]>(SEARCH_QUERY, {}, options)
+  // Fetch data in parallel
+  const [totalCount, posts] = await Promise.all([
+    client.fetch<number>(countQuery, queryParams, options),
+    client.fetch<CampPost[]>(searchQuery, queryParams, options)
   ]);
 
-  // เพิ่มการกรองใน JavaScript เพื่อความแม่นยำ
-  let posts = allPosts;
-  let filteredCount = totalCount;
-
-  if (province) {
-    // สำหรับการค้นหาตามจังหวัด เราต้องดึงข้อมูลทั้งหมดก่อนแล้วกรอง
-    const ALL_POSTS_QUERY = `*[
-      _type == "post"
-      && !(_id in path("drafts.**"))
-      && defined(slug.current)
-      && (
-        address.province == "${province}" ||
-        address.province match "${province}*" ||
-        address.province match "*${province}*"
-      )
-    ]| order(publishedAt desc){_id, title, address, thumbnail, slug, tags, otherBenefits, location}`;
-
-    const allMatchingPosts = await client.fetch<SanityDocument[]>(ALL_POSTS_QUERY, {}, options);
-
-    const filteredPosts = allMatchingPosts.filter(post => {
-      const postProvince = post.address?.province;
-      if (!postProvince) return false;
-
-      // เปรียบเทียบแบบ case-insensitive และ trim whitespace
-      const normalizedPostProvince = postProvince.trim().toLowerCase();
-      const normalizedSearchProvince = province.trim().toLowerCase();
-
-      return normalizedPostProvince === normalizedSearchProvince ||
-        normalizedPostProvince.includes(normalizedSearchProvince);
-    });
-
-    filteredCount = filteredPosts.length;
-    posts = filteredPosts.slice(offset, offset + itemsPerPage);
-  } else if (regionSlug) {
-    // สำหรับการค้นหาตามภาค - query ตรงด้วย slug เช่น "northern", "central"
-    const ALL_POSTS_QUERY = `*[
-      _type == "post"
-      && !(_id in path("drafts.**"))
-      && defined(slug.current)
-      && address.region == "${regionSlug}"
-    ]| order(publishedAt desc){_id, title, address, thumbnail, slug, tags, otherBenefits, location}`;
-
-    const allMatchingPosts = await client.fetch<SanityDocument[]>(ALL_POSTS_QUERY, {}, options);
-
-    filteredCount = allMatchingPosts.length;
-    posts = allMatchingPosts.slice(offset, offset + itemsPerPage);
-  }
-
-  // คำนวณ pagination
-  const totalPages = Math.ceil(filteredCount / itemsPerPage);
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   return (
     <>
@@ -161,7 +113,7 @@ async function SearchResults({ provinceSlug, regionSlug, page }: { provinceSlug?
           totalPages={totalPages}
           province={provinceSlug}
           region={regionSlug}
-          totalCount={filteredCount}
+          totalCount={totalCount}
         />
       ) : (
         <div className="text-center py-10">
