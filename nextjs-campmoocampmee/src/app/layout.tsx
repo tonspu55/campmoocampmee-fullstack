@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 import ConditionalLayout from "@/components/ConditionalLayout";
 import AuthProvider from "@/components/AuthProvider";
 import CookieConsent from "@/components/CookieConsent";
+import { Analytics } from "@vercel/analytics/next"
 
 const notoSansThai = Noto_Sans_Thai({
 
@@ -75,6 +76,7 @@ export default function RootLayout({
           </AuthProvider>
           <Toaster />
           <CookieConsent />
+          <Analytics />
         </ThemeProvider>
 
       </body>
