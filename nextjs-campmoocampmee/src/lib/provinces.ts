@@ -99,9 +99,7 @@ export function getThaiProvinceName(slug: string): string | undefined {
 
 // แปลงชื่อจังหวัดภาษาไทยเป็น slug ภาษาอังกฤษ
 export function getProvinceSlug(thaiName: string): string | undefined {
-  const province = PROVINCES.find(
-    (p) => p.th === thaiName.trim() || p.th.includes(thaiName.trim()),
-  );
+  const province = PROVINCES.find((p) => p.th === thaiName.trim());
   return province?.slug;
 }
 

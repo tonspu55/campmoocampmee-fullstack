@@ -43,12 +43,12 @@ export default function UserInfo({
             {user?.email}
           </p>
           {isLandOwner ? (
-            <span className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 text-xs font-medium bg-primary/10 text-primary rounded-full dark:bg-white">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-primary text-white rounded-full mt-2">
               <MapPin className="w-3 h-3" />
               เจ้าของลาน
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 text-xs font-medium bg-secondary text-secondary-foreground rounded-full">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-primary text-white rounded-full mt-2">
               <Tent className="w-3 h-3" />
               นักท่องเที่ยว
             </span>
@@ -61,7 +61,7 @@ export default function UserInfo({
             onClick={onSignOut}
             variant="outline"
             size="sm"
-            className="border-primary text-primary dark:text-primary-foreground"
+            className="border-primary text-primary dark:text-primary-foreground hover:text-primary"
           >
             ออกจากระบบ
           </Button>

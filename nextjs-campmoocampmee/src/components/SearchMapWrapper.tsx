@@ -10,6 +10,16 @@ import { getThaiProvinceName } from "@/lib/provinces";
 import { getThaiRegionName } from "@/lib/regions";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
+export interface CampPost extends SanityDocument {
+  title: string;
+  address: { province?: string; region?: string };
+  thumbnail: unknown;
+  slug: { current: string };
+  tags?: string[];
+  location?: { lat: number; lng: number };
+  otherBenefits?: string[];
+}
+
 // Dynamically import the map component to avoid SSR issues
 const CampMap = dynamic(() => import("@/components/CampMap"), {
   ssr: false,
@@ -21,7 +31,7 @@ const CampMap = dynamic(() => import("@/components/CampMap"), {
 });
 
 interface SearchMapWrapperProps {
-  posts: SanityDocument[];
+  posts: CampPost[];
   currentPage: number;
   totalPages: number;
   province?: string;
@@ -41,6 +51,7 @@ export default function SearchMapWrapper({
   const [activeTab, setActiveTab] = useState("list");
   // track ว่าเคยเปิด map tab หรือยัง เพื่อ lazy load
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [mapLoadedMobile, setMapLoadedMobile] = useState(false);
   // ใช้ ref + IntersectionObserver จับว่า tab หลุดจากจอหรือยัง
   const [isSticky, setIsSticky] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -89,20 +100,27 @@ export default function SearchMapWrapper({
     }
   };
 
-  // Header Component
-  const Header = () => (
+  const handleMobileToggle = () => {
+    const next = !showMap;
+    setShowMap(next);
+    if (next && !mapLoadedMobile) {
+      setMapLoadedMobile(true);
+    }
+  };
+
+  // JSX variables แทน inline component definitions เพื่อป้องกัน React remount ทุก render
+  const headerJSX = (
     <div className="mb-4">
       <h1 className="text-xl md:text-2xl font-semibold">
         {headerLabel}
       </h1>
       <p>
-        พบทั้งหมด {totalCount} {(provinceTh || regionTh) ? 'ลานกางเต็นท์' : 'แคมป์'}
+        พบทั้งหมด {totalCount} ลานกางเต็นท์
       </p>
     </div>
   );
 
-  // Content Component
-  const Content = () => (
+  const contentJSX = (
     <>
       <div className="grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-4 ">
         <CampThumbnail posts={posts} />
@@ -117,7 +135,7 @@ export default function SearchMapWrapper({
 
   return (
     <>
-      <Header />
+      {headerJSX}
 
       {/* Desktop Layout - Tabs */}
       <div className="hidden lg:block">
@@ -136,7 +154,7 @@ export default function SearchMapWrapper({
           </TabsList>
 
           <TabsContent value="list">
-            <Content />
+            {contentJSX}
           </TabsContent>
 
           <TabsContent value="map">
@@ -153,20 +171,19 @@ export default function SearchMapWrapper({
       <div className="lg:hidden">
         {/* Content */}
         <div className={showMap ? "hidden" : ""}>
-          <Content />
+          {contentJSX}
         </div>
 
-        {/* Map View */}
-        {showMap && (
-          <div className="fixed inset-0 z-40 bg-white  pt-15">
-            <CampMap posts={posts} className="w-full h-full" />
-          </div>
-        )}
+        {/* Map View - keep mounted after first load to preserve map state */}
+        <div className={`fixed inset-0 z-40 bg-white dark:bg-gray-900 pt-15 ${showMap ? "" : "hidden"}`}>
+          {mapLoadedMobile && <CampMap posts={posts} className="w-full h-full" />}
+        </div>
 
         {/* Toggle Button - Fixed at top */}
         <div className="fixed top-3.25 left-1/2 -translate-x-1/2 z-50">
           <button
-            onClick={() => setShowMap(!showMap)}
+            onClick={handleMobileToggle}
+            aria-label={showMap ? "แสดงแบบรายการ" : "แสดงแบบแผนที่"}
             className="flex items-center gap-2 px-4 py-2 border border-primary  dark:bg-white text-primary dark:text-primary rounded-full   transition-all active:scale-95"
           >
             {showMap ? (

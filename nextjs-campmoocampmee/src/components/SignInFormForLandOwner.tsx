@@ -46,8 +46,8 @@ export default function SignInForm() {
       <div className="container mx-auto max-w-md px-4">
         <Card className="shadow-md">
           <CardHeader className="items-center text-center pb-0">
-            <div className="flex size-14 items-center justify-center rounded-full bg-primary/10 mb-2">
-              <Tent className="size-7 text-primary" />
+            <div className="flex size-14 items-center justify-center rounded-full bg-primary/10 mb-2 mx-auto">
+              <Tent className="size-7 text-primary " />
             </div>
             <CardTitle className="text-2xl">
               สำหรับเจ้าของลานกางเต็นท์
@@ -64,8 +64,7 @@ export default function SignInForm() {
               onClick={handleGoogleSignIn}
               disabled={loading}
               variant="outline"
-              size="lg"
-              className="w-full gap-3 py-5 text-base cursor-pointer"
+              className="gap-3 w-full text-base max-w-52.5 mx-auto"
             >
               {loading ? (
                 <div className="size-5 border-2 border-muted-foreground border-t-transparent rounded-full animate-spin" />
