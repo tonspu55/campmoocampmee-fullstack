@@ -18,19 +18,25 @@ import { useLandOwnerStore } from '@/lib/store'
 interface UserDialogProps {
   className?: string
   onOpen?: () => void
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
-export default function UserDialog({ className = '', onOpen }: UserDialogProps) {
+export default function UserDialog({ className = '', onOpen, open: externalOpen, onOpenChange: externalOnOpenChange }: UserDialogProps) {
   const { data: session, status } = useSession()
   const [loading, setLoading] = useState(false)
-  const [open, setOpen] = useState(false)
+  const [internalOpen, setInternalOpen] = useState(false)
+
+  const isControlled = externalOpen !== undefined
+  const open = isControlled ? externalOpen : internalOpen
 
   // ใช้ Zustand store
   const { isLandOwner, loading: checkingLandOwner, fetchPosts, reset } = useLandOwnerStore()
 
   // เช็คว่าเป็นเจ้าของลานหรือไม่เมื่อ dialog เปิดและมี session
   const handleOpenChange = (isOpen: boolean) => {
-    setOpen(isOpen)
+    if (!isControlled) setInternalOpen(isOpen)
+    externalOnOpenChange?.(isOpen)
     if (isOpen) {
       onOpen?.()
       if (session) {
@@ -63,13 +69,15 @@ export default function UserDialog({ className = '', onOpen }: UserDialogProps) 
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button
-          className={`flex h-9 w-9 items-center justify-center rounded-full cursor-pointer ${className}`}
-        >
-          <User />
-        </Button>
-      </DialogTrigger>
+      {!isControlled && (
+        <DialogTrigger asChild>
+          <Button
+            className={`flex h-9 w-9 items-center justify-center rounded-full cursor-pointer ${className}`}
+          >
+            <User />
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="p-4 sm:max-w-md z-999">
         {status === 'loading' || checkingLandOwner ? (
           <>

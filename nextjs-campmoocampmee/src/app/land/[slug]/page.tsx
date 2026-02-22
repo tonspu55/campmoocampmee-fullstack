@@ -13,6 +13,9 @@ import InfoAddress from "@/components/InfoAddress";
 import NavigationMobile from "@/components/NavigationMobile";
 import ExpandableContent from "@/components/ExpandableContent";
 import ReviewSection from "@/components/ReviewSection";
+import JsonLd from "@/components/JsonLd";
+
+const SITE_URL = "https://www.campmoocampmee.com";
 
 
 type PageProps = {
@@ -47,6 +50,8 @@ const POST_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && slug.cur
     title
   }
 }`;
+
+const REVIEWS_QUERY = `*[_type == "review" && post._ref == $postId && status == "approved"]{rating}`;
 
 const { projectId, dataset } = client.config();
 const urlFor = (source: SanityImageSource) =>
@@ -88,7 +93,22 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function PostPage({ params }: PageProps) {
-  const post = await client.fetch<SanityDocument>(POST_QUERY, await params, options);
+  const { slug } = await params;
+  const post = await client.fetch<SanityDocument>(POST_QUERY, { slug }, options);
+
+  // ดึง reviews สำหรับ AggregateRating
+  const reviews = await client.fetch<{ rating: number }[]>(
+    REVIEWS_QUERY,
+    { postId: post._id },
+    options
+  );
+  const totalReviews = reviews.length;
+  const averageRating =
+    totalReviews > 0
+      ? parseFloat(
+          (reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews).toFixed(1)
+        )
+      : 0;
 
   // ดึงข้อมูล gallery (รูปภาพ) และ videos แยกกัน
   const rawGalleryData: SanityImageItem[] = post.gallery || [];
@@ -107,18 +127,88 @@ export default async function PostPage({ params }: PageProps) {
     })
     .filter(item => item.url);
 
-  // console.log('Raw Gallery Data:', rawGalleryData);
-  // console.log('Tab Gallery Data:', tabGalleryData);
-  // console.log('Image Gallery Data:', ImageGalleryData);
+  const pageUrl = `${SITE_URL}/land/${slug}`;
+
+  const campgroundSchema = {
+    "@context": "https://schema.org",
+    "@type": "Campground",
+    name: post.title,
+    description: `${post.title} ตั้งอยู่ที่ ${post.address?.subdistrict ?? ""} ${post.address?.district ?? ""} จังหวัด${post.address?.province ?? ""}`.trim(),
+    url: pageUrl,
+    image: ImageGalleryData.slice(0, 5).map((img) => img.url),
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: [post.address?.subdistrict, post.address?.district].filter(Boolean).join(" "),
+      addressLocality: post.address?.district,
+      addressRegion: post.address?.province,
+      addressCountry: "TH",
+    },
+    ...(post.location?.lat && post.location?.lng
+      ? {
+          geo: {
+            "@type": "GeoCoordinates",
+            latitude: post.location.lat,
+            longitude: post.location.lng,
+          },
+        }
+      : {}),
+    ...(totalReviews > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: averageRating,
+            reviewCount: totalReviews,
+            bestRating: 5,
+            worstRating: 1,
+          },
+        }
+      : {}),
+    ...(post.otherBenefits?.length
+      ? {
+          amenityFeature: post.otherBenefits.map((benefit: string) => ({
+            "@type": "LocationFeatureSpecification",
+            name: benefit,
+            value: true,
+          })),
+        }
+      : {}),
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "หน้าแรก",
+        item: SITE_URL,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: `ลานกางเต็นท์จังหวัด${post.address?.province ?? ""}`,
+        item: `${SITE_URL}/search?province=${encodeURIComponent(post.address?.province ?? "")}`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: post.title,
+        item: pageUrl,
+      },
+    ],
+  };
 
   return (
     <main className="container mx-auto max-w-6xl mt-15 pb-6 lg:pb-10">
+      <JsonLd data={campgroundSchema} />
+      <JsonLd data={breadcrumbSchema} />
       {/* Mobile: Fixed ImageGallery with parallax effect */}
-      {ImageGalleryData && <MobileParallaxGallery ImageGallery={ImageGalleryData} slug={(await params).slug} />}
+      {ImageGalleryData && <MobileParallaxGallery ImageGallery={ImageGalleryData} slug={slug} />}
 
       {/* Desktop: Normal ImageGallery */}
       <div className="hidden md:block">
-        {ImageGalleryData && <ImageGallery ImageGallery={ImageGalleryData} slug={(await params).slug} />}
+        {ImageGalleryData && <ImageGallery ImageGallery={ImageGalleryData} slug={slug} />}
       </div>
 
       {/* Content section - scrolls over ImageGallery on mobile */}
@@ -130,7 +220,7 @@ export default async function PostPage({ params }: PageProps) {
                 <h1 className="text-xl md:text-2xl font-semibold ">{post.title}</h1>
                 <InfoAddress InfoAddress={post.address} />
               </div>
-              <ShareToSocial title={post.title} slug={(await params).slug} />
+              <ShareToSocial title={post.title} slug={slug} />
             </div>
             <OtherBenefits otherBenefits={post.otherBenefits} />
             <div className="">
