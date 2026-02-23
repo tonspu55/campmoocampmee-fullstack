@@ -42,7 +42,7 @@ export const postType = defineType({
               {title: 'ใกล้กรุงเทพ', value: 'nearBangkok'},
               {title: 'วิวภูเขา', value: 'mountainView'},
               {title: 'วิวทะเล', value: 'seaView'},
-              {title: 'วิวแม่น้ำ', value: 'riverView'},
+              {title: 'ริมน้ำ', value: 'riverView'},
               {title: 'ตกปลา', value: 'fishing'},
             ],
           },
