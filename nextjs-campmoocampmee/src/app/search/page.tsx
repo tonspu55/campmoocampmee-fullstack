@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import SearchMapWrapper, { type CampPost } from "@/components/SearchMapWrapper";
 import { getThaiProvinceName } from "@/lib/provinces";
 import { getThaiRegionName } from "@/lib/regions";
+import { TAG_LABELS } from "@/lib/tags";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -19,21 +20,23 @@ interface SearchPageProps {
     province?: string;
     region?: string;
     page?: string;
+    tag?: string;
   }>;
 }
 
 export async function generateMetadata({
   searchParams,
 }: SearchPageProps): Promise<Metadata> {
-  const { province: provinceSlug, region: regionSlug } = await searchParams;
+  const { province: provinceSlug, region: regionSlug, tag: tagParam } = await searchParams;
 
   const provinceTh = provinceSlug
     ? getThaiProvinceName(provinceSlug)
     : undefined;
   const regionTh = regionSlug ? getThaiRegionName(regionSlug) : undefined;
+  const tagLabel = tagParam ? TAG_LABELS[tagParam] : undefined;
 
   const locationLabel =
-    provinceTh || provinceSlug || regionTh || regionSlug || "";
+    provinceTh || provinceSlug || regionTh || regionSlug || tagLabel || "";
   const titleSuffix = locationLabel ? ` ${locationLabel}` : "";
 
   return {
@@ -47,24 +50,26 @@ const options = { next: { revalidate: 300 } };
 const ITEMS_PER_PAGE = 12;
 
 // Helper functions for building GROQ queries
-function buildFilterConditions(province?: string, regionSlug?: string): string {
+function buildFilterConditions(province?: string, regionSlug?: string, tag?: string): string {
+  const conditions: string[] = [];
+
   if (province) {
     // ใช้ GROQ param $province แทน string interpolation
-    // address.province เก็บชื่อไทยตรงๆ จาก Sanity → exact match เพียงพอ
-    // หลีกเลี่ยง match operator ที่มี leading * ซึ่งไม่ใช่ GROQ standard และอาจ match ทุก document
-    return `&& address.province == $province`;
-  }
-
-  if (regionSlug) {
+    conditions.push(`&& address.province == $province`);
+  } else if (regionSlug) {
     // ใช้ GROQ param เพื่อป้องกัน injection จาก raw URL param
-    return `&& address.region == $region`;
+    conditions.push(`&& address.region == $region`);
   }
 
-  return "";
+  if (tag) {
+    conditions.push(`&& $tag in tags`);
+  }
+
+  return conditions.join("\n    ");
 }
 
-function buildBaseFilter(province?: string, regionSlug?: string): string {
-  const filterConditions = buildFilterConditions(province, regionSlug);
+function buildBaseFilter(province?: string, regionSlug?: string, tag?: string): string {
+  const filterConditions = buildFilterConditions(province, regionSlug, tag);
 
   return `*[
     _type == "post"
@@ -74,8 +79,8 @@ function buildBaseFilter(province?: string, regionSlug?: string): string {
   ]`;
 }
 
-function buildCountQuery(province?: string, regionSlug?: string): string {
-  return `count(${buildBaseFilter(province, regionSlug)})`;
+function buildCountQuery(province?: string, regionSlug?: string, tag?: string): string {
+  return `count(${buildBaseFilter(province, regionSlug, tag)})`;
 }
 
 function buildSearchQuery(
@@ -83,8 +88,9 @@ function buildSearchQuery(
   limit: number,
   province?: string,
   regionSlug?: string,
+  tag?: string,
 ): string {
-  const baseFilter = buildBaseFilter(province, regionSlug);
+  const baseFilter = buildBaseFilter(province, regionSlug, tag);
 
   return `${baseFilter} | order(publishedAt desc)[${offset}...${offset + limit}]{
     _id,
@@ -103,10 +109,12 @@ async function SearchResults({
   provinceSlug,
   regionSlug,
   page,
+  tag,
 }: {
   provinceSlug?: string;
   regionSlug?: string;
   page?: string;
+  tag?: string;
 }) {
   const province = provinceSlug ? getThaiProvinceName(provinceSlug) : undefined;
   const regionTh = regionSlug ? getThaiRegionName(regionSlug) : undefined;
@@ -115,18 +123,20 @@ async function SearchResults({
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   // Build queries using helper functions
-  const countQuery = buildCountQuery(province, regionSlug);
+  const countQuery = buildCountQuery(province, regionSlug, tag);
   const searchQuery = buildSearchQuery(
     offset,
     ITEMS_PER_PAGE,
     province,
     regionSlug,
+    tag,
   );
 
-  // ส่ง province และ region เป็น GROQ params ทั้งคู่ (ไม่ interpolate ลงใน query string)
+  // ส่ง province, region และ tag เป็น GROQ params (ไม่ interpolate ลงใน query string)
   const queryParams: Record<string, string> = {};
   if (province) queryParams.province = province;
   if (regionSlug) queryParams.region = regionSlug;
+  if (tag) queryParams.tag = tag;
 
   // Fetch data in parallel
   const [totalCount, posts] = await Promise.all([
@@ -154,11 +164,13 @@ async function SearchResults({
               ? `ไม่พบลานกางเต็นท์ในจังหวัด${province}`
               : regionTh
                 ? `ไม่พบลานกางเต็นท์ใน${regionTh}`
-                : provinceSlug
-                  ? `ไม่พบลานกางเต็นท์ในจังหวัด${provinceSlug}`
-                  : regionSlug
-                    ? `ไม่พบลานกางเต็นท์ในภาค${regionSlug}`
-                    : "ไม่พบข้อมูลลานกางเต็นท์"}
+                : tag && TAG_LABELS[tag]
+                  ? `ไม่พบลานกางเต็นท์ในหมวด${TAG_LABELS[tag]}`
+                  : provinceSlug
+                    ? `ไม่พบลานกางเต็นท์ในจังหวัด${provinceSlug}`
+                    : regionSlug
+                      ? `ไม่พบลานกางเต็นท์ในภาค${regionSlug}`
+                      : "ไม่พบข้อมูลลานกางเต็นท์"}
           </p>
         </div>
       )}
@@ -175,15 +187,18 @@ function SearchResultsSkeleton() {
 }
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
-  const { province, region, page } = await searchParams;
+  const { province, region, page, tag } = await searchParams;
 
   const provinceTh = province ? getThaiProvinceName(province) : undefined;
   const regionTh = region ? getThaiRegionName(region) : undefined;
+  const tagLabel = tag ? TAG_LABELS[tag] : undefined;
   const breadcrumbLabel = provinceTh
     ? `จังหวัด${provinceTh}`
     : regionTh
       ? regionTh
-      : province || region || "ลานกางเต็นท์ทั้งหมด";
+      : tagLabel
+        ? tagLabel
+        : province || region || "ลานกางเต็นท์ทั้งหมด";
 
   return (
     <main className="max-lg:pb-6 max-lg:pt-12 lg:py-10">
@@ -204,6 +219,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             provinceSlug={province}
             regionSlug={region}
             page={page}
+            tag={tag}
           />
         </Suspense>
       </div>
