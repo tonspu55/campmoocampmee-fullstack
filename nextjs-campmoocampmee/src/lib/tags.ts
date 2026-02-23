@@ -4,6 +4,6 @@ export const TAG_LABELS: Record<string, string> = {
   nearBangkok: "ใกล้กรุงเทพ",
   mountainView: "วิวภูเขา",
   seaView: "วิวทะเล",
-  riverView: "วิวแม่น้ำ",
+  riverView: "ริมน้ำ",
   fishing: "ตกปลา",
 };
