@@ -38,11 +38,12 @@ export const postType = defineType({
           options: {
             list: [
               {title: 'แนะนำ', value: 'recommend'},
-              {title: 'ใหม่', value: 'new'},
+              {title: 'เปิดใหม่', value: 'new'},
               {title: 'ใกล้กรุงเทพ', value: 'nearBangkok'},
               {title: 'วิวภูเขา', value: 'mountainView'},
               {title: 'วิวทะเล', value: 'seaView'},
               {title: 'วิวแม่น้ำ', value: 'riverView'},
+              {title: 'ตกปลา', value: 'fishing'},
             ],
           },
         },

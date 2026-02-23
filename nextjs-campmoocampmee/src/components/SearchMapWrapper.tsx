@@ -93,7 +93,7 @@ export default function SearchMapWrapper({
     ? `ลานกางเต็นท์ในจังหวัด${provinceTh}`
     : regionTh
       ? `ลานกางเต็นท์ใน${regionTh}`
-      : "ค้นหาทั้งหมด";
+      : "ผลการค้นหา";
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);

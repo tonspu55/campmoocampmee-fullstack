@@ -3,8 +3,14 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import styles from "@/app/homepage.module.css";
 import SearchBox from "@/components/SearchBox";
+import Link from "next/link";
+import { TAG_LABELS } from "@/lib/tags";
 
-export default function HeroBanner() {
+interface HeroBannerProps {
+  availableTags?: string[];
+}
+
+export default function HeroBanner({ availableTags = [] }: HeroBannerProps) {
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -29,24 +35,32 @@ export default function HeroBanner() {
   return (
     <div className={`${styles.homeBg}`}>
       <div className="container mx-auto max-w-6xl px-2 h-full">
-        <div className="flex flex-col items-center justify-center text-center h-full mt-[-20px] lg:justify-center lg:items-center lg:text-left lg:flex-row lg:pl-[0px] lg:mt-[-20px]">
+        <div className="flex flex-col items-center justify-center text-center h-full  lg:justify-center lg:items-center lg:text-left lg:flex-row lg:pl-[0px] lg:mt-[-20px]">
           <div className="w-[50%] flex-none"></div>
           <div ref={contentRef} className="w-full lg:w-[50%] gap-4">
             <h1 className="text-xl lg:text-4xl font-bold text-white">
-              หาลานกางเต็นท์
-              <br />
-              ที่พักแคมป์ปิ้งทั่วไทย
+              หาลานกางเต็นท์ตรงใจคุณ
             </h1>
-            {/* <Button asChild className="cursor-pointer mt-2 lg:mt-4" variant="default">
-              <Link href="/contact">
-                ติดต่อลงข้อมูล
-              </Link>
-            </Button> */}
             <div className="flex flex-col items-center lg:items-start mt-2 lg:mt-4">
-              <div className="w-[250px] lg:w-[350px]">
+              <div className="w-full max-w-[320px] md:w-[350px]">
                 <SearchBox />
               </div>
             </div>
+            {availableTags.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-3 justify-center  lg:justify-start  lg:max-w-[350px] w-full">
+                {Object.keys(TAG_LABELS)
+                  .filter((tag) => availableTags.includes(tag))
+                  .map((tag) => (
+                    <Link
+                      key={tag}
+                      href={`/search?tag=${tag}`}
+                      className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-white/20 text-white backdrop-blur-sm border border-white/30 hover:bg-white/30 transition-colors"
+                    >
+                      {TAG_LABELS[tag]}
+                    </Link>
+                  ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
