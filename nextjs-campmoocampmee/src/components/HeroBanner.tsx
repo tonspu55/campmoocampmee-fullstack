@@ -33,7 +33,9 @@ export default function HeroBanner() {
           <div className="w-[50%] flex-none"></div>
           <div ref={contentRef} className="w-full lg:w-[50%] gap-4">
             <h1 className="text-xl lg:text-4xl font-bold text-white">
-              ค้นหาลานกางเต็นท์<br />สำหรับการพักผ่อนที่ดีที่สุด
+              หาลานกางเต็นท์
+              <br />
+              ที่พักแคมป์ปิ้งทั่วไทย
             </h1>
             {/* <Button asChild className="cursor-pointer mt-2 lg:mt-4" variant="default">
               <Link href="/contact">
@@ -41,7 +43,9 @@ export default function HeroBanner() {
               </Link>
             </Button> */}
             <div className="flex flex-col items-center lg:items-start mt-2 lg:mt-4">
-              <div className="w-[250px] lg:w-[350px]"><SearchBox /></div>
+              <div className="w-[250px] lg:w-[350px]">
+                <SearchBox />
+              </div>
             </div>
           </div>
         </div>

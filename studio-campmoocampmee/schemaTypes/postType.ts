@@ -37,9 +37,12 @@ export const postType = defineType({
           type: 'string',
           options: {
             list: [
-              {title: 'recommend', value: 'recommend'},
-              {title: 'new', value: 'new'},
-              {title: 'nearBangkok', value: 'nearBangkok'},
+              {title: 'แนะนำ', value: 'recommend'},
+              {title: 'ใหม่', value: 'new'},
+              {title: 'ใกล้กรุงเทพ', value: 'nearBangkok'},
+              {title: 'วิวภูเขา', value: 'mountainView'},
+              {title: 'วิวทะเล', value: 'seaView'},
+              {title: 'วิวแม่น้ำ', value: 'riverView'},
             ],
           },
         },
