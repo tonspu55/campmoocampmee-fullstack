@@ -1,13 +1,12 @@
-'use client'
-import Link from 'next/link';
-import Image from 'next/image';
-import { ThemeSwitcher } from '@/components/header/ThemeSwitcher';
+"use client";
+import Link from "next/link";
+import Image from "next/image";
+import { ThemeSwitcher } from "@/components/header/ThemeSwitcher";
 
 const Footer = () => {
   return (
-
-    <footer className='bg-gray-100 dark:bg-[#0a0a0a]'>
-      <div className='container mx-auto max-w-6xl px-2 '>
+    <footer className="bg-gray-100 dark:bg-[#0a0a0a]">
+      <div className="container mx-auto max-w-6xl px-2 ">
         <div className="py-6 lg:py-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
             {/* Logo and Description */}
@@ -15,25 +14,31 @@ const Footer = () => {
               <div className="flex flex-col items-start gap-4">
                 <ThemeSwitcher />
                 <div className="flex flex-col ">
-                  <p className="text-sm">
-                    แคมป์หมูแคมป์หมี ค้นหาลานกางเต็นท์ทั่วไทย
-                  </p>
+                  <p>แคมป์หมูแคมป์หมี หาลานกางเต็นท์ตรงใจคุณ</p>
                 </div>
               </div>
-
             </div>
 
             {/* Quick Links */}
             <div className="flex flex-col space-y-2">
               <h4 className="text-lg font-bold">เมนู</h4>
               <nav className="flex flex-col space-y-2">
-                <Link href="/" className="text-md max-lg:text-sm hover:opacity-70">
+                <Link
+                  href="/"
+                  className="text-md max-lg:text-sm hover:opacity-70"
+                >
                   หน้าหลัก
                 </Link>
-                <Link href="/contact" className="text-md max-lg:text-sm hover:opacity-70">
+                <Link
+                  href="/contact"
+                  className="text-md max-lg:text-sm hover:opacity-70"
+                >
                   ติดต่อลงข้อมูล
                 </Link>
-                <Link href="/landowner" className="text-md max-lg:text-sm hover:opacity-70">
+                <Link
+                  href="/landowner"
+                  className="text-md max-lg:text-sm hover:opacity-70"
+                >
                   สำหรับเจ้าของลาน
                 </Link>
               </nav>
@@ -50,7 +55,11 @@ const Footer = () => {
 
               {/* Social Media */}
               <div className="flex space-x-2">
-                <Link href="https://www.facebook.com/profile.php?id=100080127966873" target='_blank' className=" hover:text-white">
+                <Link
+                  href="https://www.facebook.com/profile.php?id=100080127966873"
+                  target="_blank"
+                  className=" hover:text-white"
+                >
                   <Image
                     src="/assets/images/facebook.png"
                     alt="Facebook"
@@ -58,7 +67,10 @@ const Footer = () => {
                     height={35}
                   />
                 </Link>
-                <Link href="https://www.instagram.com/campmoocampmee/" className=" hover:text-white">
+                <Link
+                  href="https://www.instagram.com/campmoocampmee/"
+                  className=" hover:text-white"
+                >
                   <Image
                     src="/assets/images/instagram.png"
                     alt="Instagram"
@@ -66,7 +78,6 @@ const Footer = () => {
                     height={35}
                   />
                 </Link>
-
               </div>
             </div>
           </div>
@@ -75,16 +86,13 @@ const Footer = () => {
           <div className=" pt-6">
             <div className="flex flex-row justify-between items-center text-sm ">
               <p>&copy; 2026 campmoocampmee</p>
-              <Link
-                href="/cookie-policy"
-                className="underline-none"
-              >
+              <Link href="/cookie-policy" className="underline-none">
                 นโยบายการใช้คุกกี้
               </Link>
             </div>
           </div>
-        </div></div>
-
+        </div>
+      </div>
     </footer>
   );
 };

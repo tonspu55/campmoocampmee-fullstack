@@ -17,19 +17,16 @@ import JsonLd from "@/components/JsonLd";
 
 const SITE_URL = "https://www.campmoocampmee.com";
 
-
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
 interface SanityImageItem {
-  _type: 'image';
+  _type: "image";
   asset?: { _id: string; url: string };
   category?: string;
   alt?: string;
 }
-
-
 
 const POST_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && slug.current == $slug][0]{
   ...,
@@ -61,8 +58,14 @@ const urlFor = (source: SanityImageSource) =>
 
 const options = { next: { revalidate: 300 } };
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const post = await client.fetch<SanityDocument>(POST_QUERY, await params, options);
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const post = await client.fetch<SanityDocument>(
+    POST_QUERY,
+    await params,
+    options,
+  );
 
   const thumbnailImage = post.thumbnail
     ? urlFor(post.thumbnail)?.width(1200).height(1200).url() || null
@@ -74,17 +77,19 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     openGraph: {
       title: `${post.title} - ลานกางเต็นท์จังหวัด${post.address?.province}`,
       description: `${post.title} ตั้งอยู่ที่ ${post.address?.province} ${post.address?.district} ${post.address?.subdistrict}`,
-      images: thumbnailImage ? [
-        {
-          url: thumbnailImage,
-          width: 1200,
-          height: 1200,
-          alt: post.title,
-        }
-      ] : undefined,
+      images: thumbnailImage
+        ? [
+            {
+              url: thumbnailImage,
+              width: 1200,
+              height: 1200,
+              alt: post.title,
+            },
+          ]
+        : undefined,
     },
     twitter: {
-      card: 'summary_large_image',
+      card: "summary_large_image",
       title: `${post.title} - ลานกางเต็นท์จังหวัด${post.address?.province}`,
       description: `${post.title} ตั้งอยู่ที่ ${post.address?.province} ${post.address?.district} ${post.address?.subdistrict}`,
       images: thumbnailImage ? [thumbnailImage] : undefined,
@@ -94,19 +99,25 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function PostPage({ params }: PageProps) {
   const { slug } = await params;
-  const post = await client.fetch<SanityDocument>(POST_QUERY, { slug }, options);
+  const post = await client.fetch<SanityDocument>(
+    POST_QUERY,
+    { slug },
+    options,
+  );
 
   // ดึง reviews สำหรับ AggregateRating
   const reviews = await client.fetch<{ rating: number }[]>(
     REVIEWS_QUERY,
     { postId: post._id },
-    options
+    options,
   );
   const totalReviews = reviews.length;
   const averageRating =
     totalReviews > 0
       ? parseFloat(
-          (reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews).toFixed(1)
+          (
+            reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews
+          ).toFixed(1),
         )
       : 0;
 
@@ -115,17 +126,18 @@ export default async function PostPage({ params }: PageProps) {
 
   // สำหรับ ImageGallery (เฉพาะรูปภาพ)
   const ImageGalleryData = rawGalleryData
-    .filter((item): item is SanityImageItem & { asset: { url: string } } =>
-      item._type === 'image' && !!item.asset?.url
+    .filter(
+      (item): item is SanityImageItem & { asset: { url: string } } =>
+        item._type === "image" && !!item.asset?.url,
     )
-    .map(item => {
+    .map((item) => {
       const imageUrl = urlFor(item)?.width(1200).height(1200).url();
       return {
-        url: imageUrl || '',
-        alt: item.alt || null
+        url: imageUrl || "",
+        alt: item.alt || null,
       };
     })
-    .filter(item => item.url);
+    .filter((item) => item.url);
 
   const pageUrl = `${SITE_URL}/land/${slug}`;
 
@@ -133,12 +145,15 @@ export default async function PostPage({ params }: PageProps) {
     "@context": "https://schema.org",
     "@type": "Campground",
     name: post.title,
-    description: `${post.title} ตั้งอยู่ที่ ${post.address?.subdistrict ?? ""} ${post.address?.district ?? ""} จังหวัด${post.address?.province ?? ""}`.trim(),
+    description:
+      `${post.title} ตั้งอยู่ที่ ${post.address?.subdistrict ?? ""} ${post.address?.district ?? ""} จังหวัด${post.address?.province ?? ""}`.trim(),
     url: pageUrl,
     image: ImageGalleryData.slice(0, 5).map((img) => img.url),
     address: {
       "@type": "PostalAddress",
-      streetAddress: [post.address?.subdistrict, post.address?.district].filter(Boolean).join(" "),
+      streetAddress: [post.address?.subdistrict, post.address?.district]
+        .filter(Boolean)
+        .join(" "),
       addressLocality: post.address?.district,
       addressRegion: post.address?.province,
       addressCountry: "TH",
@@ -204,11 +219,15 @@ export default async function PostPage({ params }: PageProps) {
       <JsonLd data={campgroundSchema} />
       <JsonLd data={breadcrumbSchema} />
       {/* Mobile: Fixed ImageGallery with parallax effect */}
-      {ImageGalleryData && <MobileParallaxGallery ImageGallery={ImageGalleryData} slug={slug} />}
+      {ImageGalleryData && (
+        <MobileParallaxGallery ImageGallery={ImageGalleryData} slug={slug} />
+      )}
 
       {/* Desktop: Normal ImageGallery */}
       <div className="hidden md:block">
-        {ImageGalleryData && <ImageGallery ImageGallery={ImageGalleryData} slug={slug} />}
+        {ImageGalleryData && (
+          <ImageGallery ImageGallery={ImageGalleryData} slug={slug} />
+        )}
       </div>
 
       {/* Content section - scrolls over ImageGallery on mobile */}
@@ -217,7 +236,9 @@ export default async function PostPage({ params }: PageProps) {
           <div className="basis-1/1 px-2 lg:pr-0 lg:pl-2 w-full">
             <div className="flex flex-row gap-4 justify-between items-start mb-4 lg:mb-6">
               <div className="flex flex-col">
-                <h1 className="text-xl md:text-2xl font-semibold ">{post.title}</h1>
+                <h1 className="text-xl md:text-2xl font-semibold ">
+                  {post.title}
+                </h1>
                 <InfoAddress InfoAddress={post.address} />
               </div>
               <ShareToSocial title={post.title} slug={slug} />
@@ -229,17 +250,19 @@ export default async function PostPage({ params }: PageProps) {
               </ExpandableContent>
             </div>
 
-            <div className={`lg:hidden mt-4 `}>
+            <div className={`lg:hidden mt-4`}>
               <ContactSocialLink socialContactLinks={post.socialContactLinks} />
             </div>
+            <ReviewSection postId={post._id} />
           </div>
-          <div className="px-2 max-lg:w-full basis-1/1 lg:pl-0  lg:basis-1/3 max-lg:pt-4 max-lg:hidden">
-            <div className={`p-4 ${styles.contactInfo} dark:border-primary dark:border`}>
+          <div className="px-2 max-lg:w-full basis-1/1 lg:pl-0 lg:basis-1/3 max-lg:pt-4 max-lg:hidden sticky top-[76px]">
+            <div
+              className={`p-4 ${styles.contactInfo} dark:border-primary dark:border`}
+            >
               <ContactSocialLink socialContactLinks={post.socialContactLinks} />
             </div>
           </div>
         </div>
-        <ReviewSection postId={post._id} />
       </div>
       <div className="end-page-detection lg:hidden"></div>
       <NavigationMobile socialContactLinks={post.socialContactLinks} />
