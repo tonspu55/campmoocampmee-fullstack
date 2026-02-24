@@ -155,6 +155,7 @@ async function SearchResults({
           totalPages={totalPages}
           province={provinceSlug}
           region={regionSlug}
+          tag={tag}
           totalCount={totalCount}
         />
       ) : (

@@ -38,6 +38,7 @@ interface SearchMapWrapperProps {
   totalPages: number;
   province?: string;
   region?: string;
+  tag?: string;
   totalCount: number;
 }
 
@@ -47,6 +48,7 @@ export default function SearchMapWrapper({
   totalPages,
   province,
   region,
+  tag,
   totalCount,
 }: SearchMapWrapperProps) {
   const [showMap, setShowMap] = useState(false);
@@ -84,6 +86,7 @@ export default function SearchMapWrapper({
     const params = new URLSearchParams();
     if (province) params.set("province", province);
     if (region) params.set("region", region);
+    if (tag) params.set("tag", tag);
     params.set("page", pageNumber.toString());
     return `/search?${params.toString()}`;
   };
