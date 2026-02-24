@@ -228,6 +228,7 @@ ul {
 /* ต้อง overflow: hidden เพื่อให้ rounded corners clip ได้ถูกต้อง */
 .gm-style .gm-style-iw-d {
   overflow: hidden !important;
+  font-family: "Noto Sans Thai", sans-serif !important;
 }
 
 /* ปรับปุ่ม × ให้เป็น absolute overlay วงกลมที่มุมบนขวาของรูปภาพ */
