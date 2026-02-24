@@ -96,9 +96,7 @@ export default function CampMap({ posts, className = "" }: CampMapProps) {
 
   // Filter posts that have location data
   const postsWithLocation = useMemo(() => {
-    return posts.filter(
-      (post) => post.location?.lat && post.location?.lng
-    );
+    return posts.filter((post) => post.location?.lat && post.location?.lng);
   }, [posts]);
 
   // Calculate center based on posts or use default
@@ -108,31 +106,34 @@ export default function CampMap({ posts, className = "" }: CampMapProps) {
     const avgLat =
       postsWithLocation.reduce(
         (sum, post) => sum + (post.location?.lat || 0),
-        0
+        0,
       ) / postsWithLocation.length;
     const avgLng =
       postsWithLocation.reduce(
         (sum, post) => sum + (post.location?.lng || 0),
-        0
+        0,
       ) / postsWithLocation.length;
 
     return { lat: avgLat, lng: avgLng };
   }, [postsWithLocation]);
 
-  const onLoad = useCallback((map: google.maps.Map) => {
-    setMap(map);
+  const onLoad = useCallback(
+    (map: google.maps.Map) => {
+      setMap(map);
 
-    // Fit bounds to show all markers
-    if (postsWithLocation.length > 1) {
-      const bounds = new google.maps.LatLngBounds();
-      postsWithLocation.forEach((post) => {
-        if (post.location?.lat && post.location?.lng) {
-          bounds.extend({ lat: post.location.lat, lng: post.location.lng });
-        }
-      });
-      map.fitBounds(bounds, { top: 50, right: 50, bottom: 50, left: 50 });
-    }
-  }, [postsWithLocation]);
+      // Fit bounds to show all markers
+      if (postsWithLocation.length > 1) {
+        const bounds = new google.maps.LatLngBounds();
+        postsWithLocation.forEach((post) => {
+          if (post.location?.lat && post.location?.lng) {
+            bounds.extend({ lat: post.location.lat, lng: post.location.lng });
+          }
+        });
+        map.fitBounds(bounds, { top: 50, right: 50, bottom: 50, left: 50 });
+      }
+    },
+    [postsWithLocation],
+  );
 
   const onUnmount = useCallback(() => {
     setMap(null);
@@ -147,7 +148,9 @@ export default function CampMap({ posts, className = "" }: CampMapProps) {
 
   if (loadError) {
     return (
-      <div className={`flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-xl ${className}`}>
+      <div
+        className={`flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-xl ${className}`}
+      >
         <p className="text-gray-500">ไม่สามารถโหลดแผนที่ได้</p>
       </div>
     );
@@ -155,7 +158,9 @@ export default function CampMap({ posts, className = "" }: CampMapProps) {
 
   if (!isLoaded) {
     return (
-      <div className={`flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-xl animate-pulse ${className}`}>
+      <div
+        className={`flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-xl animate-pulse ${className}`}
+      >
         <p className="text-gray-500">กำลังโหลดแผนที่...</p>
       </div>
     );
@@ -216,7 +221,10 @@ export default function CampMap({ posts, className = "" }: CampMapProps) {
       {/* Mobile Selected Camp Card - Fixed at bottom */}
       {selectedCamp && (
         <div className="lg:hidden absolute bottom-4 left-4 right-4 z-10">
-          <MobileCampCard camp={selectedCamp} onClose={() => setSelectedCamp(null)} />
+          <MobileCampCard
+            camp={selectedCamp}
+            onClose={() => setSelectedCamp(null)}
+          />
         </div>
       )}
     </div>
@@ -232,7 +240,10 @@ function CampInfoCard({ camp }: { camp: SanityDocument }) {
 
   return (
     <div className="w-55 p-0">
-      <Link href={`/land/${camp.slug?.current}`} className="flex flex-col gap-2">
+      <Link
+        href={`/land/${camp.slug?.current}`}
+        className="flex flex-col gap-2"
+      >
         {/* Image */}
         <div className="relative w-full aspect-video bg-muted  overflow-hidden">
           {imageUrl ? (
@@ -252,12 +263,19 @@ function CampInfoCard({ camp }: { camp: SanityDocument }) {
 
         {/* Content */}
         <div className="px-2 pb-2">
-          <h3 className="text-sm font-semibold line-clamp-1">
-            {camp.title}
-          </h3>
+          <h3 className="text-sm font-semibold line-clamp-1">{camp.title}</h3>
+          {camp.address?.province && (
+            <p className="text-sm">
+              {camp.address.district &&
+                `${camp.address.district} ${camp.address.province}`}
+            </p>
+          )}
           {camp.otherBenefits?.priceOfStay && (
             <p className="text-sm text-gray-700">
-              <strong className="font-bold!">฿{camp.otherBenefits.priceOfStay}</strong> / คน / คืน
+              <strong className="font-bold!">
+                ฿{camp.otherBenefits.priceOfStay}
+              </strong>{" "}
+              / คน / คืน
             </p>
           )}
         </div>
@@ -267,7 +285,13 @@ function CampInfoCard({ camp }: { camp: SanityDocument }) {
 }
 
 // Mobile Camp Card (fixed at bottom)
-function MobileCampCard({ camp, onClose }: { camp: SanityDocument; onClose: () => void }) {
+function MobileCampCard({
+  camp,
+  onClose,
+}: {
+  camp: SanityDocument;
+  onClose: () => void;
+}) {
   const imageUrl = camp.thumbnail
     ? urlFor(camp.thumbnail)?.width(120).height(120).url()
     : null;
@@ -306,7 +330,9 @@ function MobileCampCard({ camp, onClose }: { camp: SanityDocument; onClose: () =
           {camp.otherBenefits?.priceOfStay && (
             <p className="text-sm font-semibold text-gray-900 dark:text-white mt-1">
               ฿{camp.otherBenefits.priceOfStay}{" "}
-              <span className="font-normal text-gray-500 dark:text-gray-400">/ คน / คืน</span>
+              <span className="font-normal text-gray-500 dark:text-gray-400">
+                / คน / คืน
+              </span>
             </p>
           )}
         </div>
@@ -331,9 +357,13 @@ function MobileCampCard({ camp, onClose }: { camp: SanityDocument; onClose: () =
 // Skeleton loader
 export function CampMapSkeleton({ className = "" }: { className?: string }) {
   return (
-    <div className={`bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse ${className}`}>
+    <div
+      className={`bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse ${className}`}
+    >
       <div className="w-full h-full flex items-center justify-center">
-        <span className="text-gray-400 dark:text-gray-500">กำลังโหลดแผนที่...</span>
+        <span className="text-gray-400 dark:text-gray-500">
+          กำลังโหลดแผนที่...
+        </span>
       </div>
     </div>
   );

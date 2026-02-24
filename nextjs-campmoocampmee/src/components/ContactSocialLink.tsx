@@ -1,9 +1,9 @@
-'use client'
+"use client";
 
-import Link from 'next/link';
+import Link from "next/link";
 import Image from "next/image";
 import { PhoneCall } from "lucide-react";
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 
 type SocialContactLinks = {
   facebook?: string;
@@ -12,7 +12,7 @@ type SocialContactLinks = {
   tiktok?: string;
   googleMap?: string;
   phone?: string;
-}
+};
 
 interface ContactSocialLinkProps {
   socialContactLinks: SocialContactLinks;
@@ -23,26 +23,22 @@ const ContactSocialLink = ({ socialContactLinks }: ContactSocialLinkProps) => {
 
   return (
     <>
-      <h4 className="text-lg md:text-xl font-semibold mb-4">ช่องทางการติดต่อ</h4>
+      <h4 className="text-lg md:text-xl font-semibold mb-4">
+        ช่องทางการติดต่อ
+      </h4>
       <div className="flex flex-col gap-4">
-        <div className='flex  gap-2 flex-row justify-between items-center'>
-
+        <div className="flex  gap-2 flex-row justify-between items-center">
           {socialContactLinks.phone && (
-            <div className="flex flex-row gap-2 items-center">
-              <Button variant="default" className="flex items-center">
-                <PhoneCall className='w-4 h-4 ' />
-                <Link href={`tel:${socialContactLinks.phone}`}>
-                  {socialContactLinks.phone}
-                </Link>
-              </Button>
+            <div className="flex flex-row gap-1 items-center">
+              <PhoneCall className="w-4 h-4 " />
+              <Link href={`tel:${socialContactLinks.phone}`}>
+                {socialContactLinks.phone}
+              </Link>
             </div>
           )}
           <div className="flex gap-2 flex-row">
             {socialContactLinks.facebook && (
-              <Link
-                href={socialContactLinks.facebook}
-                target="_blank"
-              >
+              <Link href={socialContactLinks.facebook} target="_blank">
                 <Image
                   priority
                   src="/assets/images/facebook.png"
@@ -50,14 +46,10 @@ const ContactSocialLink = ({ socialContactLinks }: ContactSocialLinkProps) => {
                   width={30}
                   height={30}
                 ></Image>
-
               </Link>
             )}
             {socialContactLinks.tiktok && (
-              <Link
-                href={socialContactLinks.tiktok}
-                target="_blank"
-              >
+              <Link href={socialContactLinks.tiktok} target="_blank">
                 <Image
                   priority
                   src="/assets/images/tiktok.png"
@@ -65,14 +57,10 @@ const ContactSocialLink = ({ socialContactLinks }: ContactSocialLinkProps) => {
                   width={30}
                   height={30}
                 ></Image>
-
               </Link>
             )}
             {socialContactLinks.line && (
-              <Link
-                href={socialContactLinks.line}
-                target="_blank"
-              >
+              <Link href={socialContactLinks.line} target="_blank">
                 <Image
                   priority
                   src="/assets/images/line.png"
@@ -80,14 +68,10 @@ const ContactSocialLink = ({ socialContactLinks }: ContactSocialLinkProps) => {
                   width={30}
                   height={30}
                 ></Image>
-
               </Link>
             )}
             {socialContactLinks.instagram && (
-              <Link
-                href={socialContactLinks.instagram}
-                target="_blank"
-              >
+              <Link href={socialContactLinks.instagram} target="_blank">
                 <Image
                   priority
                   src="/assets/images/instagram.png"
@@ -95,13 +79,10 @@ const ContactSocialLink = ({ socialContactLinks }: ContactSocialLinkProps) => {
                   width={30}
                   height={30}
                 ></Image>
-
               </Link>
             )}
-
           </div>
         </div>
-
 
         {socialContactLinks.googleMap && (
           <iframe
@@ -113,8 +94,6 @@ const ContactSocialLink = ({ socialContactLinks }: ContactSocialLinkProps) => {
             referrerPolicy="no-referrer-when-downgrade"
           />
         )}
-
-
       </div>
     </>
   );
