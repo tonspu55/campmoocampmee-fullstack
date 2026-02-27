@@ -3,7 +3,7 @@ import Image from "next/image";
 import { type SanityDocument } from "next-sanity";
 import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
-import { client } from "@/sanity/client";
+import { readClient as client } from "@/sanity/client";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface SearchCampGridProps {

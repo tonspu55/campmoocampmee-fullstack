@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { client } from "@/sanity/client";
+import { readClient as client } from "@/sanity/client";
 import { getProvinceSlug } from "@/lib/provinces";
 
 const PROVINCES_QUERY = `*[

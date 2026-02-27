@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { client } from "@/sanity/client";
+import { readClient as client } from "@/sanity/client";
 import { CampThumbnailSkeleton } from "@/components/CampThumbnail";
 import type { Metadata } from "next";
 import SearchMapWrapper, { type CampPost } from "@/components/SearchMapWrapper";

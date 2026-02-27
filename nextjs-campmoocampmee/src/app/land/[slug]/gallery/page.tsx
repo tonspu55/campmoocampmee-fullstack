@@ -1,4 +1,4 @@
-import { client } from "@/sanity/client";
+import { readClient as client } from "@/sanity/client";
 import type { SanityDocument } from "next-sanity";
 import Link from "next/link";
 import GalleryWithInitialImage from "@/components/GalleryWithInitialImage";

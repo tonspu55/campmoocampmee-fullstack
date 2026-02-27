@@ -3,7 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { PhoneCall } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 type SocialContactLinks = {
   facebook?: string;

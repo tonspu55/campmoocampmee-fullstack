@@ -1,4 +1,4 @@
-import { client } from "@/sanity/client";
+import { readClient as client } from "@/sanity/client";
 import { PortableText, type SanityDocument } from "next-sanity";
 import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";

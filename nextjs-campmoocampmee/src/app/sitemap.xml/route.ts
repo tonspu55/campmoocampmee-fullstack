@@ -1,4 +1,4 @@
-import { client } from "@/sanity/client";
+import { readClient as client } from "@/sanity/client";
 
 interface PostSlug {
   slug: {
