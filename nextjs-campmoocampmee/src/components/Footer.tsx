@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ThemeSwitcher } from "@/components/header/ThemeSwitcher";
-import { client } from "@/sanity/client";
+import { readClient as client } from "@/sanity/client";
 
 const CAMP_COUNT_QUERY = `count(*[_type == "post" && !(_id in path("drafts.**")) && defined(slug.current)])`;
 

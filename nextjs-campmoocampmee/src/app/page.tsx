@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { type SanityDocument } from "next-sanity";
-import { client } from "@/sanity/client";
+import { readClient as client } from "@/sanity/client";
 import HeroBanner from "@/components/HeroBanner";
 import CampThumbnail, {
   CampThumbnailSkeleton,
