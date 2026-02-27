@@ -32,10 +32,16 @@ const POST_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && slug.cur
   }
 }`;
 
-const options = { next: { revalidate: 300 } };
+const options = { next: { revalidate: 3600 } }; // 1 ชม.
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const post = await client.fetch<SanityDocument>(POST_QUERY, await params, options);
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const post = await client.fetch<SanityDocument>(
+    POST_QUERY,
+    await params,
+    options,
+  );
 
   return {
     title: `อัลบั้ม - ${post.title}`,
@@ -44,27 +50,41 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 const GalleryPage = async ({ params }: PageProps) => {
-  const post = await client.fetch<SanityDocument>(POST_QUERY, await params, options);
+  const post = await client.fetch<SanityDocument>(
+    POST_QUERY,
+    await params,
+    options,
+  );
 
   // ดึงข้อมูล gallery (รูปภาพ) และ videos แยกกัน
   const rawGalleryData = post.gallery || [];
   const rawVideosData = post.videos || [];
 
   // แปลงข้อมูลสำหรับ TabGallery (รวม gallery และ videos)
-  const tabGalleryData = transformGalleryData(rawGalleryData, rawVideosData).filter(Boolean);
+  const tabGalleryData = transformGalleryData(
+    rawGalleryData,
+    rawVideosData,
+  ).filter(Boolean);
 
   return (
     <div className="container mx-auto  max-w-225 py-6 md:py-10  px-2">
-
       <div className="flex flex-row  gap-2 items-center">
-        <Button asChild className="flex h-9 w-9 items-center  justify-center rounded-full cursor-pointer" variant="default">
-          <Link href={`/land/${(await params).slug}`} >
+        <Button
+          asChild
+          className="flex h-9 w-9 items-center  justify-center rounded-full cursor-pointer"
+          variant="default"
+        >
+          <Link href={`/land/${(await params).slug}`}>
             <ArrowLeft className="w-4 h-4" />
           </Link>
         </Button>
         <h1 className="text-lg lg:text-2xl font-bold ">{post.title}</h1>
       </div>
-      <GalleryWithInitialImage dataGallery={tabGalleryData as GalleryItem[]} slug={(await params).slug} postTitle={post.title} />
+      <GalleryWithInitialImage
+        dataGallery={tabGalleryData as GalleryItem[]}
+        slug={(await params).slug}
+        postTitle={post.title}
+      />
     </div>
   );
 };

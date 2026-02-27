@@ -27,7 +27,11 @@ interface SearchPageProps {
 export async function generateMetadata({
   searchParams,
 }: SearchPageProps): Promise<Metadata> {
-  const { province: provinceSlug, region: regionSlug, tag: tagParam } = await searchParams;
+  const {
+    province: provinceSlug,
+    region: regionSlug,
+    tag: tagParam,
+  } = await searchParams;
 
   const provinceTh = provinceSlug
     ? getThaiProvinceName(provinceSlug)
@@ -46,11 +50,15 @@ export async function generateMetadata({
   };
 }
 
-const options = { next: { revalidate: 300 } };
+const options = { next: { revalidate: 3600 } }; // 1 ชม.
 const ITEMS_PER_PAGE = 12;
 
 // Helper functions for building GROQ queries
-function buildFilterConditions(province?: string, regionSlug?: string, tag?: string): string {
+function buildFilterConditions(
+  province?: string,
+  regionSlug?: string,
+  tag?: string,
+): string {
   const conditions: string[] = [];
 
   if (province) {
@@ -68,7 +76,11 @@ function buildFilterConditions(province?: string, regionSlug?: string, tag?: str
   return conditions.join("\n    ");
 }
 
-function buildBaseFilter(province?: string, regionSlug?: string, tag?: string): string {
+function buildBaseFilter(
+  province?: string,
+  regionSlug?: string,
+  tag?: string,
+): string {
   const filterConditions = buildFilterConditions(province, regionSlug, tag);
 
   return `*[
@@ -79,7 +91,11 @@ function buildBaseFilter(province?: string, regionSlug?: string, tag?: string): 
   ]`;
 }
 
-function buildCountQuery(province?: string, regionSlug?: string, tag?: string): string {
+function buildCountQuery(
+  province?: string,
+  regionSlug?: string,
+  tag?: string,
+): string {
   return `count(${buildBaseFilter(province, regionSlug, tag)})`;
 }
 
