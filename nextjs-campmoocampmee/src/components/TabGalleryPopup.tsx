@@ -1,18 +1,24 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { X } from "lucide-react";
 import type { GalleryItem } from "@/types/gallery";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+  type CarouselApi,
+} from "@/components/ui/carousel";
 
 interface TabGalleryPopupProps {
   isOpen: boolean;
   onClose: () => void;
   images: GalleryItem[];
   currentIndex: number;
-  onNext: () => void;
-  onPrevious: () => void;
 }
 
 const TabGalleryPopup = ({
@@ -20,17 +26,64 @@ const TabGalleryPopup = ({
   onClose,
   images,
   currentIndex,
-  onNext,
-  onPrevious
 }: TabGalleryPopupProps) => {
-  const currentImage = images[currentIndex];
+  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
+  const [currentSlide, setCurrentSlide] = useState(currentIndex);
 
-  // ฟังก์ชันตรวจสอบว่าเป็น video หรือไม่
-  const isVideo = (item: GalleryItem) => {
-    return item._type === 'video' && item.embedCode;
-  };
+  // Jump to currentIndex when popup opens or API becomes ready
+  useEffect(() => {
+    if (isOpen && carouselApi) {
+      carouselApi.scrollTo(currentIndex, false);
+      setCurrentSlide(currentIndex);
+    }
+  }, [isOpen, carouselApi, currentIndex]);
 
-  // ฟังก์ชันสำหรับ render video embed
+  // Track slide changes from Embla
+  useEffect(() => {
+    if (!carouselApi) return;
+    const onSelect = () => {
+      setCurrentSlide(carouselApi.selectedScrollSnap());
+    };
+    carouselApi.on("select", onSelect);
+    return () => {
+      carouselApi.off("select", onSelect);
+    };
+  }, [carouselApi]);
+
+  // Keyboard navigation
+  const handleKeyPress = useCallback(
+    (e: KeyboardEvent) => {
+      if (!isOpen) return;
+      switch (e.key) {
+        case "Escape":
+          onClose();
+          break;
+        case "ArrowLeft":
+          carouselApi?.scrollPrev();
+          break;
+        case "ArrowRight":
+          carouselApi?.scrollNext();
+          break;
+      }
+    },
+    [isOpen, onClose, carouselApi],
+  );
+
+  useEffect(() => {
+    if (isOpen) {
+      document.addEventListener("keydown", handleKeyPress);
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress);
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen, handleKeyPress]);
+
+  const isVideo = (item: GalleryItem) => item._type === "video" && item.embedCode;
+
   const renderVideoEmbed = (item: GalleryItem) => {
     if (!item.embedCode) {
       return (
@@ -39,14 +92,10 @@ const TabGalleryPopup = ({
         </div>
       );
     }
-
     return (
       <div
         className="video-embed-container w-full h-full flex items-center justify-center max-w-[90%] lg:max-w-[50%]"
-        style={{
-          // maxWidth: item.platform ? '80%' : 'auto',
-          maxHeight: '50%'
-        }}
+        style={{ maxHeight: "50%" }}
       >
         <div
           dangerouslySetInnerHTML={{ __html: item.embedCode }}
@@ -56,106 +105,72 @@ const TabGalleryPopup = ({
     );
   };
 
-  // Handle keyboard navigation
-  const handleKeyPress = useCallback((e: KeyboardEvent) => {
-    if (!isOpen) return;
-
-    switch (e.key) {
-      case 'Escape':
-        onClose();
-        break;
-      case 'ArrowLeft':
-        onPrevious();
-        break;
-      case 'ArrowRight':
-        onNext();
-        break;
-    }
-  }, [isOpen, onClose, onNext, onPrevious]);
-
-  useEffect(() => {
-    if (isOpen) {
-      document.addEventListener('keydown', handleKeyPress);
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyPress);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen, handleKeyPress]);
-
-  if (!isOpen || !currentImage) return null;
+  if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/100 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 bg-black flex items-center justify-center">
       {/* Close button */}
       <Button
         onClick={onClose}
         variant="default"
         size="icon"
-        className="absolute top-4 right-4  z-10 text-white cursor-pointer rounded-full"
+        className="absolute top-4 right-4 z-20 text-white cursor-pointer rounded-full"
       >
         <X className="h-4 w-4" />
       </Button>
 
-      {/* Previous button */}
-      <Button
-        onClick={onPrevious}
-        variant="default"
-        size="icon"
-        className="cursor-pointer absolute left-4 top-1/2 -translate-y-1/2 z-10 rounded-full max-md:left-1/2 max-md:-translate-x-full max-md:top-auto max-md:bottom-20 max-md:-translate-y-0 max-md:ml-[-5px]"
-        disabled={currentIndex === 0}
+      {/* Carousel */}
+      <Carousel
+        setApi={setCarouselApi}
+        opts={{ loop: false }}
+        className="w-full h-full"
       >
-        <ChevronLeft className="h-4 w-4" />
-      </Button>
+        <CarouselContent className="ml-0">
+          {images.map((item, index) => (
+            <CarouselItem key={index} className="pl-0">
+              <div className="flex items-center justify-center h-screen">
+                {isVideo(item) ? (
+                  renderVideoEmbed(item)
+                ) : item.url ? (
+                  <div className="relative w-full max-w-full md:max-w-[80vw] h-[80vh]">
+                    <Image
+                      src={item.url}
+                      alt={item.alt || `Gallery image ${index + 1}`}
+                      fill
+                      className="object-contain"
+                      priority={Math.abs(index - currentSlide) <= 1}
+                    />
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center h-96 bg-gray-100 rounded-lg">
+                    <p className="text-gray-500">ไม่พบข้อมูล</p>
+                  </div>
+                )}
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
 
-      {/* Next button */}
-      <Button
-        onClick={onNext}
-        variant="default"
-        size="icon"
-        className="cursor-pointer absolute right-4 top-1/2 -translate-y-1/2 z-10 rounded-full max-md:right-1/2 max-md:translate-x-full max-md:top-auto max-md:bottom-20 max-md:-translate-y-0 max-md:mr-[-5px]"
-        disabled={currentIndex === images.length - 1}
-      >
-        <ChevronRight className="h-4 w-4" />
-      </Button>
+        {/* Previous button */}
+        <CarouselPrevious
+          variant="default"
+          className="left-4 cursor-pointer max-md:left-1/2 max-md:-translate-x-full max-md:top-auto max-md:bottom-20 max-md:translate-y-0 max-md:-ml-1.25"
+        />
 
-      {/* Content container */}
-      <div className="relative max-w-[100%] md:max-w-[80vw] max-h-[80vh] w-full h-full flex items-center justify-center">
-        {isVideo(currentImage) ? (
-          <div className="relative w-full h-full flex items-center justify-center">
-            {renderVideoEmbed(currentImage)}
-          </div>
-        ) : currentImage.url ? (
-          <div className="relative w-full h-full">
-            <Image
-              src={currentImage.url}
-              alt={currentImage.alt || `Gallery image ${currentIndex + 1}`}
-              fill
-              className="object-contain"
-              priority
-            />
-          </div>
-        ) : (
-          <div className="flex items-center justify-center h-96 bg-gray-100 rounded-lg">
-            <p className="text-gray-500">ไม่พบข้อมูล</p>
-          </div>
-        )}
-      </div>
+        {/* Next button */}
+        <CarouselNext
+          variant="default"
+          className="right-4 cursor-pointer max-md:right-1/2 max-md:translate-x-full max-md:top-auto max-md:bottom-20 max-md:translate-y-0 max-md:-mr-1.25"
+        />
+      </Carousel>
 
       {/* Image counter */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded">
-        {currentIndex + 1} / {images.length}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded z-20 pointer-events-none">
+        {currentSlide + 1} / {images.length}
       </div>
 
       {/* Background overlay to close */}
-      <div
-        className="absolute inset-0 -z-10"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 -z-10" onClick={onClose} />
     </div>
   );
 };

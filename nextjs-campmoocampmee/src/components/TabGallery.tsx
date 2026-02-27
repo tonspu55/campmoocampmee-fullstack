@@ -3,22 +3,35 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import TabGalleryPopup from "./TabGalleryPopup";
 import type { GalleryItem, TabGalleryProps } from "@/types/gallery";
 
-const TabGallery = ({ dataGallery, initialImageIndex, onTabChange, slug, postTitle }: TabGalleryProps) => {
-  const categories = [...new Set(dataGallery.map((data) => data.category))].filter(Boolean) as string[];
+const TabGallery = ({
+  dataGallery,
+  initialImageIndex,
+  onTabChange,
+  slug,
+  postTitle,
+}: TabGalleryProps) => {
+  const categories = [
+    ...new Set(dataGallery.map((data) => data.category)),
+  ].filter(Boolean) as string[];
   // กำหนดลำดับที่แสดงผลของหมวดหมู่
-  const categoryOrder = ["ทั้งหมด", "วิว", "กิจกรรม", "ที่พัก", "ห้องน้ำ", "วิดีโอ"];
+  const categoryOrder = [
+    "ทั้งหมด",
+    "วิว",
+    "กิจกรรม",
+    "ที่พัก",
+    "ห้องน้ำ",
+    "วิดีโอ",
+  ];
 
   // เรียงลำดับตาม categoryOrder และเพิ่มหมวดหมู่อื่นๆ ที่ไม่อยู่ในลิสต์ไว้ท้าย
-  const allCategories = categoryOrder.filter(c =>
-    c === "ทั้งหมด" || categories.includes(c)
-  ).concat(
-    categories.filter(c => !categoryOrder.includes(c))
-  );
+  const allCategories = categoryOrder
+    .filter((c) => c === "ทั้งหมด" || categories.includes(c))
+    .concat(categories.filter((c) => !categoryOrder.includes(c)));
 
   const [activeTab, setActiveTab] = useState("ทั้งหมด");
   const [isFixed, setIsFixed] = useState(false);
@@ -42,8 +55,8 @@ const TabGallery = ({ dataGallery, initialImageIndex, onTabChange, slug, postTit
       if (targetImage) {
         setTimeout(() => {
           targetImage.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center'
+            behavior: "smooth",
+            block: "center",
           });
         }, 100);
       }
@@ -66,15 +79,16 @@ const TabGallery = ({ dataGallery, initialImageIndex, onTabChange, slug, postTit
         }
       }
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
     // cleanup function to remove the event listener
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [originalTabsTop]);
 
-  const filteredData = activeTab === "ทั้งหมด"
-    ? dataGallery
-    : dataGallery.filter((item) => item.category === activeTab);
+  const filteredData =
+    activeTab === "ทั้งหมด"
+      ? dataGallery
+      : dataGallery.filter((item) => item.category === activeTab);
 
   const handleTabClick = (category: string) => {
     setActiveTab(category);
@@ -94,7 +108,7 @@ const TabGallery = ({ dataGallery, initialImageIndex, onTabChange, slug, postTit
         // ลอง smooth scroll ก่อน
         window.scrollTo({
           top: 0,
-          behavior: 'smooth'
+          behavior: "smooth",
         });
 
         // ใช้ instant scroll เป็น fallback เพื่อให้แน่ใจ
@@ -108,7 +122,7 @@ const TabGallery = ({ dataGallery, initialImageIndex, onTabChange, slug, postTit
         const tabsPosition = tabsRef.current.offsetTop;
         window.scrollTo({
           top: tabsPosition,
-          behavior: 'smooth'
+          behavior: "smooth",
         });
       }
     }
@@ -116,22 +130,12 @@ const TabGallery = ({ dataGallery, initialImageIndex, onTabChange, slug, postTit
 
   const handleImageClick = (clickedItem: GalleryItem) => {
     // หา index ของรูปที่คลิกใน filteredData
-    const clickedIndex = filteredData.findIndex(item => item.url === clickedItem.url);
+    const clickedIndex = filteredData.findIndex(
+      (item) => item.url === clickedItem.url,
+    );
     if (clickedIndex !== -1) {
       setCurrentPopupIndex(clickedIndex);
       setIsPopupOpen(true);
-    }
-  };
-
-  const handlePopupNext = () => {
-    if (currentPopupIndex < filteredData.length - 1) {
-      setCurrentPopupIndex(currentPopupIndex + 1);
-    }
-  };
-
-  const handlePopupPrevious = () => {
-    if (currentPopupIndex > 0) {
-      setCurrentPopupIndex(currentPopupIndex - 1);
     }
   };
 
@@ -139,14 +143,12 @@ const TabGallery = ({ dataGallery, initialImageIndex, onTabChange, slug, postTit
     setIsPopupOpen(false);
   };
 
-
-
   // ฟังก์ชันสำหรับ render video embed
   const renderVideoEmbed = (item: GalleryItem) => {
     if (!item.embedCode) {
       return (
         <div className="flex items-center justify-center h-48 bg-gray-100 rounded-lg">
-          <p >ไม่พบโค้ดวิดีโอ</p>
+          <p>ไม่พบโค้ดวิดีโอ</p>
         </div>
       );
     }
@@ -156,8 +158,8 @@ const TabGallery = ({ dataGallery, initialImageIndex, onTabChange, slug, postTit
       <div
         className="video-embed-container w-full"
         style={{
-          aspectRatio: item.platform ? '16/9' : 'auto',
-          minHeight: item.platform ? '100%' : 'auto'
+          aspectRatio: item.platform ? "16/9" : "auto",
+          minHeight: item.platform ? "100%" : "auto",
         }}
       >
         <div
@@ -170,7 +172,7 @@ const TabGallery = ({ dataGallery, initialImageIndex, onTabChange, slug, postTit
 
   // ฟังก์ชันตรวจสอบว่าเป็น video หรือไม่
   const isVideo = (item: GalleryItem) => {
-    return item._type === 'video' && item.embedCode;
+    return item._type === "video" && item.embedCode;
   };
 
   return (
@@ -178,14 +180,19 @@ const TabGallery = ({ dataGallery, initialImageIndex, onTabChange, slug, postTit
       {/* Tabs */}
       <div
         ref={tabsRef}
-        className={`flex gap-2 py-4 transition-all duration-200 z-10 bg-white dark:bg-background overflow-x-auto scrollbar-hide ${isFixed
-          ? 'fixed top-0 left-0 right-0 max-lg:px-2 py-4 container mx-auto max-w-221'
-          : 'relative'
-          }`}
+        className={`flex gap-2 py-4 transition-all duration-200 z-10 bg-white dark:bg-background overflow-x-auto scrollbar-hide ${
+          isFixed
+            ? "fixed top-0 left-0 right-0 max-lg:px-2 py-4 container mx-auto max-w-221"
+            : "relative"
+        }`}
       >
         {/* ปุ่มกลับที่แสดงเมื่อ tabs เป็น fixed */}
         {isFixed && slug && (
-          <Button asChild className="flex h-9 w-9 items-center justify-center rounded-full cursor-pointer shrink-0" variant="default">
+          <Button
+            asChild
+            className="flex h-9 w-9 items-center justify-center rounded-full cursor-pointer shrink-0"
+            variant="default"
+          >
             <Link href={`/land/${slug}`}>
               <ArrowLeft className="w-4 h-4" />
             </Link>
@@ -196,10 +203,11 @@ const TabGallery = ({ dataGallery, initialImageIndex, onTabChange, slug, postTit
           <Button
             key={category}
             onClick={() => handleTabClick(category)}
-            className={`px-4 py-2 cursor-pointer shrink-0 ${activeTab === category
-              ? "primary"
-              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
+            className={`px-4 py-2 cursor-pointer shrink-0 ${
+              activeTab === category
+                ? "primary"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            }`}
           >
             {category || "ไม่พบหมวดหมู่"}
           </Button>
@@ -217,8 +225,10 @@ const TabGallery = ({ dataGallery, initialImageIndex, onTabChange, slug, postTit
             className={`${index % 3 === 0 ? "col-span-2" : "col-span-2 md:col-span-1"}`}
             ref={(el) => {
               // Find the original index in the full dataGallery array
-              const originalIndex = dataGallery.findIndex(originalItem =>
-                originalItem.url === item.url && originalItem.category === item.category
+              const originalIndex = dataGallery.findIndex(
+                (originalItem) =>
+                  originalItem.url === item.url &&
+                  originalItem.category === item.category,
               );
               if (originalIndex !== -1) {
                 imageRefs.current[originalIndex] = el;
@@ -227,12 +237,14 @@ const TabGallery = ({ dataGallery, initialImageIndex, onTabChange, slug, postTit
           >
             {item.url && (
               <div
-                className="relative aspect-square cursor-pointer hover:opacity-90 transition-opacity"
+                className="relative aspect-square cursor-pointer "
                 onClick={() => handleImageClick(item)}
               >
                 <Image
                   src={item.url}
-                  alt={item.alt || `${postTitle || 'Gallery'} รูปที่ ${index + 1}`}
+                  alt={
+                    item.alt || `${postTitle || "Gallery"} รูปที่ ${index + 1}`
+                  }
                   fill
                   className="object-cover"
                 />
@@ -258,8 +270,6 @@ const TabGallery = ({ dataGallery, initialImageIndex, onTabChange, slug, postTit
         onClose={handlePopupClose}
         images={filteredData}
         currentIndex={currentPopupIndex}
-        onNext={handlePopupNext}
-        onPrevious={handlePopupPrevious}
       />
     </>
   );

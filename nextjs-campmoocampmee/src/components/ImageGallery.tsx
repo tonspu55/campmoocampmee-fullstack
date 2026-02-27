@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/pagination';
-import { Button } from "@/components/ui/button"
-import { Skeleton } from "@/components/ui/skeleton"
-import { useState, useEffect } from 'react';
-import { useGalleryStore } from '@/lib/store';
-import { useRouter } from 'next/navigation';
-
-
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useState, useEffect } from "react";
+import { useGalleryStore } from "@/lib/store";
+import { useRouter } from "next/navigation";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  type CarouselApi,
+} from "@/components/ui/carousel";
 
 type ImageGalleryItem = {
   url: string;
@@ -25,9 +25,14 @@ interface ImageGalleryProps {
 
 const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
+  const [currentSlide, setCurrentSlide] = useState(0);
+  // Limit to 5 images for the gallery preview
   const displayImages = ImageGallery.slice(0, 5);
   // Zustand store to set selected image index
-  const setSelectedImageIndex = useGalleryStore((state) => state.setSelectedImageIndex);
+  const setSelectedImageIndex = useGalleryStore(
+    (state) => state.setSelectedImageIndex,
+  );
   const router = useRouter();
 
   const handleImageClick = (index: number) => {
@@ -43,14 +48,18 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
   };
 
   useEffect(() => {
-    // Simulate loading time for 1 second
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 500);
-
-    // cleanup function to clear the timer
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (!carouselApi) return;
+    carouselApi.on("select", () => {
+      setCurrentSlide(carouselApi.selectedScrollSnap());
+    });
+  }, [carouselApi]);
 
   // Show loading state if internal loading or external loading is true
   if (isLoading) {
@@ -136,51 +145,50 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
 
   return (
     <div>
-      {/* Mobile View - Swiper */}
+      {/* Mobile View - Embla Carousel */}
       <div className="md:hidden">
-        <Swiper
-          spaceBetween={0}
-          slidesPerView={1}
-          className="h-75 [&_.swiper-pagination]:bottom-6! [&_.swiper-pagination-bullet-active]:bg-white! [&_.swiper-pagination-bullet]:bg-white! [&_.swiper-pagination-bullet]:opacity-100!"
-          modules={[Pagination]}
-          pagination={{
-            dynamicBullets: true,
-          }}
-        >
-          {displayImages.map((imageItem, index) => (
-            <SwiperSlide key={index}>
+        <Carousel setApi={setCarouselApi} opts={{ loop: false }}>
+          <CarouselContent className="ml-0">
+            {displayImages.map((imageItem, index) => (
+              <CarouselItem key={index} className="pl-0">
+                <div
+                  className="relative h-75 cursor-pointer"
+                  onClick={() => handleImageClick(index)}
+                >
+                  <Image
+                    src={imageItem.url}
+                    alt={imageItem.alt || `Gallery image ${index + 1}`}
+                    fill
+                    className="object-cover"
+                  />
+                  {/* Show "View All" button on the last image */}
+                  {index === displayImages.length - 1 && (
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleViewAllClick();
+                      }}
+                      className="text-[12px] absolute bottom-3  right-0 m-2 p-2"
+                    >
+                      ดูรูปภาพทั้งหมด
+                    </Button>
+                  )}
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          {/* Pagination dots */}
+          <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-1.5 z-10 pointer-events-none">
+            {displayImages.map((_, i) => (
               <div
-                className="relative h-full cursor-pointer"
-                onClick={() => handleImageClick(index)}
-              >
-                <Image
-                  src={imageItem.url}
-                  alt={imageItem.alt || `Gallery image ${index + 1}`}
-                  fill
-                  className="object-cover "
-                />
-                {index === 4 && (
-                  <div className="absolute bottom-4 md:bottom-0 right-0">
-                    <div className="flex flex-col items-end pr-2 ">
-                      <Button
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent triggering handleImageClick
-                          handleViewAllClick();
-                        }}
-                        className="text-sm text-center absolute bottom-0 right-0 m-2 p-2 cursor-pointer hover:cursor-pointer"
-                        style={{ cursor: 'pointer' }}
-                      >
-                        ดูรูปภาพทั้งหมด
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-
-
+                key={i}
+                className={`h-2 rounded-full bg-white transition-all ${
+                  currentSlide === i ? "w-3 opacity-100" : "w-2 opacity-70"
+                }`}
+              />
+            ))}
+          </div>
+        </Carousel>
       </div>
 
       {/* Desktop View - Grid Layout */}
@@ -270,11 +278,10 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
                           handleViewAllClick();
                         }}
                         className="text-sm text-center absolute bottom-0 right-0 m-2 p-2 cursor-pointer hover:cursor-pointer"
-                        style={{ cursor: 'pointer' }}
+                        style={{ cursor: "pointer" }}
                       >
                         ดูรูปภาพทั้งหมด
                       </Button>
-
                     </div>
                   </div>
                 )}
