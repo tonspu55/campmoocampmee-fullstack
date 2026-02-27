@@ -1,9 +1,16 @@
-"use client";
 import Link from "next/link";
 import Image from "next/image";
 import { ThemeSwitcher } from "@/components/header/ThemeSwitcher";
+import { client } from "@/sanity/client";
 
-const Footer = () => {
+const CAMP_COUNT_QUERY = `count(*[_type == "post" && !(_id in path("drafts.**")) && defined(slug.current)])`;
+
+const Footer = async () => {
+  const campCount = await client.fetch<number>(
+    CAMP_COUNT_QUERY,
+    {},
+    { next: { revalidate: 3600 } },
+  );
   return (
     <footer className="bg-gray-100 dark:bg-[#0a0a0a]">
       <div className="container mx-auto max-w-6xl px-2 ">
@@ -15,6 +22,10 @@ const Footer = () => {
                 <ThemeSwitcher />
                 <div className="flex flex-col ">
                   <p>แคมป์หมูแคมป์หมี หาลานกางเต็นท์ตรงใจคุณ</p>
+                  <p>
+                    ลานกางเต็นท์ทั้งหมด:{" "}
+                    <b className="text-primary">{campCount}</b> ลาน
+                  </p>
                 </div>
               </div>
             </div>

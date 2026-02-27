@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import ConditionalLayout from "@/components/ConditionalLayout";
+import Footer from "@/components/Footer";
 import AuthProvider from "@/components/AuthProvider";
 import CookieConsent from "@/components/CookieConsent";
 import { Analytics } from "@vercel/analytics/next";
@@ -116,7 +117,7 @@ export default function RootLayout({
           enableSystem={false}
         >
           <AuthProvider>
-            <ConditionalLayout>{children}</ConditionalLayout>
+            <ConditionalLayout footer={<Footer />}>{children}</ConditionalLayout>
           </AuthProvider>
           <Toaster />
           <CookieConsent />
