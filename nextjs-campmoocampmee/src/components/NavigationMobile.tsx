@@ -1,9 +1,9 @@
-'use client';
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
+"use client";
+import { useState, useEffect } from "react";
+import Link from "next/link";
 import { PhoneCall } from "lucide-react";
 import { MessageCircleMore } from "lucide-react";
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 
 type SocialContactLinks = {
   facebook?: string;
@@ -11,7 +11,7 @@ type SocialContactLinks = {
   instagram?: string;
   googleMap?: string;
   phone?: string;
-}
+};
 
 interface ContactSocialLinkProps {
   socialContactLinks: SocialContactLinks;
@@ -22,7 +22,7 @@ const NavigationMobile = ({ socialContactLinks }: ContactSocialLinkProps) => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const endElement = document.querySelector('.end-page-detection');
+      const endElement = document.querySelector(".end-page-detection");
       if (endElement) {
         const endElementRect = endElement.getBoundingClientRect();
         const windowHeight = window.innerHeight;
@@ -45,47 +45,55 @@ const NavigationMobile = ({ socialContactLinks }: ContactSocialLinkProps) => {
       }
     };
 
-    window.addEventListener('scroll', throttledScroll, { passive: true });
+    window.addEventListener("scroll", throttledScroll, { passive: true });
     handleScroll(); // เรียกครั้งแรกเพื่อตรวจสอบ initial state
 
     return () => {
       // Clean up event listener
-      window.removeEventListener('scroll', throttledScroll);
+      window.removeEventListener("scroll", throttledScroll);
     };
   }, []);
 
   return (
-    <div className={`${isAtBottom
-      ? 'relative hidden'
-      : 'fixed bottom-0 left-0 right-0 z-10 w-full'
-      } lg:hidden bg-white dark:bg-background transition-all px-2`}>
-      <div className='py-2 flex flex-row gap-2 items-center'>
+    <div
+      className={`${
+        isAtBottom
+          ? "relative hidden"
+          : "fixed bottom-0 left-0 right-0 z-10 w-full"
+      } lg:hidden bg-white dark:bg-background transition-all px-2`}
+    >
+      <div className="py-2 flex flex-row gap-2 items-center">
         <div className="basis-1/2">
           {socialContactLinks.phone && (
-            <Button variant="default" className="flex items-center w-full" asChild>
-
+            <Button
+              variant="default"
+              className="flex items-center w-full"
+              asChild
+            >
               <Link href={`tel:${socialContactLinks.phone}`}>
-                <PhoneCall className='w-6 h-6 ' />
-                จองที่พัก
+                <PhoneCall className="w-6 h-6 " />
+                โทรติดต่อที่พัก
               </Link>
             </Button>
           )}
         </div>
         <div className="basis-1/2">
           {socialContactLinks.facebook && (
-            <Button variant="default" className="flex items-center w-full" asChild>
-              <Link target='_blank' href={`${socialContactLinks.facebook}`}>
-                <MessageCircleMore className='w-6 h-6 ' />
-                จองที่พักผ่านเพจ
+            <Button
+              variant="default"
+              className="flex items-center w-full"
+              asChild
+            >
+              <Link target="_blank" href={`${socialContactLinks.facebook}`}>
+                <MessageCircleMore className="w-6 h-6 " />
+                ติดต่อที่พักผ่านเพจ
               </Link>
             </Button>
           )}
         </div>
-
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default NavigationMobile;
-

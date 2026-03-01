@@ -21,7 +21,7 @@ const POSTS_QUERY = `*[
 ]| order(publishedAt desc)[]{_id, title, address, thumbnail, slug, tags, otherBenefits}`;
 
 // Set revalidation time for ISR
-const options = { next: { revalidate: 3600 } }; // 1 ชม.
+const options = { next: { revalidate: 3600 } }; // Revalidate every hour (3600 seconds)
 
 // ฟังก์ชันสำหรับสลับที่รายการแบบสุ่มโดยใช้ seed
 function shufflePosts(array: SanityDocument[], seed: number) {
