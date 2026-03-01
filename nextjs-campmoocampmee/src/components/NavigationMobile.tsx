@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { PhoneCall } from "lucide-react";
-import { MessageCircleMore } from "lucide-react";
+import { Navigation } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type SocialContactLinks = {
@@ -11,6 +11,7 @@ type SocialContactLinks = {
   instagram?: string;
   googleMap?: string;
   phone?: string;
+  googleMapNavigation?: string;
 };
 
 interface ContactSocialLinkProps {
@@ -53,7 +54,7 @@ const NavigationMobile = ({ socialContactLinks }: ContactSocialLinkProps) => {
       window.removeEventListener("scroll", throttledScroll);
     };
   }, []);
-
+  console.log("Social Contact Links:", socialContactLinks.googleMapNavigation);
   return (
     <div
       className={`${
@@ -78,15 +79,18 @@ const NavigationMobile = ({ socialContactLinks }: ContactSocialLinkProps) => {
           )}
         </div>
         <div className="basis-1/2">
-          {socialContactLinks.facebook && (
+          {socialContactLinks.googleMapNavigation && (
             <Button
               variant="default"
               className="flex items-center w-full"
               asChild
             >
-              <Link target="_blank" href={`${socialContactLinks.facebook}`}>
-                <MessageCircleMore className="w-6 h-6 " />
-                ติดต่อที่พักผ่านเพจ
+              <Link
+                target="_blank"
+                href={`${socialContactLinks.googleMapNavigation}`}
+              >
+                <Navigation className="w-6 h-6 " />
+                นำทางไปที่พัก
               </Link>
             </Button>
           )}

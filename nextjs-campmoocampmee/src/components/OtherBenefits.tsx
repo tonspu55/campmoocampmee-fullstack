@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import Image from "next/image";
 
@@ -11,15 +11,14 @@ type OtherBenefits = {
   noNoise: string;
   petFriendly: string;
   wifi: string;
-  food: string
-}
+  food: string;
+};
 interface OtherBenefitsProps {
   otherBenefits: OtherBenefits;
 }
 const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
-
   return (
-    <>
+    <div className="max-lg:px-2">
       <h4 className="text-lg md:text-xl font-semibold mb-4">รายละเอียด</h4>
       <div className="grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-4 ">
         {otherBenefits.priceOfStay && (
@@ -31,7 +30,9 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               width={35}
               height={35}
             />
-            <p className="max-md:text-sm">฿{otherBenefits.priceOfStay} / คน / คืน</p>
+            <p className="max-md:text-sm">
+              ฿{otherBenefits.priceOfStay} / คน / คืน
+            </p>
           </div>
         )}
         {otherBenefits.checkIn && (
@@ -55,7 +56,9 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               width={35}
               height={35}
             />
-            <p className="max-md:text-sm">เช็คเอาท์ {otherBenefits.checkOut} น.</p>
+            <p className="max-md:text-sm">
+              เช็คเอาท์ {otherBenefits.checkOut} น.
+            </p>
           </div>
         )}
         {otherBenefits.nature && (
@@ -91,7 +94,9 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               width={35}
               height={35}
             />
-            <p className="max-md:text-sm">งดส่งเสียง {otherBenefits.noNoise} น.</p>
+            <p className="max-md:text-sm">
+              งดส่งเสียง {otherBenefits.noNoise} น.
+            </p>
           </div>
         )}
         {otherBenefits.petFriendly && (
@@ -131,8 +136,7 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
           </div>
         )}
       </div>
-    </>
-  )
-}
+    </div>
+  );
+};
 export default OtherBenefits;
-
