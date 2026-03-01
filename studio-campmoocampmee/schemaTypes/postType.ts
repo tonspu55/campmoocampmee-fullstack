@@ -204,6 +204,13 @@ export const postType = defineType({
         defineField({name: 'instagram', title: 'Instagram', type: 'url'}),
         defineField({name: 'tiktok', title: 'TikTok', type: 'url'}),
         defineField({name: 'googleMap', title: 'Google Map', type: 'url'}),
+        defineField({
+          name: 'googleMapNavigation',
+          title: 'Google Map Navigation Link',
+          type: 'url',
+          description:
+            'ลิงค์สำหรับนำทางไปที่พักผ่าน Google Map (สามารถใช้ฟีเจอร์ "แชร์ตำแหน่งนี้" ใน Google Map แล้วเลือก "ลิงค์นำทาง" เพื่อสร้างลิงค์นี้ได้)',
+        }),
       ],
     }),
 
