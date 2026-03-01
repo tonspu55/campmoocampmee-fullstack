@@ -1,5 +1,6 @@
 import { createClient } from "next-sanity";
 
+// ตั้งค่า Sanity client สำหรับการอ่านและเขียนข้อมูล
 const config = {
   projectId: "tqzf3jx1",
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
