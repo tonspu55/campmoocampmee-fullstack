@@ -1,4 +1,6 @@
 import { createClient } from "next-sanity";
+import imageUrlBuilder from "@sanity/image-url";
+import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 
 // ตั้งค่า Sanity client สำหรับการอ่านและเขียนข้อมูล
 const config = {
@@ -19,3 +21,7 @@ export const client = createClient({
   useCdn: false,
   token: process.env.SANITY_API_TOKEN,
 });
+
+// Shared image URL builder
+export const urlFor = (source: SanityImageSource) =>
+  imageUrlBuilder({ projectId: config.projectId, dataset: config.dataset }).image(source);
