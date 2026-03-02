@@ -44,9 +44,10 @@ const NavLinkMobile = ({ path, children, onCloseNav }: NavLinkMobileProps) => {
     <Link
       className={`
         py-2 px-3 rounded-md transition-colors duration-200
-        ${pathname === path
-          ? "text-primary bg-primary/10 font-medium"
-          : "text-foreground hover:bg-muted"
+        ${
+          pathname === path
+            ? "text-primary bg-primary/10 font-medium"
+            : "text-foreground hover:bg-muted"
         }
       `}
       href={path}
@@ -100,12 +101,12 @@ const Header = () => {
   // ป้องกัน body scroll เมื่อ mobile menu เปิด
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [isOpen]);
 
@@ -120,21 +121,26 @@ const Header = () => {
         className={`
           flex items-center fixed top-0 left-0 right-0 z-50 h-15
           transition-all duration-300 ease-in-out
-          ${mounted
-            ? (isScrolled || isOpen
-              ? 'bg-white/95 dark:bg-background/95 backdrop-blur-md shadow-sm'
-              : 'bg-transparent')
-            : 'bg-transparent'
+          ${
+            mounted
+              ? isScrolled || isOpen
+                ? "bg-white/95 dark:bg-background/95 backdrop-blur-md shadow-sm"
+                : "bg-transparent"
+              : "bg-transparent"
           }
         `}
       >
-        <div className="container mx-auto flex items-center max-w-6xl px-2">
+        <div className="container mx-auto flex items-center max-w-[1800px] px-2 lg:px-6">
           <LogoSwitcher />
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex lg:flex-row lg:items-center lg:justify-center lg:gap-x-8">
-            <NavLink path="/" isHomepageTop={isHomepageTop}>หน้าหลัก</NavLink>
-            <NavLink path="/contact" isHomepageTop={isHomepageTop}>ติดต่อลงข้อมูล</NavLink>
+            <NavLink path="/" isHomepageTop={isHomepageTop}>
+              หน้าหลัก
+            </NavLink>
+            <NavLink path="/contact" isHomepageTop={isHomepageTop}>
+              ติดต่อลงข้อมูล
+            </NavLink>
             {/* <NavLink path="/landowner" isHomepageTop={isHomepageTop}>สำหรับเจ้าของลาน</NavLink> */}
           </div>
 
@@ -151,10 +157,15 @@ const Header = () => {
               onClick={() => setIsOpen(!isOpen)}
               aria-expanded={isOpen}
               aria-label={isOpen ? "ปิดเมนู" : "เปิดเมนู"}
-
             >
-              <span className={`transition-transform duration-200 ${isOpen ? 'rotate-90' : ''}`}>
-                {!isOpen ? <AlignJustify className="h-5 w-5" /> : <X className="h-5 w-5" />}
+              <span
+                className={`transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`}
+              >
+                {!isOpen ? (
+                  <AlignJustify className="h-5 w-5" />
+                ) : (
+                  <X className="h-5 w-5" />
+                )}
               </span>
             </Button>
           </div>
@@ -166,7 +177,7 @@ const Header = () => {
         className={`
           fixed inset-0 z-40 bg-black/50 lg:hidden
           transition-opacity duration-300
-          ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
+          ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}
         `}
         onClick={handleCloseNav}
         aria-hidden="true"
@@ -180,9 +191,10 @@ const Header = () => {
           border-b border-border
           shadow-lg
           transition-all duration-300 ease-in-out
-          ${isOpen
-            ? 'opacity-100 translate-y-0 z-444'
-            : 'opacity-0 -translate-y-4 pointer-events-none'
+          ${
+            isOpen
+              ? "opacity-100 translate-y-0 z-444"
+              : "opacity-0 -translate-y-4 pointer-events-none"
           }
         `}
       >

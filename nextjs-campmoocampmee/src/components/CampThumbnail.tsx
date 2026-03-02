@@ -1,9 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { type SanityDocument } from "next-sanity";
-import imageUrlBuilder from "@sanity/image-url";
-import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
-import { readClient as client } from "@/sanity/client";
+import { urlFor } from "@/sanity/client";
 import { Skeleton } from "@/components/ui/skeleton";
 
 
@@ -12,12 +10,6 @@ interface CampCardProps {
   loading?: boolean;
   skeletonCount?: number;
 }
-// สร้าง URL สำหรับรูปภาพจาก Sanity
-const { projectId, dataset } = client.config();
-const urlFor = (source: SanityImageSource) =>
-  projectId && dataset
-    ? imageUrlBuilder({ projectId, dataset }).image(source)
-    : null;
 
 // Skeleton component for loading state
 function CampThumbnailSkeleton({ count, }: { count: number; }) {
@@ -26,7 +18,7 @@ function CampThumbnailSkeleton({ count, }: { count: number; }) {
 
       {Array.from({ length: count }).map((_, i) => (
         <div key={i} className="flex flex-col gap-2">
-          <Skeleton className="aspect-video rounded-[20px] w-full h-43.75 lg:h-58.75" />
+          <Skeleton className="aspect-square rounded-[20px] w-full" />
           {/* <div className="px-1 space-y-2">
             <Skeleton className="h-5 w-3/4" />
             <Skeleton className="h-4 w-1/2" />
@@ -52,9 +44,8 @@ export default function CampCard({
   return (
     <>
       {posts.filter(Boolean).map((post) => {
-        if (!post) return null;
         const postImageUrl = post.thumbnail
-          ? urlFor(post.thumbnail)?.width(550).height(300).url()
+          ? urlFor(post.thumbnail).width(550).height(550).url()
           : null;
         return (
           <Link href={`/land/${post.slug.current}`} key={post._id}>
@@ -63,12 +54,12 @@ export default function CampCard({
                 <Image
                   src={postImageUrl}
                   alt={post.title}
-                  className="aspect-video rounded-[20px] w-full h-43.75 lg:h-58.75 object-cover"
-                  width={300}
-                  height={300}
+                  className="aspect-square rounded-[20px] w-full object-cover"
+                  width={550}
+                  height={550}
                 />
               ) : (
-                <div className="aspect-video rounded-[20px] w-full h-43.75 lg:h-58.75 bg-muted flex items-center justify-center">
+                <div className="aspect-square rounded-[20px] w-full bg-muted flex items-center justify-center">
                   <span className="text-muted-foreground text-sm">ไม่มีรูปภาพ</span>
                 </div>
               )}

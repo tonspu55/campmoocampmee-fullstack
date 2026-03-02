@@ -13,7 +13,7 @@ const Footer = async () => {
   );
   return (
     <footer className="bg-gray-100 dark:bg-[#0a0a0a]">
-      <div className="container mx-auto max-w-6xl px-2 ">
+      <div className="container mx-auto max-w-[1800px] px-2 lg:px-6">
         <div className="py-6 lg:py-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
             {/* Logo and Description */}
