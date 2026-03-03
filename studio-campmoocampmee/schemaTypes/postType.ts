@@ -79,7 +79,21 @@ export const postType = defineType({
       type: 'object',
       group: 'location',
       fields: [
-        defineField({name: 'region', title: 'ภาค', type: 'string'}),
+        defineField({
+          name: 'region',
+          title: 'ภาค',
+          type: 'string',
+          options: {
+            list: [
+              {title: 'ภาคเหนือ (Northern)', value: 'northern'},
+              {title: 'ภาคตะวันออกเฉียงเหนือ (Northeastern)', value: 'northeastern'},
+              {title: 'ภาคกลาง (Central)', value: 'central'},
+              {title: 'ภาคตะวันตก (Western)', value: 'western'},
+              {title: 'ภาคตะวันออก (Eastern)', value: 'eastern'},
+              {title: 'ภาคใต้ (Southern)', value: 'southern'},
+            ],
+          },
+        }),
         defineField({name: 'province', title: 'จังหวัด', type: 'string'}),
         defineField({name: 'district', title: 'อำเภอ', type: 'string'}),
         defineField({name: 'subdistrict', title: 'ตำบล', type: 'string'}),
