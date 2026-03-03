@@ -1,10 +1,16 @@
 .homeBg {
-  background-image: url("/assets/images/banner-desktop.jpg");
+  background-image: url("/assets/images/banner-desktop-2026.jpg");
   background-repeat: no-repeat;
   background-size: cover;
-  background-position: bottom;
+  background-position: center top;
   height: 100%;
   width: 100%;
+}
+@media screen and (min-width: 1024px) {
+  .homeBg {
+    background-image: url("/assets/images/banner-desktop.jpg");
+    background-position: center bottom;
+  }
 }
 
 .contactBg {

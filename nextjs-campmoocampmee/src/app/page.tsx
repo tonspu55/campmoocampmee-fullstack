@@ -141,7 +141,7 @@ export default async function IndexPage() {
 
   return (
     <main className="pb-6 lg:pb-10">
-      <div className="flex relative h-80 md:h-125 flex-col">
+      <div className="flex relative h-70 md:h-100 flex-col">
         <HeroBanner availableTags={availableTags} />
       </div>
       <div className="container mx-auto px-2 max-w-[1800px] pt-6 lg:pt-8 lg:px-6">
