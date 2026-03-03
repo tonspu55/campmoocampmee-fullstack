@@ -35,10 +35,10 @@ export default function HeroBanner({ availableTags = [] }: HeroBannerProps) {
   return (
     <div className={`${styles.homeBg}`}>
       <div className="container mx-auto max-w-6xl px-2 h-full">
-        <div className="flex flex-col items-center justify-center text-center h-full  lg:justify-center lg:items-center lg:text-left lg:flex-row lg:pl-[0px] lg:mt-[-20px]">
+        <div className="flex flex-col items-center justify-center text-center h-full  lg:justify-center lg:items-center lg:text-left lg:flex-row  max-lg:mt-5">
           <div className="w-[50%] flex-none"></div>
           <div ref={contentRef} className="w-full lg:w-[50%] gap-4">
-            <h1 className="text-xl lg:text-4xl font-bold text-white">
+            <h1 className="text-2xl lg:text-4xl font-bold text-white">
               หาลานกางเต็นท์ตรงใจคุณ
             </h1>
             <div className="flex flex-col items-center lg:items-start mt-2 lg:mt-4">
@@ -47,7 +47,7 @@ export default function HeroBanner({ availableTags = [] }: HeroBannerProps) {
               </div>
             </div>
             {availableTags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-3 justify-center  lg:justify-start  lg:max-w-[350px] w-full">
+              <div className="flex flex-wrap gap-2 mt-3 max-lg:mx-auto justify-center  lg:justify-start  max-w-[320px] w-full">
                 {Object.keys(TAG_LABELS)
                   .filter((tag) => availableTags.includes(tag))
                   .map((tag) => (
