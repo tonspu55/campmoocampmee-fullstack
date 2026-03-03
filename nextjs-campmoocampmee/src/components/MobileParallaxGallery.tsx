@@ -1,12 +1,7 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
-import ImageGallery from '@/components/ImageGallery'
-
-type ImageGalleryItem = {
-  url: string
-  alt: string | null
-}
+import { useEffect, useState, useRef, useCallback } from 'react'
+import ImageGallery, { type ImageGalleryItem } from '@/components/ImageGallery'
 
 interface MobileParallaxGalleryProps {
   ImageGallery: ImageGalleryItem[]
@@ -16,52 +11,42 @@ interface MobileParallaxGalleryProps {
 export default function MobileParallaxGallery({ ImageGallery: galleryData, slug }: MobileParallaxGalleryProps) {
   const [isFixed, setIsFixed] = useState(true)
   const galleryRef = useRef<HTMLDivElement>(null)
-  const placeholderRef = useRef<HTMLDivElement>(null)
+
+  const handleScroll = useCallback(() => {
+    const reviewSection = document.getElementById('review-section')
+    if (!reviewSection || !galleryRef.current) return
+
+    const galleryHeight = galleryRef.current.offsetHeight
+    const headerHeight = 60
+    const reviewSectionTop = reviewSection.getBoundingClientRect().top
+
+    setIsFixed(reviewSectionTop > galleryHeight + headerHeight)
+  }, [])
 
   useEffect(() => {
-    const handleScroll = () => {
-      // หา review section element
-      const reviewSection = document.getElementById('review-section')
-      if (!reviewSection || !galleryRef.current) return
-
-      const galleryHeight = 300 // ความสูงของ gallery
-      const headerHeight = 60 // ความสูงของ header (top-15 = 60px)
-
-      // ตำแหน่งที่ review section เริ่มต้น
-      const reviewSectionTop = reviewSection.getBoundingClientRect().top
-
-      // เมื่อ review section มาถึงด้านล่างของ gallery
-      // gallery ควรหยุด fixed และ scroll ไปพร้อมกับ content
-      if (reviewSectionTop <= galleryHeight + headerHeight) {
-        setIsFixed(false)
-      } else {
-        setIsFixed(true)
-      }
+    let rafId: number
+    const onScroll = () => {
+      cancelAnimationFrame(rafId)
+      rafId = requestAnimationFrame(handleScroll)
     }
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll() // เรียกครั้งแรกเพื่อเช็คตำแหน่งเริ่มต้น
-
-    // ล้าง event listener เมื่อ component ถูก unmount
+    window.addEventListener('scroll', onScroll, { passive: true })
+    handleScroll()
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-
+      window.removeEventListener('scroll', onScroll)
+      cancelAnimationFrame(rafId)
     }
-  }, [])
+  }, [handleScroll])
 
   return (
     <div className="md:hidden">
-      {/* Gallery container */}
       <div
         ref={galleryRef}
-        className={`${isFixed ? 'fixed top-15 left-0 right-0 z-0' : 'absolute top-0 left-0 right-0 z-0'}`}
-        style={!isFixed ? { position: 'absolute' } : undefined}
+        className={isFixed ? 'fixed top-15 left-0 right-0 z-0' : 'absolute top-0 left-0 right-0 z-0'}
       >
         <ImageGallery ImageGallery={galleryData} slug={slug} />
       </div>
-
-      {/* Spacer to maintain layout */}
-      <div ref={placeholderRef} className="h-75"></div>
+      <div className="h-75" />
     </div>
   )
 }

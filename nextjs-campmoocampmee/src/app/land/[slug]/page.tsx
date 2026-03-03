@@ -1,7 +1,5 @@
-import { readClient as client } from "@/sanity/client";
+import { readClient as client, urlFor } from "@/sanity/client";
 import { PortableText, type SanityDocument } from "next-sanity";
-import imageUrlBuilder from "@sanity/image-url";
-import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import ImageGallery from "@/components/ImageGallery";
 import MobileParallaxGallery from "@/components/MobileParallaxGallery";
 import ContactSocialLink from "@/components/ContactSocialLink";
@@ -50,12 +48,6 @@ const POST_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && slug.cur
 
 const REVIEWS_QUERY = `*[_type == "review" && post._ref == $postId && status == "approved"]{rating}`;
 
-const { projectId, dataset } = client.config();
-const urlFor = (source: SanityImageSource) =>
-  projectId && dataset
-    ? imageUrlBuilder({ projectId, dataset }).image(source)
-    : null;
-
 const options = { next: { revalidate: 300 } };
 
 export async function generateMetadata({
@@ -68,7 +60,7 @@ export async function generateMetadata({
   );
 
   const thumbnailImage = post.thumbnail
-    ? urlFor(post.thumbnail)?.width(1200).height(1200).url() || null
+    ? urlFor(post.thumbnail).width(1200).height(1200).url()
     : null;
 
   return {
@@ -130,14 +122,10 @@ export default async function PostPage({ params }: PageProps) {
       (item): item is SanityImageItem & { asset: { url: string } } =>
         item._type === "image" && !!item.asset?.url,
     )
-    .map((item) => {
-      const imageUrl = urlFor(item)?.width(1200).height(1200).url();
-      return {
-        url: imageUrl || "",
-        alt: item.alt || null,
-      };
-    })
-    .filter((item) => item.url);
+    .map((item) => ({
+      url: urlFor(item).width(1200).height(1200).url(),
+      alt: item.alt || null,
+    }));
 
   const pageUrl = `${SITE_URL}/land/${slug}`;
 
