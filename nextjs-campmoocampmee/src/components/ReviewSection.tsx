@@ -136,10 +136,12 @@ export default function ReviewSection({ postId }: ReviewSectionProps) {
     });
   };
   return (
-    <div id="review-section" className="mt-4 space-y-4 max-lg:px-2">
+    <div id="review-section" className="  max-lg:px-2">
       {/* สรุปคะแนนรีวิว */}
-      <div className="flex flex-row gap-4 justify-between items-end">
-        <h3 className="text-lg md:text-xl font-semibold">รีวิวจากผู้เข้าพัก</h3>
+      <div className="flex flex-row gap-4 justify-between items-end  mb-4 mt-6">
+        <h3 className="text-lg md:text-xl font-semibold ">
+          รีวิวจากผู้เข้าพัก
+        </h3>
         <p
           className="text-blue-500 cursor-pointer"
           onClick={handleWriteReviewClick}
@@ -149,7 +151,7 @@ export default function ReviewSection({ postId }: ReviewSectionProps) {
       </div>
       <UserDialog open={userDialogOpen} onOpenChange={setUserDialogOpen} />
 
-      <div className="p-4 lg:p-6 rounded-lg border border-gray-200 dark:border-primary">
+      <div className="p-4  rounded-lg border border-gray-200 dark:border-primary">
         {totalReviews > 0 ? (
           <div className="flex items-center gap-4">
             <div className="text-4xl font-bold">{averageRating}</div>
@@ -167,13 +169,15 @@ export default function ReviewSection({ postId }: ReviewSectionProps) {
 
       {/* แสดงรีวิวทั้งหมด */}
       {reviews.length > 0 && (
-        <div className="space-y-4">
-          <h3 className="text-lg md:text-xl font-semibold">รีวิวทั้งหมด</h3>
+        <>
+          <h3 className="text-lg md:text-xl font-semibold mt-6 mb-4 ">
+            รีวิวทั้งหมด
+          </h3>
           <div className="flex flex-col lg:flex-row gap-4">
             {reviews.map((review) => (
               <div
                 key={review._id}
-                className=" lg:basis-1/3 p-4 lg:p-6 rounded-lg border border-gray-200 dark:border-primary"
+                className=" lg:basis-1/2 p-4  rounded-lg border border-gray-200 dark:border-primary"
               >
                 <div className="flex items-start gap-4">
                   {review.user.image ? (
@@ -207,13 +211,15 @@ export default function ReviewSection({ postId }: ReviewSectionProps) {
               </div>
             ))}
           </div>
-        </div>
+        </>
       )}
 
       {session && (
         <div id="write-review-form">
-          <h3 className="text-lg md:text-xl font-semibold mb-4">เขียนรีวิว</h3>
-          <div className="p-4 lg:p-6 rounded-lg border border-gray-200 dark:border-primary">
+          <h3 className="text-lg md:text-xl font-semibold mt-6 mb-4 ">
+            เขียนรีวิว
+          </h3>
+          <div className="p-4  rounded-lg border border-gray-200 dark:border-primary">
             <form onSubmit={handleSubmitReview} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-2">

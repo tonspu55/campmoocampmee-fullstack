@@ -222,7 +222,7 @@ export default async function PostPage({ params }: PageProps) {
       <div className="relative z-10 bg-background md:bg-transparent rounded-t-2xl md:rounded-none -mt-4 md:mt-0 pt-4 md:pt-0">
         <div className="flex flex-col lg:flex-row gap-4 mt-0 md:mt-4 lg:mt-6 items-start">
           <div className="basis-1/1 lg:px-2 lg:pr-0 lg:pl-2 w-full">
-            <div className="flex flex-row gap-4 justify-between items-start mb-4 lg:mb-6 max-lg:px-2">
+            <div className="flex flex-row gap-4 justify-between items-start mb-4  max-lg:px-2">
               <div className="flex flex-col">
                 <h1 className="text-xl md:text-2xl font-semibold ">
                   {post.title}
@@ -238,7 +238,7 @@ export default async function PostPage({ params }: PageProps) {
               </ExpandableContent>
             </div>
 
-            <div className={`lg:hidden mt-4`}>
+            <div className={`lg:hidden mt-6`}>
               <ContactSocialLink socialContactLinks={post.socialContactLinks} />
             </div>
             <ReviewSection postId={post._id} />
