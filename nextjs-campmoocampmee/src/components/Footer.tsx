@@ -68,6 +68,7 @@ const Footer = async () => {
                     href={`/search?tag=${tag}`}
                     className="text-md max-lg:text-sm hover:opacity-70"
                   >
+                    {/* แสดงป้ายคำค้นหา */}
                     {TAG_LABELS[tag] ?? tag}
                   </Link>
                 ))}
