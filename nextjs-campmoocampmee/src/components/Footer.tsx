@@ -59,21 +59,29 @@ const Footer = async () => {
             </div>
 
             {/* Quick Tags */}
-            <div className="flex flex-col space-y-2">
-              <h4 className="text-lg font-bold">คำค้นหา</h4>
-              <nav className="flex flex-col space-y-2">
-                {tags.map((tag) => (
-                  <Link
-                    key={tag}
-                    href={`/search?tag=${tag}`}
-                    className="text-md max-lg:text-sm hover:opacity-70"
-                  >
-                    {/* แสดงป้ายคำค้นหา */}
-                    {TAG_LABELS[tag] ?? tag}
-                  </Link>
-                ))}
-              </nav>
-            </div>
+            {tags?.length > 0 && (
+              <div className="flex flex-col space-y-2">
+                <h4 className="text-lg font-bold">คำค้นหา</h4>
+                <nav className="flex flex-col space-y-2">
+                  {tags
+                    .filter((tag) => tag != null)
+                    .sort((a, b) => {
+                      const keys = Object.keys(TAG_LABELS);
+                      return keys.indexOf(a) - keys.indexOf(b);
+                    })
+                    .map((tag) => (
+                      <Link
+                        key={tag}
+                        href={`/search?tag=${tag}`}
+                        className="text-md max-lg:text-sm hover:opacity-70"
+                      >
+                        {/* แสดงป้ายคำค้นหา */}
+                        {TAG_LABELS[tag] ?? tag}
+                      </Link>
+                    ))}
+                </nav>
+              </div>
+            )}
 
             {/* Contact Info */}
             <div className="flex flex-col space-y-2">
