@@ -28,7 +28,7 @@ const NavLink = ({ path, children, isHomepageTop = false }: NavLinkProps) => {
       className={`
         ${pathname === path ? "border-b-2 border-primary" : ""} 
         hover:opacity-75 font-medium transition-colors duration-200
-        ${isHomepageTop ? "text-white" : "text-foreground"}
+        ${isHomepageTop ? "hidden" : "text-foreground"}
       `}
       href={path}
     >
