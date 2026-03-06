@@ -170,16 +170,13 @@ export default function ReviewSection({ postId }: ReviewSectionProps) {
       {/* แสดงรีวิวทั้งหมด */}
       {reviews.length > 0 && (
         <>
-          <h3 className="text-lg md:text-xl font-semibold mt-6 mb-4 ">
-            รีวิวทั้งหมด
-          </h3>
-          <div className="flex flex-col lg:flex-row gap-4">
+          <div className="grid lg:grid-cols-2 lg:gap-4 grid-cols-1 gap-2 mt-2 lg:mt-4">
             {reviews.map((review) => (
               <div
                 key={review._id}
-                className=" lg:basis-1/2 p-4  rounded-lg border border-gray-200 dark:border-primary"
+                className=" p-4  rounded-lg border border-gray-200 dark:border-primary"
               >
-                <div className="flex items-start gap-4">
+                <div className="flex  items-start gap-4">
                   {review.user.image ? (
                     <Image
                       src={review.user.image}
@@ -203,11 +200,11 @@ export default function ReviewSection({ postId }: ReviewSectionProps) {
                     <div className="flex mb-2">
                       {renderStars(review.rating)}
                     </div>
-                    <p className="text-gray-700 dark:text-gray-200">
-                      {review.comment}
-                    </p>
                   </div>
                 </div>
+                <p className="text-gray-700 dark:text-gray-200">
+                  {review.comment}
+                </p>
               </div>
             ))}
           </div>
