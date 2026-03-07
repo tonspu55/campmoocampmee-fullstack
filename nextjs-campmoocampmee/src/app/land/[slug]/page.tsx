@@ -125,6 +125,7 @@ export default async function PostPage({ params }: PageProps) {
     .map((item) => ({
       url: urlFor(item).width(1200).height(1200).url(),
       alt: item.alt || null,
+      title: post.title,
     }));
 
   const pageUrl = `${SITE_URL}/land/${slug}`;

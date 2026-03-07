@@ -38,12 +38,12 @@ const TabGallery = ({
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [currentPopupIndex, setCurrentPopupIndex] = useState(0);
   const tabsRef = useRef<HTMLDivElement>(null);
-  const [originalTabsTop, setOriginalTabsTop] = useState(0);
+  const [originalTabsTop, setOriginalTabsTop] = useState<number | null>(null);
   const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     // เก็บตำแหน่งเดิมของ tabs
-    if (tabsRef.current && originalTabsTop === 0) {
+    if (tabsRef.current && originalTabsTop === null) {
       setOriginalTabsTop(tabsRef.current.offsetTop);
     }
   }, [originalTabsTop]);
@@ -64,25 +64,32 @@ const TabGallery = ({
   }, [dataGallery, activeTab, initialImageIndex]);
 
   useEffect(() => {
+    let rafId: number | null = null;
     const handleScroll = () => {
-      if (tabsRef.current && originalTabsTop > 0) {
-        const scrollY = window.scrollY;
-        const tabsTop = tabsRef.current.getBoundingClientRect().top;
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        if (tabsRef.current && originalTabsTop !== null) {
+          const scrollY = window.scrollY;
+          const tabsTop = tabsRef.current.getBoundingClientRect().top;
 
-        // ถ้า scroll มาถึงตำแหน่งเดิมของ tabs หรือเลยขึ้นไป ให้ยกเลิก fixed
-        if (scrollY <= originalTabsTop) {
-          setIsFixed(false);
+          // ถ้า scroll มาถึงตำแหน่งเดิมของ tabs หรือเลยขึ้นไป ให้ยกเลิก fixed
+          if (scrollY <= originalTabsTop) {
+            setIsFixed(false);
+          }
+          // ถ้า scroll ลงไปจนกระทั่ง tabs จะหายจากด้านบน ให้เริ่ม fixed
+          else if (tabsTop <= 0 && scrollY > originalTabsTop) {
+            setIsFixed(true);
+          }
         }
-        // ถ้า scroll ลงไปจนกระทั่ง tabs จะหายจากด้านบน ให้เริ่ม fixed
-        else if (tabsTop <= 0 && scrollY > originalTabsTop) {
-          setIsFixed(true);
-        }
-      }
+      });
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
 
-    // cleanup function to remove the event listener
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
   }, [originalTabsTop]);
 
   const filteredData =
@@ -98,8 +105,10 @@ const TabGallery = ({
       onTabChange();
     }
 
-    // Scroll to top สำหรับ iOS Safari/Chrome
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    // Scroll to top สำหรับ iOS Safari/Chrome (รวม iPadOS ที่แสดง userAgent เป็น Mac)
+    const isIOS =
+      /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.userAgent.includes("Mac") && "ontouchend" in document);
     const isMobile = window.innerWidth <= 768;
 
     if (isIOS || isMobile) {
@@ -221,7 +230,7 @@ const TabGallery = ({
       <div className="grid gap-2">
         {filteredData.map((item, index) => (
           <div
-            key={index}
+            key={item.url || index}
             className={`${index % 3 === 0 ? "col-span-2" : "col-span-2 md:col-span-1"}`}
             ref={(el) => {
               // Find the original index in the full dataGallery array
@@ -270,6 +279,7 @@ const TabGallery = ({
         onClose={handlePopupClose}
         images={filteredData}
         currentIndex={currentPopupIndex}
+        postTitle={postTitle}
       />
     </>
   );

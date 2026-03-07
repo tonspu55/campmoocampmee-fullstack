@@ -16,6 +16,7 @@ import {
 export type ImageGalleryItem = {
   url: string;
   alt: string | null;
+  title?: string;
 };
 
 interface ImageGalleryProps {
@@ -99,7 +100,7 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
                 >
                   <Image
                     src={imageItem.url}
-                    alt={imageItem.alt || `Gallery image ${index + 1}`}
+                    alt={imageItem.alt || imageItem.title || `Gallery image ${index + 1}`}
                     fill
                     className="object-cover"
                   />
@@ -143,7 +144,7 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
               >
                 <Image
                   src={ImageGallery[0].url}
-                  alt={ImageGallery[0].alt || "Gallery image 1"}
+                  alt={ImageGallery[0].alt || ImageGallery[0].title || "Gallery image 1"}
                   className="object-cover w-full h-full max-h-100 rounded-tl-xl rounded-bl-xl"
                   width={500}
                   height={400}
@@ -161,7 +162,7 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
                   >
                     <Image
                       src={ImageGallery[1].url}
-                      alt={ImageGallery[1].alt || "Gallery image 2"}
+                      alt={ImageGallery[1].alt || ImageGallery[1].title || "Gallery image 2"}
                       className="object-cover w-full max-h-49"
                       width={500}
                       height={196}
@@ -175,7 +176,7 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
                   >
                     <Image
                       src={ImageGallery[2].url}
-                      alt={ImageGallery[2].alt || "Gallery image 3"}
+                      alt={ImageGallery[2].alt || ImageGallery[2].title || "Gallery image 3"}
                       className="object-cover w-full max-h-49 rounded-tr-xl"
                       width={500}
                       height={196}
@@ -193,7 +194,7 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
                   >
                     <Image
                       src={ImageGallery[3].url}
-                      alt={ImageGallery[3].alt || "Gallery image 4"}
+                      alt={ImageGallery[3].alt || ImageGallery[3].title || "Gallery image 4"}
                       className="object-cover w-full max-h-49"
                       width={500}
                       height={196}
@@ -208,7 +209,7 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
                     <div className="relative h-full">
                       <Image
                         src={ImageGallery[4].url}
-                        alt={ImageGallery[4].alt || "Gallery image 5"}
+                        alt={ImageGallery[4].alt || ImageGallery[4].title || "Gallery image 5"}
                         className="object-cover w-full max-h-49 rounded-br-xl"
                         width={500}
                         height={196}
