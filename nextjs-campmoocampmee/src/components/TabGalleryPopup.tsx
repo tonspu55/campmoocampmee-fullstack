@@ -19,6 +19,7 @@ interface TabGalleryPopupProps {
   onClose: () => void;
   images: GalleryItem[];
   currentIndex: number;
+  postTitle?: string;
 }
 
 const TabGalleryPopup = ({
@@ -26,6 +27,7 @@ const TabGalleryPopup = ({
   onClose,
   images,
   currentIndex,
+  postTitle,
 }: TabGalleryPopupProps) => {
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [currentSlide, setCurrentSlide] = useState(currentIndex);
@@ -71,15 +73,14 @@ const TabGalleryPopup = ({
 
   useEffect(() => {
     if (isOpen) {
+      const previousOverflow = document.body.style.overflow;
       document.addEventListener("keydown", handleKeyPress);
       document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
+      return () => {
+        document.removeEventListener("keydown", handleKeyPress);
+        document.body.style.overflow = previousOverflow;
+      };
     }
-    return () => {
-      document.removeEventListener("keydown", handleKeyPress);
-      document.body.style.overflow = "unset";
-    };
   }, [isOpen, handleKeyPress]);
 
   const isVideo = (item: GalleryItem) => item._type === "video" && item.embedCode;
@@ -127,7 +128,7 @@ const TabGalleryPopup = ({
       >
         <CarouselContent className="ml-0">
           {images.map((item, index) => (
-            <CarouselItem key={index} className="pl-0">
+            <CarouselItem key={item.url || index} className="pl-0">
               <div className="flex items-center justify-center h-screen">
                 {isVideo(item) ? (
                   renderVideoEmbed(item)
@@ -135,7 +136,7 @@ const TabGalleryPopup = ({
                   <div className="relative w-full max-w-full md:max-w-[80vw] h-[80vh]">
                     <Image
                       src={item.url}
-                      alt={item.alt || `Gallery image ${index + 1}`}
+                      alt={item.alt || postTitle || `Gallery image ${index + 1}`}
                       fill
                       className="object-contain"
                       priority={Math.abs(index - currentSlide) <= 1}
