@@ -11,6 +11,7 @@ import AuthProvider from "@/components/AuthProvider";
 import CookieConsent from "@/components/CookieConsent";
 import { Analytics } from "@vercel/analytics/next";
 import JsonLd from "@/components/JsonLd";
+import WishlistInitializer from "@/components/WishlistInitializer";
 
 const SITE_URL = "https://www.campmoocampmee.com";
 
@@ -117,6 +118,7 @@ export default function RootLayout({
           enableSystem={false}
         >
           <AuthProvider>
+            <WishlistInitializer />
             <ConditionalLayout footer={<Footer />}>{children}</ConditionalLayout>
           </AuthProvider>
           <Toaster />

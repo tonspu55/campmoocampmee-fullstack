@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/dialog'
 import UserInfo from '@/components/UserInfo'
 import { useLandOwnerStore } from '@/lib/store'
+import { useWishlistStore } from '@/lib/wishlist-store'
 
 function isInAppBrowser(): boolean {
   if (typeof window === 'undefined') return false
@@ -79,6 +80,7 @@ export default function UserDialog({ className = '', onOpen, open: externalOpen,
   const handleSignOut = () => {
     // Reset store เมื่อ sign out
     reset()
+    useWishlistStore.getState().reset()
     signOut({
       callbackUrl: window.location.href,
       redirect: true,
@@ -125,6 +127,7 @@ export default function UserDialog({ className = '', onOpen, open: externalOpen,
               }}
               isLandOwner={isLandOwner}
               onSignOut={handleSignOut}
+              onCloseDialog={() => handleOpenChange(false)}
               showSignOutButton={true}
             />
           </>
