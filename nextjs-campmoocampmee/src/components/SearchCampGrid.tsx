@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { type SanityDocument } from "next-sanity";
@@ -5,6 +7,7 @@ import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { readClient as client } from "@/sanity/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import HeartButton from "@/components/HeartButton";
 
 interface SearchCampGridProps {
   posts: SanityDocument[];
@@ -44,11 +47,12 @@ export default function SearchCampGrid({ posts }: SearchCampGridProps) {
           : null;
 
         return (
-          <Link
-            href={`/land/${post.slug.current}`}
-            key={post._id}
-            className="group block"
-          >
+          <div key={post._id} className="relative group">
+            <HeartButton postId={post._id} />
+            <Link
+              href={`/land/${post.slug.current}`}
+              className="block"
+            >
             <div className="flex flex-col gap-2">
               {/* Image with carousel dots overlay */}
               <div className="relative aspect-4/3 overflow-hidden rounded-xl bg-gray-100">
@@ -105,7 +109,8 @@ export default function SearchCampGrid({ posts }: SearchCampGridProps) {
                 )}
               </div>
             </div>
-          </Link>
+            </Link>
+          </div>
         );
       })}
     </div>

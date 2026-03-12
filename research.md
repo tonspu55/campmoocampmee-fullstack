@@ -1,6 +1,6 @@
 # CampMooCampMee — Codebase Research
 
-> Last updated: 2026-02-28
+> Last updated: 2026-03-08
 > Website: https://www.campmoocampmee.com
 
 ---
@@ -409,3 +409,140 @@ pnpm deploy   # Deploy studio to Sanity.io
 - Metadata generation ต่อหน้า
 - Canonical URLs ผ่าน `metadataBase`
 - Open Graph + Twitter Card สำหรับ social sharing
+
+---
+
+## 16. ระบบจองลานกางเต็นท์ (Booking System) — แผนพัฒนา
+
+### Booking Flow
+
+```text
+1. ผู้ใช้ดูหน้าแคมป์ → กดปุ่ม "จอง"
+2. เลือกวันเช็คอิน/เช็คเอาท์, จำนวนผู้เข้าพัก
+3. กรอกเบอร์โทร → ระบบส่ง OTP (ThaiBulkSMS) → ยืนยัน OTP
+4. แสดงสรุปการจอง + ข้อมูลบัญชี/PromptPay ของเจ้าของลาน
+5. ผู้จองโอนเงินเอง → แนบรูปสลิป
+6. ระบบส่งสลิปไป SlipOK API ตรวจสอบอัตโนมัติ
+   ✅ สลิปถูกต้อง + ยอดเงินตรง → สร้าง booking + ส่ง SMS หมายเลขจอง
+   ❌ สลิปไม่ผ่าน → แจ้งผู้จอง / fallback ให้เจ้าของลาน approve manual
+```
+
+### Decisions
+
+- **Auth:** จองได้ทั้ง guest (เบอร์โทร+OTP) และ Google login
+- **SMS/OTP:** ThaiBulkSMS
+- **Payment:** ผู้จองโอนเงินเอง → แนบสลิป → SlipOK ตรวจสอบอัตโนมัติ
+- **Approval:** auto-confirm หลังสลิปถูกต้อง, fallback เจ้าของลาน approve manual
+- **Database:** Sanity CMS (เดิม)
+- **บัญชีรับเงิน:** เจ้าของลานตั้งค่าเลขบัญชี/PromptPay ใน post schema
+
+### External Services เพิ่มเติม
+
+| Service | Purpose | Env Variables |
+| --- | --- | --- |
+| ThaiBulkSMS | ส่ง OTP + SMS ยืนยันการจอง | `THAIBULKSMS_API_KEY`, `THAIBULKSMS_API_SECRET` |
+| SlipOK | ตรวจสอบสลิปโอนเงินอัตโนมัติ | `SLIPOK_API_KEY`, `SLIPOK_BRANCH_ID` |
+
+### Sanity Schemas ใหม่
+
+#### Booking
+
+```typescript
+{
+  _type: "booking"
+  bookingNumber: string           // CMC-YYYYMMDD-XXXX (unique)
+  post: reference                 // → Post
+  guestName: string
+  guestPhone: string
+  guestEmail?: string             // ถ้า login Google
+  userId?: reference              // → User (ถ้า login Google)
+  checkIn: date
+  checkOut: date
+  guests: number
+  totalAmount: number
+  slipImage: image
+  slipVerification: {
+    verified: boolean
+    transRef?: string             // เลขอ้างอิงจาก SlipOK
+    amount?: number
+    verifiedAt?: datetime
+  }
+  status: "pending_payment" | "pending_verify" | "confirmed" | "rejected" | "cancelled"
+  createdAt: datetime
+  confirmedAt?: datetime
+}
+```
+
+#### OTP
+
+```typescript
+{
+  _type: "otp"
+  phone: string
+  code: string                    // hashed (bcrypt)
+  expiresAt: datetime             // 5 นาที
+  verified: boolean
+  attempts: number                // max 3
+  createdAt: datetime
+}
+```
+
+#### เพิ่ม field ใน Post
+
+```typescript
+paymentInfo: {
+  bankName: string
+  accountNumber: string
+  accountName: string
+  promptPayId: string
+}
+```
+
+### API Endpoints ใหม่
+
+```text
+POST  /api/booking/otp/send                  ส่ง OTP ไปเบอร์โทร
+POST  /api/booking/otp/verify                ตรวจสอบ OTP
+POST  /api/booking/create                    สร้าง booking (pending_payment)
+POST  /api/booking/upload-slip               อัพโหลดสลิป + ตรวจสอบ SlipOK
+GET   /api/booking/[bookingNumber]           ดูสถานะการจอง
+PATCH /api/booking/[bookingNumber]           เจ้าของลาน approve/reject
+
+GET   /api/landowner/bookings                รายการจองทั้งหมดของลาน
+PATCH /api/landowner/bookings/[bookingNumber] approve/reject สลิป (manual)
+```
+
+### Pages ใหม่
+
+| Route | Description |
+| --- | --- |
+| `/land/[slug]/booking` | หน้าจอง (multi-step form) |
+| `/booking/[bookingNumber]` | ดูสถานะการจอง |
+| `/landowner/bookings` | Dashboard จัดการ booking |
+
+### Components ใหม่
+
+```text
+components/booking/
+  BookingForm.tsx        — multi-step form หลัก
+  DatePicker.tsx         — เลือกวัน check-in/check-out
+  OtpInput.tsx           — กรอก OTP 6 หลัก
+  BookingSummary.tsx     — สรุปการจอง + ข้อมูลบัญชี
+  SlipUpload.tsx         — อัพโหลดรูปสลิป
+  BookingStatus.tsx      — แสดงสถานะการจอง
+  BookingCard.tsx        — card ในหน้า landowner dashboard
+```
+
+### Packages เพิ่มเติม
+
+```text
+bcryptjs               — hash OTP code
+```
+
+### Security
+
+- OTP hash ด้วย bcrypt ก่อนเก็บ
+- Rate limit: ส่ง OTP ≤ 5 ครั้ง/เบอร์/ชม.
+- Slip upload: จำกัด 5MB, เฉพาะ image/*
+- ป้องกันสลิปซ้ำ (transRef duplicate check)
+- SlipOK API key เก็บ server-side only

@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { type SanityDocument } from "next-sanity";
 import { urlFor } from "@/sanity/client";
+import HeartButton from "@/components/HeartButton";
 
 export default function CampThumbnailCarousel({
   posts,
@@ -25,37 +26,44 @@ export default function CampThumbnailCarousel({
             ? urlFor(post.thumbnail).width(354).height(354).url()
             : null;
           return (
-            <Link
-              href={`/land/${post.slug.current}`}
+            <div
               key={post._id}
-              className="flex-none w-44.25 flex flex-col gap-2"
+              className="relative flex-none w-44.25 flex flex-col gap-2"
             >
-              {postImageUrl ? (
-                <Image
-                  src={postImageUrl}
-                  alt={post.title}
-                  className="rounded-[20px] w-44.25 aspect-square object-cover"
-                  width={177}
-                  height={177}
-                />
-              ) : (
-                <div className="rounded-[20px] w-44.25 aspect-square bg-muted flex items-center justify-center">
-                  <span className="text-muted-foreground text-sm">
-                    ไม่มีรูปภาพ
-                  </span>
+              <HeartButton postId={post._id} />
+              <Link
+                href={`/land/${post.slug.current}`}
+                className="flex flex-col gap-2"
+              >
+                <div className="rounded-[20px] overflow-hidden w-44.25 aspect-square">
+                  {postImageUrl ? (
+                    <Image
+                      src={postImageUrl}
+                      alt={post.title}
+                      className="w-full h-full object-cover"
+                      width={177}
+                      height={177}
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-muted flex items-center justify-center">
+                      <span className="text-muted-foreground text-sm">
+                        ไม่มีรูปภาพ
+                      </span>
+                    </div>
+                  )}
                 </div>
-              )}
-              <div className="px-1">
-                <h3 className="text-sm font-semibold line-clamp-1">
-                  {post.title}
-                </h3>
-                {post.otherBenefits?.priceOfStay && (
-                  <p className="text-sm text-gray-700 dark:text-gray-200">
-                    ฿{post.otherBenefits.priceOfStay} / คน / คืน
-                  </p>
-                )}
-              </div>
-            </Link>
+                <div className="px-1">
+                  <h3 className="text-sm font-semibold line-clamp-1">
+                    {post.title}
+                  </h3>
+                  {post.otherBenefits?.priceOfStay && (
+                    <p className="text-sm text-gray-700 dark:text-gray-200">
+                      ฿{post.otherBenefits.priceOfStay} / คน / คืน
+                    </p>
+                  )}
+                </div>
+              </Link>
+            </div>
           );
         })}
       </div>
