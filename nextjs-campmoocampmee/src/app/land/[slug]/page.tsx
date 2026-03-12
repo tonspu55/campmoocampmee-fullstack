@@ -6,6 +6,7 @@ import ContactSocialLink from "@/components/ContactSocialLink";
 import type { Metadata } from "next";
 import styles from "./style.module.css";
 import ShareToSocial from "@/components/ShareToSocial";
+import HeartButton from "@/components/HeartButton";
 import OtherBenefits from "@/components/OtherBenefits";
 import InfoAddress from "@/components/InfoAddress";
 import NavigationMobile from "@/components/NavigationMobile";
@@ -230,7 +231,10 @@ export default async function PostPage({ params }: PageProps) {
                 </h1>
                 <InfoAddress InfoAddress={post.address} />
               </div>
-              <ShareToSocial title={post.title} slug={slug} />
+              <div className="flex flex-row gap-2 items-center">
+                <HeartButton postId={post._id} variant="button" />
+                <ShareToSocial title={post.title} slug={slug} />
+              </div>
             </div>
             <OtherBenefits otherBenefits={post.otherBenefits} />
             <div className="max-lg:px-2">
