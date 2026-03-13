@@ -15,7 +15,7 @@ export default function ProtectedContactForm() {
     if (status === 'loading') return // Still loading
 
     if (!session) {
-      router.push('/auth/signin')
+      router.push('/auth/signin-landowner')
     }
   }, [session, status, router])
 

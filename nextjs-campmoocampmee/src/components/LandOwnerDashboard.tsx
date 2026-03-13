@@ -32,7 +32,7 @@ export default function LandOwnerDashboard() {
     if (status === 'loading') return
 
     if (!session) {
-      router.push('/auth/signin?callbackUrl=/landowner')
+      router.push('/auth/signin-landowner')
       return
     }
 

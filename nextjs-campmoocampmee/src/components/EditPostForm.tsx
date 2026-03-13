@@ -128,7 +128,7 @@ export default function EditPostForm({ postId }: { postId: string }) {
     if (status === 'loading') return
 
     if (!session) {
-      router.push('/auth/signin?callbackUrl=/landowner')
+      router.push('/auth/signin-landowner')
       return
     }
 
