@@ -1,6 +1,6 @@
 # CampMooCampMee — Codebase Research
 
-> Last updated: 2026-03-08
+> Last updated: 2026-03-14
 > Website: https://www.campmoocampmee.com
 
 ---
@@ -71,7 +71,8 @@ campmoocampmee-fullstack/
 │   │   │   │       ├── posts/
 │   │   │   │       ├── posts/[postId]/
 │   │   │   │       └── upload/
-│   │   │   ├── auth/signin/        # Sign-in page
+│   │   │   ├── auth/signin/        # Sign-in page (ทั่วไป, กลับหน้าเดิม)
+│   │   │   ├── auth/signin-landowner/ # Sign-in สำหรับเจ้าของลาน
 │   │   │   ├── land/[slug]/        # Camp detail page
 │   │   │   │   └── gallery/        # Gallery view
 │   │   │   ├── search/             # Search & filter page
@@ -135,7 +136,8 @@ campmoocampmee-fullstack/
 | `/land/[slug]` | หน้ารายละเอียดแคมป์ (ISR 300s) |
 | `/land/[slug]/gallery` | Gallery ภาพ/วิดีโอ |
 | `/contact` | ฟอร์มติดต่อสำหรับเจ้าของที่ดิน |
-| `/auth/signin` | Sign-in ด้วย Google |
+| `/auth/signin` | Sign-in ทั่วไป (กลับหน้าเดิมตาม callbackUrl) |
+| `/auth/signin-landowner` | Sign-in สำหรับเจ้าของลานกางเต็นท์ (redirect → /landowner) |
 | `/cookie-policy` | นโยบาย Cookie |
 | `/sitemap.xml` | Dynamic XML sitemap (cache 24h) |
 
@@ -252,13 +254,17 @@ POST   /api/landowner/upload             อัปโหลดภาพไปย
 
 ## 7. Authentication Flow
 
-```
+```text
 User → Google OAuth 2.0
   → NextAuth.js signIn callback
     → ค้นหา / สร้าง User document ใน Sanity
     → เก็บ providerId, name, email, image
   → Session มี: provider, providerId
-  → Redirect → /landowner
+  → Redirect ตาม callbackUrl (default: /)
+
+Sign-in แยก 2 flow:
+  - /auth/signin          → user ทั่วไป → กลับหน้าเดิม (callbackUrl)
+  - /auth/signin-landowner → เจ้าของลาน → redirect ไป /landowner
 ```
 
 **Authorization:**
