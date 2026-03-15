@@ -26,6 +26,17 @@ export const processVideoUrl = (url: string, platform: string) => {
     }
   }
 
+  // สำหรับ TikTok
+  if (platform === "tiktok") {
+    // ดึง video ID จาก URL รูปแบบ tiktok.com/@user/video/1234567890
+    const videoIdMatch = url.match(/\/video\/(\d+)/);
+    if (videoIdMatch?.[1]) {
+      return `https://www.tiktok.com/embed/v2/${videoIdMatch[1]}`;
+    }
+    // ถ้าเป็น URL รูปแบบอื่น ส่งกลับ url เดิม
+    return url;
+  }
+
   // สำหรับ platform อื่นๆ หรือ direct video URL
   return url;
 };
@@ -45,12 +56,7 @@ export const createVideoIframe = (
 
   // สำหรับ TikTok
   if (platform === "tiktok") {
-    // TikTok จะต้องใช้ blockquote embed แทน iframe
-    return `<blockquote class="tiktok-embed" cite="${processedUrl}" data-video-id="${title}" style="max-width: 325px; margin: 0 auto; display: block;">
-      <section>
-        <a target="_blank" title="${title || "TikTok video"}" href="${processedUrl}">Watch the video</a>
-      </section>
-    </blockquote>`;
+    return `<iframe src="${processedUrl}" width="325" height="578" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="max-width:100%; border-radius:8px;"></iframe>`;
   }
 
   // สำหรับ platform อื่นๆ

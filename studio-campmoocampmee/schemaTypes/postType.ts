@@ -163,14 +163,20 @@ export const postType = defineType({
               title: 'Video URL',
               type: 'url',
               description:
-                'วางลิงค์วิดีโอจาก YouTube URL ที่นี่ เช่น https://www.youtube.com/embed/VIDEO_ID หรือ https://www.youtube.com/watch?v=VIDEO_ID',
+                'วางลิงค์วิดีโอที่นี่ เช่น YouTube: https://www.youtube.com/watch?v=VIDEO_ID หรือ TikTok: https://www.tiktok.com/@user/video/VIDEO_ID',
               validation: (rule) => rule.required().error('กรุณาใส่ลิงค์วิดีโอ'),
             }),
             defineField({
               name: 'platform',
               title: 'Platform',
               type: 'string',
-              options: {list: [{title: 'YouTube', value: 'youtube'}], layout: 'radio'},
+              options: {
+                list: [
+                  {title: 'YouTube', value: 'youtube'},
+                  {title: 'TikTok', value: 'tiktok'},
+                ],
+                layout: 'radio',
+              },
               initialValue: 'youtube',
             }),
             defineField({

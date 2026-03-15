@@ -167,8 +167,10 @@ const TabGallery = ({
       <div
         className="video-embed-container w-full"
         style={{
-          aspectRatio: item.platform ? "16/9" : "auto",
+          aspectRatio: item.platform === "tiktok" ? "9/16" : item.platform ? "16/9" : "auto",
           minHeight: item.platform ? "100%" : "auto",
+          maxWidth: item.platform === "tiktok" ? "325px" : "100%",
+          margin: item.platform === "tiktok" ? "0 auto" : undefined,
         }}
       >
         <div
