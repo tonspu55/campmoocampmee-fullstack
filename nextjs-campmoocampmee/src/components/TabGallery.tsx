@@ -229,11 +229,11 @@ const TabGallery = ({
       {isFixed && <div className="h-16" />}
 
       {/* Gallery*/}
-      <div className="grid gap-2">
+      <div className="grid grid-cols-2 gap-2">
         {filteredData.map((item, index) => (
           <div
             key={item.url || index}
-            className={`${index % 3 === 0 ? "col-span-2" : "col-span-2 md:col-span-1"}`}
+            className={`${isVideo(item) ? "col-span-full" : index % 3 === 0 ? "col-span-2" : "col-span-2 md:col-span-1"}`}
             ref={(el) => {
               // Find the original index in the full dataGallery array
               const originalIndex = dataGallery.findIndex(
@@ -262,7 +262,7 @@ const TabGallery = ({
               </div>
             )}
             {isVideo(item) && (
-              <div className="relative cursor-pointer hover:opacity-90 transition-opacity">
+              <div className="relative w-full cursor-pointer hover:opacity-90 transition-opacity">
                 {renderVideoEmbed(item)}
               </div>
             )}
