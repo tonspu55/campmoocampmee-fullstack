@@ -13,6 +13,7 @@ import NavigationMobile from "@/components/NavigationMobile";
 import ExpandableContent from "@/components/ExpandableContent";
 import ReviewSection from "@/components/ReviewSection";
 import JsonLd from "@/components/JsonLd";
+import CampThumbnailCarousel from "@/components/CampThumbnailCarousel";
 
 const SITE_URL = "https://www.campmoocampmee.com";
 
@@ -48,6 +49,20 @@ const POST_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && slug.cur
 }`;
 
 const REVIEWS_QUERY = `*[_type == "review" && post._ref == $postId && status == "approved"]{rating}`;
+
+const RELATED_POSTS_QUERY = `*[
+  _type == "post"
+  && !(_id in path("drafts.**"))
+  && defined(slug.current)
+  && address.province == $province
+  && _id != $currentPostId
+]{
+  _id,
+  title,
+  slug,
+  thumbnail,
+  otherBenefits
+}`;
 
 const options = { next: { revalidate: 300 } };
 
@@ -104,6 +119,16 @@ export default async function PostPage({ params }: PageProps) {
     { postId: post._id },
     options,
   );
+  // ดึง related posts จังหวัดเดียวกัน
+  const relatedPostsRaw = await client.fetch<SanityDocument[]>(
+    RELATED_POSTS_QUERY,
+    { province: post.address?.province, currentPostId: post._id },
+    options,
+  );
+  const relatedPosts = relatedPostsRaw
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 7);
+
   const totalReviews = reviews.length;
   const averageRating =
     totalReviews > 0
@@ -257,6 +282,16 @@ export default async function PostPage({ params }: PageProps) {
           </div>
         </div>
       </div>
+      {/* relate posts */}
+      {relatedPosts.length > 0 && (
+        <section className="mt-6 ">
+          <h3 className="text-lg md:text-xl font-semibold px-2 mb-4">
+            ลานกางเต็นท์อื่นๆในจังหวัด{post.address?.province}
+          </h3>
+          <CampThumbnailCarousel posts={relatedPosts} />
+        </section>
+      )}
+
       <div className="end-page-detection lg:hidden"></div>
       <NavigationMobile socialContactLinks={post.socialContactLinks} />
     </main>
