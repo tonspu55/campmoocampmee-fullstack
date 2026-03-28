@@ -30,9 +30,9 @@ export async function GET() {
       );
     }
 
-    // ดึง posts ที่ providerId ตรงกัน
+    // ดึง posts ที่ providerId อยู่ใน providerIds
     const posts = await client.fetch(
-      `*[_type == "post" && providerId == $providerId && !(_id in path("drafts.**"))] | order(publishedAt desc){
+      `*[_type == "post" && $providerId in providerIds && !(_id in path("drafts.**"))] | order(publishedAt desc){
         _id,
         title,
         slug,

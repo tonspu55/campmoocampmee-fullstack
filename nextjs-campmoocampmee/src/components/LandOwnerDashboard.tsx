@@ -1,16 +1,21 @@
-'use client'
+"use client";
 
-import { useSession, signOut } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
-import Image from 'next/image'
-import Link from 'next/link';
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
-import { MapPin, ImageIcon, Video } from 'lucide-react'
-import UserInfo from '@/components/UserInfo'
-import { useLandOwnerStore } from '@/lib/store'
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { MapPin, ImageIcon, Video } from "lucide-react";
+import { useLandOwnerStore } from "@/lib/store";
 import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { client } from "@/sanity/client";
@@ -22,45 +27,33 @@ const urlFor = (source: SanityImageSource) =>
     : null;
 
 export default function LandOwnerDashboard() {
-  const { data: session, status } = useSession()
-  const router = useRouter()
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
-  // ใช้ Zustand store
-  const { posts, isLandOwner, loading, error, fetchPosts, reset } = useLandOwnerStore()
+  const { posts, loading, error, fetchPosts } = useLandOwnerStore();
 
   useEffect(() => {
-    if (status === 'loading') return
+    if (status === "loading") return;
 
     if (!session) {
-      router.push('/auth/signin-landowner')
-      return
+      router.push("/auth/signin-landowner");
+      return;
     }
 
-    fetchPosts()
-  }, [session, status, router, fetchPosts])
+    fetchPosts();
+  }, [session, status, router, fetchPosts]);
 
   const handleEdit = (postId: string) => {
-    router.push(`/landowner/edit/${postId}`)
-  }
+    router.push(`/landowner/edit/${postId}`);
+  };
 
-  const handleSignOut = () => {
-    // Reset store เมื่อ sign out
-    reset()
-    signOut({
-      callbackUrl: '/landowner',
-      redirect: true,
-    })
-  }
-
-  if (status === 'loading' || loading) {
+  if (status === "loading" || loading) {
     return (
-      <div className="container mx-auto max-w-4xl px-2 ">
+      <div>
         <div className="mb-6">
           <Skeleton className="h-8 w-64 mb-2" />
-          <Skeleton className="h-4 w-96" />
         </div>
-        <Skeleton className="h-24 w-full mb-6 rounded-lg" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {[1].map((i) => (
             <Card key={i} className="overflow-hidden border-0 pt-0">
               <Skeleton className="h-48 w-full" />
@@ -72,70 +65,54 @@ export default function LandOwnerDashboard() {
           ))}
         </div>
       </div>
-    )
+    );
   }
 
   if (error) {
     return (
-      <div className="container mx-auto max-w-4xl px-2 ">
-        <Card className="border-0">
-          <CardHeader>
-            <CardTitle className="text-destructive">เกิดข้อผิดพลาด</CardTitle>
-            <CardDescription>{error}</CardDescription>
-          </CardHeader>
-        </Card>
-      </div>
-    )
+      <Card className="border-0">
+        <CardHeader>
+          <CardTitle className="text-destructive">เกิดข้อผิดพลาด</CardTitle>
+          <CardDescription>{error}</CardDescription>
+        </CardHeader>
+      </Card>
+    );
   }
 
   return (
-    <div className="container mx-auto max-w-4xl px-2 ">
-
-
-
-      <div className="mb-4 lg:mb-6">
-        <div className="flex flex-col">
-          <div className="flex flex-col">
-            <h1 className="text-xl  font-bold mb-2">
-              จัดการข้อมูลลานกางเต็นท์
-            </h1>
-            <p className="text-muted-foreground">
-              คุณสามารถแก้ไขข้อมูลลานกางเต็นท์ของคุณได้ที่นี่
-            </p>
-          </div>
-          {/* User Info Section */}
-          <UserInfo
-            user={{
-              name: session?.user?.name,
-              email: session?.user?.email,
-              image: session?.user?.image,
-            }}
-            isLandOwner={isLandOwner}
-            onSignOut={handleSignOut}
-            className="mt-4 lg:mt-6"
-          />
-        </div>
-
-      </div>
+    <>
+      <h1 className="text-xl font-bold">จัดการข้อมูลลานกางเต็นท์</h1>
 
       {posts.length === 0 ? (
-        <Card className='border-0'>
+        <Card className="border-0">
           <CardHeader>
             <CardTitle>ไม่พบข้อมูลลาน</CardTitle>
             <CardDescription>
-              คุณยังไม่มีลานกางเต็นท์ที่เชื่อมโยงกับบัญชีของคุณ หากคุณต้องการยืนยันว่าเป็นเจ้าของลานกรุณาติดต่อทีมงานที่เพจ <Link href="https://www.facebook.com/profile.php?id=100080127966873" target="_blank" className="text-primary underline">แคมป์หมูแคมป์หมี</Link> เพื่อยืนยันตัวตน
+              คุณยังไม่มีลานกางเต็นท์ที่เชื่อมโยงกับบัญชีของคุณ
+              หากคุณต้องการยืนยันว่าเป็นเจ้าของลานกรุณาติดต่อทีมงานที่เพจ{" "}
+              <Link
+                href="https://www.facebook.com/profile.php?id=100080127966873"
+                target="_blank"
+                className="text-primary underline"
+              >
+                แคมป์หมูแคมป์หมี
+              </Link>{" "}
+              เพื่อยืนยันตัวตน
             </CardDescription>
           </CardHeader>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {posts.map((post) => {
             const thumbnailUrl = post.thumbnail
               ? urlFor(post.thumbnail)?.width(400).height(300).url()
               : null;
 
             return (
-              <Card key={post._id} className="overflow-hidden hover:shadow-md transition-shadow pt-0 border-0">
+              <Card
+                key={post._id}
+                className="overflow-hidden hover:shadow-md transition-shadow pt-0 border-0"
+              >
                 <div className="relative aspect-video bg-muted">
                   {thumbnailUrl ? (
                     <Image
@@ -157,7 +134,8 @@ export default function LandOwnerDashboard() {
                   <CardDescription className="flex items-start gap-1">
                     <MapPin className="w-4 h-4 mt-0.5 shrink-0" />
                     <span className="line-clamp-2">
-                      {post.address?.subdistrict && `${post.address.subdistrict} `}
+                      {post.address?.subdistrict &&
+                        `${post.address.subdistrict} `}
                       {post.address?.district && `${post.address.district} `}
                       {post.address?.province && `จ.${post.address.province}`}
                     </span>
@@ -183,15 +161,14 @@ export default function LandOwnerDashboard() {
                     className="w-full"
                     variant="default"
                   >
-
                     แก้ไขข้อมูล
                   </Button>
                 </CardContent>
               </Card>
-            )
+            );
           })}
         </div>
       )}
-    </div>
-  )
+    </>
+  );
 }
