@@ -26,7 +26,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
       return NextResponse.json({ error: "ไม่พบข้อมูลผู้ใช้" }, { status: 404 });
     }
 
-    // ดึงข้อมูล post และตรวจสอบ providerId
+    // ดึงข้อมูล post และตรวจสอบ providerIds
     const post = await client.fetch(
       `*[_type == "post" && _id == $postId && !(_id in path("drafts.**"))][0]{
         _id,
@@ -39,7 +39,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
             url
           }
         },
-        providerId,
+        providerIds,
         address,
         gallery[]{
           _key,
@@ -78,8 +78,8 @@ export async function GET(request: NextRequest, context: RouteContext) {
       return NextResponse.json({ error: "ไม่พบข้อมูลลาน" }, { status: 404 });
     }
 
-    // ตรวจสอบว่า providerId ตรงกันหรือไม่
-    if (post.providerId !== userData.providerId) {
+    // ตรวจสอบว่า providerId อยู่ใน providerIds หรือไม่
+    if (!post.providerIds?.includes(userData.providerId)) {
       return NextResponse.json(
         { error: "คุณไม่มีสิทธิ์เข้าถึงข้อมูลนี้" },
         { status: 403 },
@@ -116,9 +116,9 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       return NextResponse.json({ error: "ไม่พบข้อมูลผู้ใช้" }, { status: 404 });
     }
 
-    // ดึงข้อมูล post และตรวจสอบ providerId
+    // ดึงข้อมูล post และตรวจสอบ providerIds
     const post = await client.fetch(
-      `*[_type == "post" && _id == $postId && !(_id in path("drafts.**"))][0]{_id, providerId}`,
+      `*[_type == "post" && _id == $postId && !(_id in path("drafts.**"))][0]{_id, providerIds}`,
       { postId },
     );
 
@@ -126,8 +126,8 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       return NextResponse.json({ error: "ไม่พบข้อมูลลาน" }, { status: 404 });
     }
 
-    // ตรวจสอบว่า providerId ตรงกันหรือไม่
-    if (post.providerId !== userData.providerId) {
+    // ตรวจสอบว่า providerId อยู่ใน providerIds หรือไม่
+    if (!post.providerIds?.includes(userData.providerId)) {
       return NextResponse.json(
         { error: "คุณไม่มีสิทธิ์แก้ไขข้อมูลนี้" },
         { status: 403 },
