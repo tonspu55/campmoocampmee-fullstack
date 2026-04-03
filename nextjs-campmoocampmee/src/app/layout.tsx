@@ -12,6 +12,7 @@ import CookieConsent from "@/components/CookieConsent";
 import { Analytics } from "@vercel/analytics/next";
 import JsonLd from "@/components/JsonLd";
 import WishlistInitializer from "@/components/WishlistInitializer";
+import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 
 const SITE_URL = "https://www.campmoocampmee.com";
 
@@ -51,6 +52,12 @@ export const metadata: Metadata = {
   title: "หาลานกางเต็นท์ ที่พักแคมป์ปิ้งทั่วไทย - แคมป์หมูแคมป์หมี",
   description:
     "หาลานกางเต็นท์ทั่วไทย ค้นหาที่พักแคมป์ปิ้ง ลานกางเต็นท์ภาคเหนือ ภาคกลาง ภาคอีสาน ภาคตะวันออก รีวิวและราคาครบ",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "แคมป์หมูแคมป์หมี",
+  },
   openGraph: {
     title: "หาลานกางเต็นท์ ที่พักแคมป์ปิ้งทั่วไทย - แคมป์หมูแคมป์หมี",
     description:
@@ -118,6 +125,7 @@ export default function RootLayout({
           enableSystem={false}
         >
           <AuthProvider>
+            <ServiceWorkerRegister />
             <WishlistInitializer />
             <ConditionalLayout footer={<Footer />}>{children}</ConditionalLayout>
           </AuthProvider>
