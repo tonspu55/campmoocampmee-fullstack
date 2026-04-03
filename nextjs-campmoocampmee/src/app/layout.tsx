@@ -13,6 +13,7 @@ import { Analytics } from "@vercel/analytics/next";
 import JsonLd from "@/components/JsonLd";
 import WishlistInitializer from "@/components/WishlistInitializer";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
+import PwaInstallBanner from "@/components/PwaInstallBanner";
 
 const SITE_URL = "https://www.campmoocampmee.com";
 
@@ -84,6 +85,7 @@ export default function RootLayout({
         name="google-site-verification"
         content="1ux37MJZu2__Qw7RM8WVtQNTV9lVcUI3xklRWoXaFdo"
       />
+      <meta name="theme-color" content="#ffffff" />
       <link rel="icon" href="/assets/images/favicon/favicon.ico" sizes="any" />
       <link
         rel="apple-touch-icon"
@@ -126,6 +128,7 @@ export default function RootLayout({
         >
           <AuthProvider>
             <ServiceWorkerRegister />
+            <PwaInstallBanner />
             <WishlistInitializer />
             <ConditionalLayout footer={<Footer />}>{children}</ConditionalLayout>
           </AuthProvider>
