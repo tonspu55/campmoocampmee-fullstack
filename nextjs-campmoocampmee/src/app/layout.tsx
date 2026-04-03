@@ -13,7 +13,6 @@ import { Analytics } from "@vercel/analytics/next";
 import JsonLd from "@/components/JsonLd";
 import WishlistInitializer from "@/components/WishlistInitializer";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
-import PwaInstallBanner from "@/components/PwaInstallBanner";
 
 const SITE_URL = "https://www.campmoocampmee.com";
 
@@ -59,6 +58,9 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
     title: "แคมป์หมูแคมป์หมี",
   },
+  other: {
+    "mobile-web-app-capable": "yes",
+  },
   openGraph: {
     title: "หาลานกางเต็นท์ ที่พักแคมป์ปิ้งทั่วไทย - แคมป์หมูแคมป์หมี",
     description:
@@ -81,28 +83,30 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="th" suppressHydrationWarning>
-      <meta
-        name="google-site-verification"
-        content="1ux37MJZu2__Qw7RM8WVtQNTV9lVcUI3xklRWoXaFdo"
-      />
-      <meta name="theme-color" content="#ffffff" />
-      <link rel="icon" href="/assets/images/favicon/favicon.ico" sizes="any" />
-      <link
-        rel="apple-touch-icon"
-        href="/assets/images/favicon/apple-touch-icon.png"
-      />
-      <link
-        rel="icon"
-        type="image/png"
-        sizes="192x192"
-        href="/assets/images/favicon/android-chrome-192x192.png"
-      />
-      <link
-        rel="icon"
-        type="image/png"
-        sizes="512x512"
-        href="/assets/images/favicon/android-chrome-512x512.png"
-      />
+      <head>
+        <meta
+          name="google-site-verification"
+          content="1ux37MJZu2__Qw7RM8WVtQNTV9lVcUI3xklRWoXaFdo"
+        />
+        <meta name="theme-color" content="#ffffff" />
+        <link rel="icon" href="/assets/images/favicon/favicon.ico" sizes="any" />
+        <link
+          rel="apple-touch-icon"
+          href="/assets/images/favicon/apple-touch-icon.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="192x192"
+          href="/assets/images/favicon/android-chrome-192x192.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="512x512"
+          href="/assets/images/favicon/android-chrome-512x512.png"
+        />
+      </head>
       <body
         className={cn(" bg-background  antialiased", notoSansThai.className)}
       >
@@ -128,7 +132,6 @@ export default function RootLayout({
         >
           <AuthProvider>
             <ServiceWorkerRegister />
-            <PwaInstallBanner />
             <WishlistInitializer />
             <ConditionalLayout footer={<Footer />}>{children}</ConditionalLayout>
           </AuthProvider>
