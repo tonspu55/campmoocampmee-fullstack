@@ -1,5 +1,17 @@
 packages:
   - '.'
 
+allowBuilds:
+  esbuild: false
+
 ignoredBuiltDependencies:
   - esbuild
+
+minimumReleaseAgeExclude:
+  - '@sanity/diff@5.31.0'
+  - '@sanity/mutator@5.31.0'
+  - '@sanity/schema@5.31.0'
+  - '@sanity/types@5.31.0'
+  - '@sanity/util@5.31.0'
+  - '@sanity/vision@5.31.0'
+  - sanity@5.31.0
