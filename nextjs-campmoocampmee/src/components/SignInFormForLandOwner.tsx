@@ -1,6 +1,6 @@
 'use client'
 
-import { signIn, getSession } from 'next-auth/react'
+import { authClient } from '@/lib/auth-client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Tent, ShieldCheck, Copy, Check } from 'lucide-react'
@@ -26,23 +26,24 @@ export default function SignInForm() {
   const [copied, setCopied] = useState(false)
   const router = useRouter()
 
+  const { data: session, isPending } = authClient.useSession()
+
   useEffect(() => {
     setInAppBrowser(isInAppBrowser())
-    const checkSession = async () => {
-      const session = await getSession()
-      if (session) {
-        router.push('/landowner')
-      }
+  }, [])
+
+  useEffect(() => {
+    if (!isPending && session) {
+      router.push('/landowner')
     }
-    checkSession()
-  }, [router])
+  }, [session, isPending, router])
 
   const handleGoogleSignIn = async () => {
     setLoading(true)
     try {
-      await signIn('google', {
-        callbackUrl: '/landowner',
-        redirect: true,
+      await authClient.signIn.social({
+        provider: 'google',
+        callbackURL: '/landowner',
       })
     } catch (error) {
       console.error('Sign in error:', error)

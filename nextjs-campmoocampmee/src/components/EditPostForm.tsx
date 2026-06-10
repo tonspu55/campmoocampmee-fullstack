@@ -1,6 +1,6 @@
 'use client'
 
-import { useSession } from 'next-auth/react'
+import { authClient } from '@/lib/auth-client'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState, useRef } from 'react'
 import { Button } from '@/components/ui/button'
@@ -74,7 +74,7 @@ interface PostData {
 }
 
 export default function EditPostForm({ postId }: { postId: string }) {
-  const { data: session, status } = useSession()
+  const { data: session, isPending } = authClient.useSession()
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -125,7 +125,7 @@ export default function EditPostForm({ postId }: { postId: string }) {
   })
 
   useEffect(() => {
-    if (status === 'loading') return
+    if (isPending) return
 
     if (!session) {
       router.push('/auth/signin-landowner')
@@ -133,7 +133,7 @@ export default function EditPostForm({ postId }: { postId: string }) {
     }
 
     fetchPost()
-  }, [session, status, router, postId])
+  }, [session, isPending, router, postId])
 
   const fetchPost = async () => {
     try {
@@ -430,7 +430,7 @@ export default function EditPostForm({ postId }: { postId: string }) {
     }
   }
 
-  if (status === 'loading' || loading) {
+  if (isPending || loading) {
     return (
       <div className="container mx-auto max-w-4xl px-2 ">
         <Skeleton className="h-8 w-64 mb-6" />

@@ -1,8 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  serverExternalPackages: ["@prisma/client"],
   turbopack: {
-    root: "/Users/tosaponwaikitja/Desktop/freelance/campmoocampmee-fullstack/nextjs-campmoocampmee",
+    root: __dirname,
   },
   images: {
     remotePatterns: [

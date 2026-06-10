@@ -15,7 +15,7 @@ import { z } from "zod"
 import { toast } from "sonner"
 import { Loader2Icon } from "lucide-react"
 import { useState } from "react"
-import { useSession } from "next-auth/react"
+import { authClient } from "@/lib/auth-client"
 
 
 
@@ -36,7 +36,7 @@ const formSchema = z.object({
 export default function ContactForm() {
   // สร้าง loading state
   const [isLoading, setIsLoading] = useState(false)
-  const { data: session } = useSession()
+  const { data: session } = authClient.useSession()
 
   // สร้าง form instance
   const form = useForm<z.infer<typeof formSchema>>({
@@ -59,8 +59,6 @@ export default function ContactForm() {
           name: session.user.name,
           email: session.user.email,
           image: session.user.image,
-          provider: (session.user as typeof session.user & { provider?: string }).provider,
-          providerId: (session.user as typeof session.user & { providerId?: string }).providerId,
         } : null
       }
 

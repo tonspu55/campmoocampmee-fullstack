@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession, signOut } from "next-auth/react";
+import { authClient } from "@/lib/auth-client";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -57,7 +57,7 @@ function getBreadcrumbTitle(pathname: string) {
 }
 
 function AppSidebar() {
-  const { data: session } = useSession();
+  const { data: session } = authClient.useSession();
   const pathname = usePathname();
   const user = session?.user;
 
@@ -183,7 +183,7 @@ function AppSidebar() {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => signOut()}>
+                  <DropdownMenuItem onClick={() => authClient.signOut()}>
                     <LogOut className="mr-2 size-4" />
                     ออกจากระบบ
                   </DropdownMenuItem>

@@ -1,4 +1,8 @@
-const CACHE_NAME = "campmoocampmee-v1";
+// Dynamic cache version — based on build timestamp for auto-invalidation
+// In production, this should be injected at build time via Next.js rewrites/redirects
+// For now, use a timestamp-based version that changes on each deploy
+const BUILD_TIMESTAMP = "2026-06-10T16-34-16-932Z";
+const CACHE_NAME = `campmoocampmee-${BUILD_TIMESTAMP}`;
 
 const PRECACHE_URLS = [
   "/",

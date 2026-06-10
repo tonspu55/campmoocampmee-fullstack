@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
+import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Star } from "lucide-react";
 import { toast } from "sonner";
@@ -25,7 +25,7 @@ interface ReviewSectionProps {
 }
 
 export default function ReviewSection({ postId }: ReviewSectionProps) {
-  const { data: session } = useSession();
+  const { data: session } = authClient.useSession();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [averageRating, setAverageRating] = useState(0);
   const [totalReviews, setTotalReviews] = useState(0);

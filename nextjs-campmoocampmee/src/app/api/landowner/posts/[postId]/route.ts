@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 import { client } from "@/sanity/client";
 
 type RouteContext = {
@@ -10,7 +11,7 @@ type RouteContext = {
 export async function GET(request: NextRequest, context: RouteContext) {
   try {
     const { postId } = await context.params;
-    const session = await getServerSession();
+    const session = await auth.api.getSession({ headers: await headers() });
 
     if (!session?.user?.email) {
       return NextResponse.json({ error: "กรุณาเข้าสู่ระบบ" }, { status: 401 });
@@ -100,7 +101,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
 export async function PATCH(request: NextRequest, context: RouteContext) {
   try {
     const { postId } = await context.params;
-    const session = await getServerSession();
+    const session = await auth.api.getSession({ headers: await headers() });
 
     if (!session?.user?.email) {
       return NextResponse.json({ error: "กรุณาเข้าสู่ระบบ" }, { status: 401 });

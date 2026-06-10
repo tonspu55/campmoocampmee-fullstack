@@ -1,15 +1,89 @@
 import { NextRequest, NextResponse } from "next/server";
 import { client } from "@/sanity/client";
 
+// Simple in-memory rate limiter — resets on server restart
+// Protects against spam: max 5 submissions per IP per 10 minutes
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
+const RATE_LIMIT_MAX = 5;
+const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitStore.get(ip);
+
+  if (!entry || now > entry.resetAt) {
+    rateLimitStore.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return true;
+  }
+
+  if (entry.count >= RATE_LIMIT_MAX) {
+    return false;
+  }
+
+  entry.count += 1;
+  return true;
+}
+
+// Clean up stale entries every 5 minutes (best-effort)
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, entry] of rateLimitStore.entries()) {
+    if (now > entry.resetAt) {
+      rateLimitStore.delete(ip);
+    }
+  }
+}, 5 * 60 * 1000);
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { campName, phoneNumber, lineId } = body;
 
+    // Extract client IP for rate limiting
+    const forwarded = request.headers.get("x-forwarded-for");
+    const realIp = request.headers.get("x-real-ip");
+    const ip = forwarded?.split(",")[0].trim() || realIp || "unknown";
+
+    if (!checkRateLimit(ip)) {
+      return NextResponse.json(
+        { error: "ขออภัย — ส่งข้อมูลมากเกินไป กรุณารอสักครู่" },
+        { status: 429 }
+      );
+    }
+
     // Validate required fields
     if (!campName || !phoneNumber) {
       return NextResponse.json(
         { error: "ชื่อแคมป์และเบอร์ติดต่อเป็นข้อมูลที่จำเป็น" },
+        { status: 400 }
+      );
+    }
+
+    // Validate phone number (Thai format: 10 digits)
+    const phoneClean = phoneNumber.replace(/[\s\-()]/g, "");
+    if (!/^[0-9]{10}$/.test(phoneClean)) {
+      return NextResponse.json(
+        { error: "เบอร์ติดต่อไม่ถุกต้อง (ตัวเลข 10 หลัก)" },
+        { status: 400 }
+      );
+    }
+
+    // Validate lineId length (max 50 chars, alphanumeric + underscore)
+    if (lineId && (lineId.length > 50 || !/^[a-zA-Z0-9_\-]+$/.test(lineId))) {
+      return NextResponse.json(
+        { error: "ไอดี LINE ไม่ถุกต้อง" },
+        { status: 400 }
+      );
+    }
+
+    // Sanitize input — strip HTML tags to prevent XSS in stored data
+    const sanitize = (str: string): string =>
+      str.replace(/<[^>]*>/g, "").trim();
+
+    const sanitizedCampName = sanitize(campName);
+    if (sanitizedCampName.length < 2 || sanitizedCampName.length > 200) {
+      return NextResponse.json(
+        { error: "ชื่อแคมป์ต้องยาว 2-200 ตัวอักษร" },
         { status: 400 }
       );
     }
@@ -26,9 +100,9 @@ export async function POST(request: NextRequest) {
     // เตรียมข้อมูลสำหรับบันทึกใน Sanity
     const contactData = {
       _type: "submitContact",
-      campName,
-      telNumber: phoneNumber,
-      lineId: lineId || "",
+      campName: sanitizedCampName,
+      telNumber: phoneClean,
+      lineId: lineId?.trim() || "",
       submittedAt: new Date().toISOString(),
       status: "pending",
     };

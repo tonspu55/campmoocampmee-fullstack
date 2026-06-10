@@ -99,10 +99,10 @@ async function CampRegionList({
     _type == "post"
     && !(_id in path("drafts.**"))
     && defined(slug.current)
-    && address.region == "${regionSlug}"
+    && address.region == $region
   ]| order(publishedAt desc)[]{_id, title, address, thumbnail, slug, tags, otherBenefits}`;
 
-  const posts = await client.fetch<SanityDocument[]>(REGION_QUERY, {}, options);
+  const posts = await client.fetch<SanityDocument[]>(REGION_QUERY, { region: regionSlug }, options);
   const threeHundredSecondInterval = Math.floor(Date.now() / (300 * 1000));
   const shuffledPosts = shufflePosts(posts, threeHundredSecondInterval).slice(
     0,

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useSession } from "next-auth/react";
+import { authClient } from "@/lib/auth-client";
 import { Heart } from "lucide-react";
 import { useWishlistStore } from "@/lib/wishlist-store";
 import UserDialog from "@/components/UserDialog";
@@ -15,7 +15,7 @@ export default function HeartButton({
   postId,
   variant = "overlay",
 }: HeartButtonProps) {
-  const { data: session } = useSession();
+  const { data: session } = authClient.useSession();
   const [loginOpen, setLoginOpen] = useState(false);
   const isFavorite = useWishlistStore((state) => state.isFavorite(postId));
   const toggleFavorite = useWishlistStore((state) => state.toggleFavorite);
