@@ -1,6 +1,6 @@
 'use client'
 
-import { useSession, signOut } from 'next-auth/react'
+import { authClient } from '@/lib/auth-client'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import Image from 'next/image'
@@ -8,25 +8,24 @@ import { Button } from '@/components/ui/button'
 import { LogOut } from 'lucide-react'
 
 export default function ProtectedContactForm() {
-  const { data: session, status } = useSession()
+  const { data: session, isPending } = authClient.useSession()
   const router = useRouter()
 
   useEffect(() => {
-    if (status === 'loading') return // Still loading
+    if (isPending) return
 
     if (!session) {
       router.push('/auth/signin-landowner')
     }
-  }, [session, status, router])
+  }, [session, isPending, router])
 
-  const handleSignOut = () => {
-    signOut({
-      callbackUrl: '/',
-      redirect: true,
+  const handleSignOut = async () => {
+    await authClient.signOut({
+      fetchOptions: { onSuccess: () => router.push('/') },
     })
   }
 
-  if (status === 'loading') {
+  if (isPending) {
     return (
       <div className="flex justify-center items-center py-20">
         <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>

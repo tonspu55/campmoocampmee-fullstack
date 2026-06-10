@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
-import { signIn, getSession } from "next-auth/react";
+import { authClient } from "@/lib/auth-client";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ShieldCheck, Copy, Check, Tent } from "lucide-react";
@@ -31,23 +31,24 @@ function SignInContent() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
 
+  const { data: session, isPending } = authClient.useSession();
+
   useEffect(() => {
     setInAppBrowser(isInAppBrowser());
-    const checkSession = async () => {
-      const session = await getSession();
-      if (session) {
-        router.push(callbackUrl);
-      }
-    };
-    checkSession();
-  }, [router, callbackUrl]);
+  }, []);
+
+  useEffect(() => {
+    if (!isPending && session) {
+      router.push(callbackUrl);
+    }
+  }, [session, isPending, router, callbackUrl]);
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
-      await signIn("google", {
-        callbackUrl,
-        redirect: true,
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: callbackUrl,
       });
     } catch (error) {
       console.error("Sign in error:", error);

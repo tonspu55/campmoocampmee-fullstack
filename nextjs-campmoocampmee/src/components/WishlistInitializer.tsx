@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
-import { useSession } from "next-auth/react";
+import { authClient } from "@/lib/auth-client";
 import { useWishlistStore } from "@/lib/wishlist-store";
 
 export default function WishlistInitializer() {
-  const { data: session } = useSession();
+  const { data: session } = authClient.useSession();
   const fetchFavorites = useWishlistStore((state) => state.fetchFavorites);
 
   useEffect(() => {

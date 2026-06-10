@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { Suspense } from "react";
 import { readClient as client } from "@/sanity/client";
 import { CampThumbnailSkeleton } from "@/components/CampThumbnail";

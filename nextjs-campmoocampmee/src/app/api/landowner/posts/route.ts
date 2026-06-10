@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 import { client } from "@/sanity/client";
 
 // Disable static generation for this route
@@ -8,7 +9,7 @@ export const dynamic = "force-dynamic";
 // ดึงข้อมูล post ทั้งหมดของเจ้าของลาน
 export async function GET() {
   try {
-    const session = await getServerSession();
+    const session = await auth.api.getSession({ headers: await headers() });
 
     if (!session?.user?.email) {
       return NextResponse.json(

@@ -1,3 +1,5 @@
+export const revalidate = 300;
+
 import { readClient as client, urlFor } from "@/sanity/client";
 import { PortableText, type SanityDocument } from "next-sanity";
 import ImageGallery from "@/components/ImageGallery";

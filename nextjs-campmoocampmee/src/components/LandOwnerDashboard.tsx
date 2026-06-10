@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Image from "next/image";
@@ -27,13 +27,13 @@ const urlFor = (source: SanityImageSource) =>
     : null;
 
 export default function LandOwnerDashboard() {
-  const { data: session, status } = useSession();
+  const { data: session, isPending } = authClient.useSession();
   const router = useRouter();
 
   const { posts, loading, error, fetchPosts } = useLandOwnerStore();
 
   useEffect(() => {
-    if (status === "loading") return;
+    if (isPending) return;
 
     if (!session) {
       router.push("/auth/signin-landowner");
@@ -41,13 +41,13 @@ export default function LandOwnerDashboard() {
     }
 
     fetchPosts();
-  }, [session, status, router, fetchPosts]);
+  }, [session, isPending, router, fetchPosts]);
 
   const handleEdit = (postId: string) => {
     router.push(`/landowner/edit/${postId}`);
   };
 
-  if (status === "loading" || loading) {
+  if (isPending || loading) {
     return (
       <div>
         <div className="mb-6">

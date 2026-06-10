@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useSession, signIn, signOut } from 'next-auth/react'
+import { authClient } from '@/lib/auth-client'
 import { ShieldCheck, User, Copy, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -30,7 +30,7 @@ interface UserDialogProps {
 }
 
 export default function UserDialog({ className = '', onOpen, open: externalOpen, onOpenChange: externalOnOpenChange }: UserDialogProps) {
-  const { data: session, status } = useSession()
+  const { data: session, isPending } = authClient.useSession()
   const [loading, setLoading] = useState(false)
   const [internalOpen, setInternalOpen] = useState(false)
   const [inAppBrowser, setInAppBrowser] = useState(false)
@@ -61,9 +61,9 @@ export default function UserDialog({ className = '', onOpen, open: externalOpen,
   const handleGoogleSignIn = async () => {
     setLoading(true)
     try {
-      await signIn('google', {
-        callbackUrl: window.location.href,
-        redirect: true,
+      await authClient.signIn.social({
+        provider: 'google',
+        callbackURL: window.location.href,
       })
     } catch (error) {
       console.error('Sign in error:', error)
@@ -77,13 +77,11 @@ export default function UserDialog({ className = '', onOpen, open: externalOpen,
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const handleSignOut = () => {
-    // Reset store เมื่อ sign out
+  const handleSignOut = async () => {
     reset()
     useWishlistStore.getState().reset()
-    signOut({
-      callbackUrl: window.location.href,
-      redirect: true,
+    await authClient.signOut({
+      fetchOptions: { onSuccess: () => window.location.reload() },
     })
   }
 
@@ -99,7 +97,7 @@ export default function UserDialog({ className = '', onOpen, open: externalOpen,
         </DialogTrigger>
       )}
       <DialogContent className="p-4 sm:max-w-md z-999">
-        {status === 'loading' || checkingLandOwner ? (
+        {isPending || checkingLandOwner ? (
           <>
             <DialogHeader>
               <DialogTitle>กำลังโหลด</DialogTitle>

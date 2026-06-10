@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 import { client } from "@/sanity/client";
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession();
+    const session = await auth.api.getSession({ headers: await headers() });
 
     if (!session || !session.user?.email) {
       return NextResponse.json(

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { type SanityDocument } from "next-sanity";
@@ -17,21 +17,21 @@ import {
 } from "@/components/ui/breadcrumb";
 
 export default function WishlistsPage() {
-  const { status } = useSession();
+  const { data: session, isPending } = authClient.useSession();
   const router = useRouter();
   const [posts, setPosts] = useState<SanityDocument[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (status === "unauthenticated") {
+    if (isPending) return;
+
+    if (!session) {
       router.push("/");
       return;
     }
 
-    if (status === "authenticated") {
-      fetchWishlist();
-    }
-  }, [status, router]);
+    fetchWishlist();
+  }, [session, isPending, router]);
 
   const fetchWishlist = async () => {
     try {
@@ -50,7 +50,7 @@ export default function WishlistsPage() {
     }
   };
 
-  if (status === "loading") {
+  if (isPending) {
     return (
       <main className="max-lg:pb-6 max-lg:pt-12 lg:py-10">
         <div className="container mx-auto px-2 max-w-6xl pt-6 lg:pt-10">
