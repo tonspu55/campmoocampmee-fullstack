@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "NODE_ENV=development next dev --hostname 0.0.0.0 -p 2499",
     "postinstall": "prisma generate",
-    "build": "NODE_ENV=production next build && node scripts/inject-sw-version.js",
+    "build": "NODE_ENV=production next build",
     "start": "NODE_ENV=production next start",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },

@@ -61,8 +61,6 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
       if (!response.ok) {
         throw new Error("Failed to update favorite");
       }
-
-      toast.success(isFav ? "ลบออกจากรายการโปรดแล้ว" : "เพิ่มในรายการโปรดแล้ว");
     } catch {
       // Revert on failure
       set({ favoriteIds });
