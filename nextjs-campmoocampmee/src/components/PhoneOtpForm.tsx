@@ -10,7 +10,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import Image from 'next/image';
-import { ChevronLeft, Smartphone, Tent } from 'lucide-react';
+import { ChevronLeft, Smartphone } from 'lucide-react';
 import { authClient } from '@/lib/auth-client';
 import { toE164TH, isValidThaiMobile } from '@/lib/phone';
 import { Button } from '@/components/ui/button';
