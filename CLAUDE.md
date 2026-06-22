@@ -52,6 +52,7 @@ pnpm deploy     # Deploy studio
 - ต้องมี:
   - Auth: `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
   - Auth DB (Supabase): `DATABASE_URL` (pooler `:6543?pgbouncer=true`), `DIRECT_URL` (`:5432`, ใช้ตอน migrate)
+  - SMS OTP: `SMS_API_URL`, `SMS_API_TOKEN`, `SMS_SENDER` (Thai SMS gateway; ถ้าไม่ตั้งจะ log OTP ใน dev)
   - อื่นๆ: `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`, `NEXT_PUBLIC_SANITY_DATASET`, `SANITY_API_TOKEN`
 
 ## Key Patterns
@@ -62,13 +63,20 @@ pnpm deploy     # Deploy studio
 - **Zustand stores**: `src/lib/store.ts` (scroll, gallery, landowner state)
 - **UI components**: shadcn/ui อยู่ใน `src/components/ui/`
 - **Auth (Better Auth)**:
-  - Server config: `src/lib/auth.ts` (Google provider, Prisma adapter, session cookieCache 5 นาที)
-  - Client: `src/lib/auth-client.ts` → ใช้ `authClient.useSession()` / `authClient.signIn.social()`
+  - Server config: `src/lib/auth.ts` (Google provider, `phoneNumber` plugin, Prisma adapter, session cookieCache 5 นาที)
+  - Client: `src/lib/auth-client.ts` → ใช้ `authClient.useSession()` / `authClient.signIn.social()` / `authClient.phoneNumber.*`
   - Route handler: `src/app/api/auth/[...all]/route.ts` (`toNextJsHandler`)
   - Server-side session: `auth.api.getSession({ headers })` ใน API routes
   - Prisma schema/models: `prisma/schema.prisma` (`User`, `Session`, `Account`, `Verification`)
   - **Sanity sync**: หลัง login จะ sync user เข้า Sanity แบบ deferred ด้วย `after()` (ไม่บล็อก redirect)
+- **Phone OTP login**:
+  - ใช้ Better Auth `phoneNumber` plugin (gen/ตรวจ OTP เองในตาราง `Verification`)
+  - ส่ง SMS ผ่าน abstraction `src/lib/sms.ts` (`sendSms`) — config ด้วย env `SMS_API_URL`/`SMS_API_TOKEN`/`SMS_SENDER`; ถ้าไม่ตั้ง env จะ log OTP ลง console (dev)
+  - normalize เบอร์เป็น E.164 ไทยที่ `src/lib/phone.ts` (`toE164TH`)
+  - UI: `src/components/PhoneOtpForm.tsx` (flow 3 ขั้น: เลือกวิธี → กรอกเบอร์ +66 → กรอก OTP; เก็บ resend cooldown ใน localStorage)
+  - phone-only signup → gen placeholder email `<digits>@phone.campmoocampmee.com`
 - **Auth flow**: user ปกติ → `/auth/signin`, เจ้าของที่ → `/auth/signin-landowner`
+- **Account page**: `/account` (`src/app/account/page.tsx`) — หน้าบัญชีของฉัน (โปรไฟล์ + ลิงก์ wishlists/แดชบอร์ด + ออกจากระบบ); ปุ่ม avatar ใน Header กดแล้วไป `/account` ถ้า login อยู่, ไม่งั้นเปิด login dialog (`UserDialog` = login-only)
 
 ## Conventions
 

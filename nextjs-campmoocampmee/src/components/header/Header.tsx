@@ -1,12 +1,12 @@
-"use client";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState, useEffect, useCallback, ReactNode } from "react";
-import { LogoSwitcher } from "@/components/header/LogoSwitcher";
-import { AlignJustify, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useScrollStore } from "@/lib/store";
-import UserDialog from "@/components/UserDialog";
+'use client';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { useState, useEffect, useCallback, ReactNode } from 'react';
+import { LogoSwitcher } from '@/components/header/LogoSwitcher';
+import { AlignJustify, ArrowLeft, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useScrollStore } from '@/lib/store';
+import UserDialog from '@/components/UserDialog';
 
 interface NavLinkProps {
   path: string;
@@ -26,9 +26,9 @@ const NavLink = ({ path, children, isHomepageTop = false }: NavLinkProps) => {
   return (
     <Link
       className={`
-        ${pathname === path ? "border-b-2 border-primary" : ""} 
+        ${pathname === path ? 'border-b-2 border-primary' : ''} 
         hover:opacity-75 font-medium transition-colors duration-200
-        ${isHomepageTop ? "hidden" : "text-foreground"}
+        ${isHomepageTop ? 'hidden' : 'text-foreground'}
       `}
       href={path}
     >
@@ -46,8 +46,8 @@ const NavLinkMobile = ({ path, children, onCloseNav }: NavLinkMobileProps) => {
         py-2 px-3 rounded-md transition-colors duration-200
         ${
           pathname === path
-            ? "text-primary bg-primary/10 font-medium"
-            : "text-foreground hover:bg-muted"
+            ? 'text-primary bg-primary/10 font-medium'
+            : 'text-foreground hover:bg-muted'
         }
       `}
       href={path}
@@ -64,9 +64,22 @@ const Header = () => {
   const isScrolled = useScrollStore((state) => state.isScrolled);
   const setIsScrolled = useScrollStore((state) => state.setIsScrolled);
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleBack = useCallback(() => {
+    if (window.history.length > 1) {
+      router.back();
+    } else {
+      router.push('/');
+    }
+  }, [router]);
+
+  // หน้าที่แสดงปุ่มย้อนกลับแทนโลโก้ (account + รายละเอียดลาน)
+  const showBackButton =
+    pathname === '/account' || pathname.startsWith('/land/');
 
   // เช็คว่าอยู่ที่หน้าหลักและไม่ได้ scroll
-  const isHomepageTop = mounted && pathname === "/" && !isScrolled;
+  const isHomepageTop = mounted && pathname === '/' && !isScrolled;
 
   // ปิด mobile menu เมื่อ resize ไป desktop
   const handleResize = useCallback(() => {
@@ -89,24 +102,24 @@ const Header = () => {
 
     handleScroll();
 
-    window.addEventListener("resize", handleResize);
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
     return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, [setIsScrolled, handleResize]);
 
   // ป้องกัน body scroll เมื่อ mobile menu เปิด
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = "";
+      document.body.style.overflow = '';
     }
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = '';
     };
   }, [isOpen]);
 
@@ -124,14 +137,27 @@ const Header = () => {
           ${
             mounted
               ? isScrolled || isOpen
-                ? "bg-white/95 dark:bg-background/95 backdrop-blur-md shadow-sm"
-                : "bg-transparent"
-              : "bg-transparent"
+                ? 'bg-white/95 dark:bg-background/95 backdrop-blur-md shadow-sm'
+                : 'bg-transparent'
+              : 'bg-transparent'
           }
         `}
       >
         <div className="container mx-auto flex items-center max-w-[1800px] px-2 lg:px-6">
-          <LogoSwitcher />
+          {showBackButton ? (
+            <div className="flex flex-1">
+              <Button
+                onClick={handleBack}
+                aria-label="ย้อนกลับ"
+                className="flex  h-9 w-9 items-center  justify-center rounded-full cursor-pointer"
+                variant="default"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+            </div>
+          ) : (
+            <LogoSwitcher />
+          )}
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex lg:flex-row lg:items-center lg:justify-center lg:gap-x-8">
@@ -156,10 +182,10 @@ const Header = () => {
               className="flex h-9 w-9 items-center justify-center rounded-full cursor-pointer"
               onClick={() => setIsOpen(!isOpen)}
               aria-expanded={isOpen}
-              aria-label={isOpen ? "ปิดเมนู" : "เปิดเมนู"}
+              aria-label={isOpen ? 'ปิดเมนู' : 'เปิดเมนู'}
             >
               <span
-                className={`transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`}
+                className={`transition-transform duration-200 ${isOpen ? 'rotate-90' : ''}`}
               >
                 {!isOpen ? (
                   <AlignJustify className="h-5 w-5" />
@@ -177,7 +203,7 @@ const Header = () => {
         className={`
           fixed inset-0 z-40 bg-black/50 lg:hidden
           transition-opacity duration-300
-          ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}
+          ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
         `}
         onClick={handleCloseNav}
         aria-hidden="true"
@@ -193,8 +219,8 @@ const Header = () => {
           transition-all duration-300 ease-in-out
           ${
             isOpen
-              ? "opacity-100 translate-y-0 z-444"
-              : "opacity-0 -translate-y-4 pointer-events-none"
+              ? 'opacity-100 translate-y-0 z-444'
+              : 'opacity-0 -translate-y-4 pointer-events-none'
           }
         `}
       >
