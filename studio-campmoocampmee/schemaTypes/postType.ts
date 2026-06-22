@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {PROVINCE_OPTIONS} from './provinces'
 
 export const postType = defineType({
   name: 'post',
@@ -95,7 +96,22 @@ export const postType = defineType({
             ],
           },
         }),
-        defineField({name: 'province', title: 'จังหวัด', type: 'string'}),
+        defineField({
+          name: 'province',
+          title: 'จังหวัด',
+          type: 'string',
+          // เลือกจาก dropdown 77 จังหวัด — กันพิมพ์ผิด/ช่องว่างที่ทำให้ filter หน้า search นับผิด
+          options: {
+            list: PROVINCE_OPTIONS,
+          },
+          // กันค่าเก่าที่ไม่อยู่ในลิสต์ (เช่น มีช่องว่างต่อท้าย) ให้ขึ้นเตือนใน Studio
+          validation: (Rule) =>
+            Rule.custom((value) =>
+              value && !PROVINCE_OPTIONS.some((opt) => opt.value === value)
+                ? 'กรุณาเลือกจังหวัดจากรายการ'
+                : true,
+            ),
+        }),
         defineField({name: 'district', title: 'อำเภอ', type: 'string'}),
         defineField({name: 'subdistrict', title: 'ตำบล', type: 'string'}),
       ],
