@@ -31,7 +31,8 @@ Monorepo แบ่งเป็น 2 ส่วน:
 ```bash
 # Frontend (nextjs-campmoocampmee/)
 pnpm dev        # Dev server (localhost:2499)
-pnpm build      # Production build (รัน prisma generate ผ่าน postinstall)
+pnpm build      # Production build (next build; prisma generate ผ่าน postinstall)
+                # บน Vercel: scripts/prod-migrate.mjs รัน `prisma migrate deploy` เฉพาะ VERCEL_ENV=production (preview/local ข้าม)
 pnpm start      # Production server
 pnpm lint       # ESLint
 
