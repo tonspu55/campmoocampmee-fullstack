@@ -161,6 +161,39 @@ flowchart LR
 
 ---
 
+## 7.1 Authorization / identity = Postgres (ไม่พึ่ง Sanity)
+
+สิทธิ์และตัวตนทั้งหมด resolve จาก **Postgres (source of truth)** ผ่าน
+`getUserIdentity(userId)` ใน `src/server/identity.service.ts` — ไม่อ่านจาก Sanity mirror
+(เพราะ sync เป็น best-effort อาจยังไม่ทันสร้าง doc):
+
+- `getUserIdentity(userId)` → `{ provider, providerId, name, email, image, phoneNumber }`
+  โดย `providerId` = Google `accountId` (ถ้าผูก Google) ไม่งั้น = `phoneNumber`
+- **landowner** (posts/upload) ใช้ `getUserIdentity(session.user.id).providerId` แทนการอ่าน Sanity
+- **wishlist / reviews** ที่ผูก data กับ Sanity user `_id` ใช้ `resolveSanityUserId(userId)`
+  (`src/server/users.service.ts`) ซึ่ง **self-heal**: ถ้า mirror doc หาย จะ `upsertSanityUser` สร้างให้
+  จาก Postgres แล้วคืน `_id` → ฟีเจอร์ไม่พังเพราะ sync พลาด
+
+> เดิมใช้ `getProviderIdByEmail` / `getSanityUserIdByEmail` ที่อ่าน Sanity แล้วโยน 404 ถ้า doc หาย
+> (ลบออกแล้ว) — ย้ายมาอิง Postgres เพื่อตัด coupling กับ CMS
+
+---
+
+## 7.2 Account linking policy
+
+**แต่ละวิธี login = คนละ identity** เว้นแต่ผูกกันอย่างชัดเจน:
+
+- **Google ↔ Google**: บัญชีเดียวกัน (ตาม Google `accountId`)
+- **Phone ↔ Phone**: บัญชีเดียวกัน (ตาม `phoneNumber`)
+- **Google auto-link**: `account.accountLinking` เปิด `trustedProviders: ["google"]` +
+  `allowDifferentEmails=false` (default) → login Google จะผูกเข้า user เดิม **เฉพาะเมื่ออีเมลตรงกัน**
+  (Google verify อีเมลแล้ว ปลอดภัย, กันบัญชี Google ซ้ำ)
+- **Phone + Google ของคนเดียวกัน**: **ไม่ auto-merge** — เบอร์โทรใช้ placeholder email
+  (`<digits>@phone.campmoocampmee.com`) ไม่มีวันตรงกับ Gmail จริง และไม่มี identifier ร่วม
+  การ merge อัตโนมัติจึงไม่ปลอดภัย → ถ้าจะรวมต้องทำเป็น manual linking + จัดการ conflict (แยก feature)
+
+---
+
 ## 8. การอ่าน session
 
 | ที่ใช้ | วิธี |

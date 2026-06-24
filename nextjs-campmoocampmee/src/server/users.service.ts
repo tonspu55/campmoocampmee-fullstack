@@ -1,27 +1,5 @@
 import { client } from "@/sanity/client";
-import { ApiError } from "./http";
-
-// Resolve the Sanity `user` document _id for a logged-in user. Throws 404 if
-// the mirror doc does not exist yet.
-export async function getSanityUserIdByEmail(email: string): Promise<string> {
-  const user = await client.fetch<{ _id: string } | null>(
-    '*[_type == "user" && email == $email][0]{_id}',
-    { email },
-  );
-  if (!user) throw new ApiError(404, "ไม่พบข้อมูลผู้ใช้");
-  return user._id;
-}
-
-// Resolve the landowner providerId for a logged-in user. Throws 404 if the
-// mirror doc or its providerId is missing.
-export async function getProviderIdByEmail(email: string): Promise<string> {
-  const data = await client.fetch<{ providerId: string | null } | null>(
-    '*[_type == "user" && email == $email][0]{providerId}',
-    { email },
-  );
-  if (!data?.providerId) throw new ApiError(404, "ไม่พบข้อมูลผู้ใช้");
-  return data.providerId;
-}
+import { getUserIdentity } from "./identity.service";
 
 export type SanityUserInput = {
   name: string | null;
@@ -60,4 +38,20 @@ export async function upsertSanityUser(
 
   const created = await client.create({ _type: "user", ...input });
   return created._id;
+}
+
+// Resolve the Sanity `user` doc _id for a logged-in user, anchored on the
+// Postgres identity (source of truth). Self-heals: if the mirror doc is missing
+// (login sync hadn't run), it is created on the fly — so content keyed by the
+// Sanity _id (wishlists, reviews) never breaks due to a missed sync.
+export async function resolveSanityUserId(userId: string): Promise<string> {
+  const identity = await getUserIdentity(userId);
+  return upsertSanityUser({
+    name: identity.name,
+    email: identity.email,
+    image: identity.image,
+    phoneNumber: identity.phoneNumber,
+    provider: identity.provider,
+    providerId: identity.providerId,
+  });
 }

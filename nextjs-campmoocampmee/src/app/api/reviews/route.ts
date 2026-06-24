@@ -8,7 +8,7 @@ export const POST = handleRoute(async (req: NextRequest) => {
   const { postId, rating, comment } = await req.json();
 
   const result = await createReview({
-    email: session.user.email,
+    authUserId: session.user.id,
     postId,
     rating,
     comment,

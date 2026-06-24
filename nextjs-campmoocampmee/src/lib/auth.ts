@@ -3,6 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { phoneNumber } from "better-auth/plugins";
 import { prisma } from "@/lib/prisma";
 import { sendSms } from "@/lib/sms";
+import { getUserIdentity } from "@/server/identity.service";
 import { upsertSanityUser } from "@/server/users.service";
 
 // Mirror a freshly-authenticated user into Sanity. Self-contained and never
@@ -10,23 +11,14 @@ import { upsertSanityUser } from "@/server/users.service";
 // backfills a missing doc (no patch), so a missed run retries next login.
 async function syncUserToSanity(userId: string) {
   try {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      include: {
-        accounts: { where: { providerId: "google" }, take: 1 },
-      },
-    });
-    if (!user) return;
-
-    const googleAccount = user.accounts[0];
-    // A user may sign up with phone only, Google only, or link both later.
+    const identity = await getUserIdentity(userId);
     await upsertSanityUser({
-      name: user.name,
-      email: user.email,
-      image: user.image,
-      phoneNumber: user.phoneNumber,
-      provider: googleAccount ? "google" : "phone",
-      providerId: googleAccount?.accountId ?? user.phoneNumber ?? null,
+      name: identity.name,
+      email: identity.email,
+      image: identity.image,
+      phoneNumber: identity.phoneNumber,
+      provider: identity.provider,
+      providerId: identity.providerId,
     });
   } catch (err) {
     // Don't throw — auth must succeed even if Sanity sync fails
@@ -40,6 +32,18 @@ export const auth = betterAuth({
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    },
+  },
+  // Account linking policy: methods are SEPARATE identities. We only auto-link
+  // a Google sign-in to an existing user when the verified email matches
+  // (allowDifferentEmails stays false). Google verifies emails, so this is safe
+  // and prevents duplicate accounts for the same Google user. We intentionally
+  // do NOT auto-merge phone (placeholder email) with Google — there is no shared
+  // identifier, so merging would be unsafe; that stays a manual, explicit action.
+  account: {
+    accountLinking: {
+      enabled: true,
+      trustedProviders: ["google"],
     },
   },
   // Phone number + OTP login. Better Auth generates/stores/verifies the OTP in

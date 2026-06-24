@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { handleRoute } from "@/server/http";
 import { requireSession } from "@/server/session";
-import { getProviderIdByEmail } from "@/server/users.service";
+import { getUserIdentity } from "@/server/identity.service";
 import { getLandownerPost, updateLandownerPost } from "@/server/posts.service";
 
 type RouteContext = { params: Promise<{ postId: string }> };
@@ -10,7 +10,7 @@ type RouteContext = { params: Promise<{ postId: string }> };
 export const GET = handleRoute<RouteContext>(async (_req, context) => {
   const { postId } = await context.params;
   const session = await requireSession();
-  const providerId = await getProviderIdByEmail(session.user.email);
+  const { providerId } = await getUserIdentity(session.user.id);
 
   const post = await getLandownerPost(postId, providerId);
   return { body: { post } };
@@ -20,7 +20,7 @@ export const GET = handleRoute<RouteContext>(async (_req, context) => {
 export const PATCH = handleRoute<RouteContext>(async (req: NextRequest, context) => {
   const { postId } = await context.params;
   const session = await requireSession();
-  const providerId = await getProviderIdByEmail(session.user.email);
+  const { providerId } = await getUserIdentity(session.user.id);
 
   const body = await req.json();
   const post = await updateLandownerPost(postId, providerId, body);

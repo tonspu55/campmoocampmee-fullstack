@@ -1,8 +1,8 @@
-import Link from "next/link";
-import Image from "next/image";
-import { ThemeSwitcher } from "@/components/header/ThemeSwitcher";
-import { readClient as client } from "@/sanity/client";
-import { TAG_LABELS } from "@/lib/tags";
+import Link from 'next/link';
+import Image from 'next/image';
+import { ThemeSwitcher } from '@/components/header/ThemeSwitcher';
+import { readClient as client } from '@/sanity/client';
+import { TAG_LABELS } from '@/lib/tags';
 
 const CAMP_COUNT_QUERY = `count(*[_type == "post" && !(_id in path("drafts.**")) && defined(slug.current)])`;
 const TAGS_QUERY = `array::unique(*[_type == "post" && !(_id in path("drafts.**")) && defined(slug.current)].tags[])`;
@@ -26,7 +26,7 @@ const Footer = async () => {
                     แคมป์หมูแคมป์หมี หาลานกางเต็นท์ตรงใจคุณ
                   </p>
                   <p className="text-md max-lg:text-sm">
-                    ลานกางเต็นท์ทั้งหมด:{" "}
+                    ลานกางเต็นท์ทั้งหมด:{' '}
                     <b className="text-primary">{campCount}</b> ลาน
                   </p>
                 </div>
@@ -49,12 +49,12 @@ const Footer = async () => {
                 >
                   ติดต่อลงข้อมูล
                 </Link>
-                <Link
+                {/* <Link
                   href="/landowner"
                   className="text-md max-lg:text-sm hover:opacity-70"
                 >
                   สำหรับเจ้าของลาน
-                </Link>
+                </Link> */}
               </nav>
             </div>
 
