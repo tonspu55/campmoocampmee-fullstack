@@ -136,7 +136,8 @@ export default function AccountClient({ initialUser }: AccountClientProps) {
       return;
     }
     toast.success('บันทึกข้อมูลเรียบร้อยแล้ว');
-    await refetch?.();
+    // Bypass the session cookie cache so the updated name/image show immediately.
+    await refetch?.({ query: { disableCookieCache: true } });
     cancelEdit();
   };
 

@@ -76,6 +76,14 @@ export const auth = betterAuth({
   ],
   // Session security
   session: {
+    // Serve the session from a short-lived signed cookie instead of hitting the
+    // DB on every getSession/useSession call. Big latency win in production
+    // (Supabase is in ap-south-1; without this every page read is a cross-region
+    // round-trip). Reads bypass the cache with query.disableCookieCache.
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60, // 5 minutes
+    },
     userAgent: true,
     expiresIn: 60 * 60 * 24 * 15, // 15 days
     updateAge: 3600,              // refresh every hour of activity
