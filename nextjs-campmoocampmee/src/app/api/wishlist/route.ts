@@ -1,193 +1,36 @@
-import { NextRequest, NextResponse } from "next/server";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
-import { client } from "@/sanity/client";
+import { NextRequest } from "next/server";
+import { handleRoute, ApiError } from "@/server/http";
+import { requireSession } from "@/server/session";
+import { getSanityUserIdByEmail } from "@/server/users.service";
+import {
+  getFavoriteIds,
+  getFavoritePosts,
+  addFavorite,
+  removeFavorite,
+} from "@/server/wishlist.service";
 
-export async function GET(request: NextRequest) {
-  try {
-    const session = await auth.api.getSession({ headers: await headers() });
+export const GET = handleRoute(async (req: NextRequest) => {
+  const session = await requireSession();
+  const userId = await getSanityUserIdByEmail(session.user.email);
 
-    if (!session || !session.user?.email) {
-      return NextResponse.json(
-        { error: "กรุณาเข้าสู่ระบบ" },
-        { status: 401 }
-      );
-    }
+  const full = new URL(req.url).searchParams.get("full") === "true";
+  return { body: full ? await getFavoritePosts(userId) : await getFavoriteIds(userId) };
+}, "เกิดข้อผิดพลาดในการดึงข้อมูลรายการโปรด");
 
-    const user = await client.fetch(
-      '*[_type == "user" && email == $email][0]{_id}',
-      { email: session.user.email }
-    );
+export const POST = handleRoute(async (req: NextRequest) => {
+  const session = await requireSession();
+  const { postId } = await req.json();
+  if (!postId) throw new ApiError(400, "กรุณาระบุ postId");
 
-    if (!user) {
-      return NextResponse.json({ error: "ไม่พบข้อมูลผู้ใช้" }, { status: 404 });
-    }
+  const userId = await getSanityUserIdByEmail(session.user.email);
+  return await addFavorite(userId, postId);
+}, "เกิดข้อผิดพลาดในการเพิ่มรายการโปรด");
 
-    const { searchParams } = new URL(request.url);
-    const full = searchParams.get("full") === "true";
+export const DELETE = handleRoute(async (req: NextRequest) => {
+  const session = await requireSession();
+  const { postId } = await req.json();
+  if (!postId) throw new ApiError(400, "กรุณาระบุ postId");
 
-    if (full) {
-      const favorites = await client.fetch(
-        `*[_type == "favorite" && user._ref == $userId] | order(createdAt desc) {
-          "post": post->{
-            _id,
-            title,
-            slug,
-            thumbnail,
-            "otherBenefits": otherBenefits{ priceOfStay },
-            "address": address{ province, district }
-          }
-        }`,
-        { userId: user._id }
-      );
-
-      const posts = favorites
-        .map((f: { post: unknown }) => f.post)
-        .filter(Boolean);
-
-      return NextResponse.json({ posts });
-    }
-
-    const favorites = await client.fetch(
-      `*[_type == "favorite" && user._ref == $userId]{ "postId": post._ref }`,
-      { userId: user._id }
-    );
-
-    const favoriteIds = favorites.map((f: { postId: string }) => f.postId);
-
-    return NextResponse.json({ favoriteIds });
-  } catch (error) {
-    console.error("Error fetching wishlist:", error);
-    return NextResponse.json(
-      { error: "เกิดข้อผิดพลาดในการดึงข้อมูลรายการโปรด" },
-      { status: 500 }
-    );
-  }
-}
-
-export async function POST(request: NextRequest) {
-  try {
-    const session = await auth.api.getSession({ headers: await headers() });
-
-    if (!session || !session.user?.email) {
-      return NextResponse.json(
-        { error: "กรุณาเข้าสู่ระบบ" },
-        { status: 401 }
-      );
-    }
-
-    const { postId } = await request.json();
-
-    if (!postId) {
-      return NextResponse.json(
-        { error: "กรุณาระบุ postId" },
-        { status: 400 }
-      );
-    }
-
-    const user = await client.fetch(
-      '*[_type == "user" && email == $email][0]{_id}',
-      { email: session.user.email }
-    );
-
-    if (!user) {
-      return NextResponse.json({ error: "ไม่พบข้อมูลผู้ใช้" }, { status: 404 });
-    }
-
-    // Upsert pattern — prevent race condition from concurrent requests
-    // Check if favorite already exists
-    const existing = await client.fetch(
-      '*[_type == "favorite" && user._ref == $userId && post._ref == $postId][0]{_id}',
-      { userId: user._id, postId }
-    );
-
-    if (existing) {
-      // Already exists — return success (idempotent) instead of error
-      // This prevents race conditions when user double-clicks the heart button
-      return NextResponse.json(
-        { message: "อยู่ในรายการโปรดแล้ว", favoriteId: existing._id },
-        { status: 200 }
-      );
-    }
-
-    // Create with optimistic approach — if two requests arrive simultaneously,
-    // Sanity may create a duplicate. We accept this trade-off (eventual consistency)
-    // and handle dedup on the client side via the upsert check above.
-    const newFavorite = await client.create({
-      _type: "favorite",
-      user: {
-        _type: "reference",
-        _ref: user._id,
-      },
-      post: {
-        _type: "reference",
-        _ref: postId,
-      },
-      createdAt: new Date().toISOString(),
-    });
-
-    return NextResponse.json(
-      { message: "เพิ่มในรายการโปรดแล้ว", favoriteId: newFavorite._id },
-      { status: 201 }
-    );
-  } catch (error) {
-    console.error("Error adding to wishlist:", error);
-    return NextResponse.json(
-      { error: "เกิดข้อผิดพลาดในการเพิ่มรายการโปรด" },
-      { status: 500 }
-    );
-  }
-}
-
-export async function DELETE(request: NextRequest) {
-  try {
-    const session = await auth.api.getSession({ headers: await headers() });
-
-    if (!session || !session.user?.email) {
-      return NextResponse.json(
-        { error: "กรุณาเข้าสู่ระบบ" },
-        { status: 401 }
-      );
-    }
-
-    const { postId } = await request.json();
-
-    if (!postId) {
-      return NextResponse.json(
-        { error: "กรุณาระบุ postId" },
-        { status: 400 }
-      );
-    }
-
-    const user = await client.fetch(
-      '*[_type == "user" && email == $email][0]{_id}',
-      { email: session.user.email }
-    );
-
-    if (!user) {
-      return NextResponse.json({ error: "ไม่พบข้อมูลผู้ใช้" }, { status: 404 });
-    }
-
-    const favorite = await client.fetch(
-      '*[_type == "favorite" && user._ref == $userId && post._ref == $postId][0]{_id}',
-      { userId: user._id, postId }
-    );
-
-    if (!favorite) {
-      return NextResponse.json(
-        { error: "ไม่พบรายการโปรดนี้" },
-        { status: 404 }
-      );
-    }
-
-    await client.delete(favorite._id);
-
-    return NextResponse.json({ message: "ลบออกจากรายการโปรดแล้ว" });
-  } catch (error) {
-    console.error("Error removing from wishlist:", error);
-    return NextResponse.json(
-      { error: "เกิดข้อผิดพลาดในการลบรายการโปรด" },
-      { status: 500 }
-    );
-  }
-}
+  const userId = await getSanityUserIdByEmail(session.user.email);
+  return { body: await removeFavorite(userId, postId) };
+}, "เกิดข้อผิดพลาดในการลบรายการโปรด");
