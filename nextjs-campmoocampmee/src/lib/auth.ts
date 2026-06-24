@@ -2,11 +2,12 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { phoneNumber } from "better-auth/plugins";
 import { prisma } from "@/lib/prisma";
-import { client } from "@/sanity/client";
 import { sendSms } from "@/lib/sms";
+import { upsertSanityUser } from "@/server/users.service";
 
 // Mirror a freshly-authenticated user into Sanity. Self-contained and never
-// throws so it can be fired-and-forgotten off the login critical path.
+// throws so it can be fired-and-forgotten off the login critical path. Only
+// backfills a missing doc (no patch), so a missed run retries next login.
 async function syncUserToSanity(userId: string) {
   try {
     const user = await prisma.user.findUnique({
@@ -19,26 +20,14 @@ async function syncUserToSanity(userId: string) {
 
     const googleAccount = user.accounts[0];
     // A user may sign up with phone only, Google only, or link both later.
-    const provider = googleAccount ? "google" : "phone";
-    const providerId = googleAccount?.accountId ?? user.phoneNumber ?? null;
-
-    // Match an existing Sanity doc by phone (phone-only users have a
-    // placeholder email) or email, so re-syncs update rather than duplicate.
-    const existing = await client.fetch(
-      '*[_type == "user" && (($phone != null && phoneNumber == $phone) || email == $email)][0]._id',
-      { phone: user.phoneNumber, email: user.email }
-    );
-    if (!existing) {
-      await client.create({
-        _type: "user",
-        name: user.name,
-        email: user.email,
-        image: user.image,
-        phoneNumber: user.phoneNumber,
-        provider,
-        providerId,
-      });
-    }
+    await upsertSanityUser({
+      name: user.name,
+      email: user.email,
+      image: user.image,
+      phoneNumber: user.phoneNumber,
+      provider: googleAccount ? "google" : "phone",
+      providerId: googleAccount?.accountId ?? user.phoneNumber ?? null,
+    });
   } catch (err) {
     // Don't throw — auth must succeed even if Sanity sync fails
     console.error("Sanity sync error:", err);

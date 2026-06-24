@@ -1,54 +1,6 @@
-import { NextResponse } from "next/server";
-import { readClient as client } from "@/sanity/client";
-import { getProvinceSlug } from "@/lib/provinces";
+import { handleRoute } from "@/server/http";
+import { getProvincesWithCount } from "@/server/provinces.service";
 
-const PROVINCES_QUERY = `*[
-  _type == "post"
-  && !(_id in path("drafts.**"))
-  && defined(slug.current)
-  && defined(address.province)
-]{
-  "province": address.province
-}`;
-
-export async function GET() {
-  try {
-    const options = { next: { revalidate: 3600 } }; // Cache for 1 hour
-
-    // ดึงข้อมูลจังหวัดทั้งหมดจาก posts
-    const results = await client.fetch(PROVINCES_QUERY, {}, options);
-
-    // นับจำนวนแคมป์ในแต่ละจังหวัด
-    const provinceCount: { [key: string]: number } = {};
-
-    results
-      .map((item: { province: string }) => item.province)
-      .filter((province: string) => province && province.trim() !== "")
-      .forEach((province: string) => {
-        const cleanProvince = province.trim();
-        provinceCount[cleanProvince] = (provinceCount[cleanProvince] || 0) + 1;
-      });
-
-    // สร้างรายการจังหวัดพร้อมจำนวนแคมป์ และเรียงตามตัวอักษร
-    const provincesWithCount = Object.entries(provinceCount)
-      .map(([province, count]) => ({
-        name: province,
-        slug:
-          getProvinceSlug(province) ||
-          province.toLowerCase().replace(/\s+/g, "-"),
-        count: count,
-      }))
-      .sort((a, b) => a.name.localeCompare(b.name));
-
-    return NextResponse.json({
-      provinces: provincesWithCount,
-      totalProvinces: provincesWithCount.length,
-    });
-  } catch (error) {
-    console.error("Error fetching provinces:", error);
-    return NextResponse.json(
-      { error: "เกิดข้อผิดพลาดในการดึงข้อมูลจังหวัด" },
-      { status: 500 },
-    );
-  }
-}
+export const GET = handleRoute(async () => {
+  return { body: await getProvincesWithCount() };
+}, "เกิดข้อผิดพลาดในการดึงข้อมูลจังหวัด");
