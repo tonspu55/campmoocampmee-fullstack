@@ -1,13 +1,13 @@
 import { NextRequest } from "next/server";
 import { handleRoute, ApiError } from "@/server/http";
 import { requireSession } from "@/server/session";
-import { getProviderIdByEmail } from "@/server/users.service";
+import { getUserIdentity } from "@/server/identity.service";
 import { validateAndUploadImage } from "@/server/media.service";
 
 export const POST = handleRoute(async (req: NextRequest) => {
   const session = await requireSession();
-  // Authorize: only registered landowners may upload.
-  await getProviderIdByEmail(session.user.email);
+  // Authorize: must resolve a valid Postgres identity.
+  await getUserIdentity(session.user.id);
 
   const formData = await req.formData();
   const file = formData.get("file") as File | null;

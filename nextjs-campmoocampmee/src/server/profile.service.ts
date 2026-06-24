@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { ApiError } from "./http";
 import { validateAndUploadImage } from "./media.service";
+import { getUserIdentity } from "./identity.service";
 import { upsertSanityUser } from "./users.service";
 
 type UpdateProfileInput = {
@@ -29,18 +30,15 @@ export async function updateProfile(userId: string, input: UpdateProfileInput) {
 
   // 2) Sanity mirror — best-effort, never blocks the response.
   try {
-    const googleAccount = await prisma.account.findFirst({
-      where: { userId, providerId: "google" },
-      select: { accountId: true },
-    });
+    const identity = await getUserIdentity(userId);
     await upsertSanityUser(
       {
-        name: rawName,
-        email: updated.email,
-        image: imageUrl ?? updated.image,
-        phoneNumber: updated.phoneNumber,
-        provider: googleAccount ? "google" : "phone",
-        providerId: googleAccount?.accountId ?? updated.phoneNumber ?? null,
+        name: identity.name,
+        email: identity.email,
+        image: identity.image,
+        phoneNumber: identity.phoneNumber,
+        provider: identity.provider,
+        providerId: identity.providerId,
       },
       { name: rawName, image: imageUrl },
     );

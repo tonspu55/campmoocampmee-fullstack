@@ -76,6 +76,8 @@ pnpm deploy     # Deploy studio
   - normalize เบอร์เป็น E.164 ไทยที่ `src/lib/phone.ts` (`toE164TH`)
   - UI: `src/components/PhoneOtpForm.tsx` (flow 3 ขั้น: เลือกวิธี → กรอกเบอร์ +66 → กรอก OTP; เก็บ resend cooldown ใน localStorage)
   - phone-only signup → gen placeholder email `<digits>@phone.campmoocampmee.com`
+- **Authorization/identity**: resolve จาก Postgres เสมอ (`getUserIdentity` ใน `src/server/identity.service.ts`), ไม่อ่านจาก Sanity mirror; ฟีเจอร์ที่ผูก Sanity `_id` (wishlist/review) ใช้ `resolveSanityUserId` ที่ self-heal สร้าง doc ถ้าหาย
+- **Account linking policy**: `accountLinking` เปิด `trustedProviders:["google"]` (auto-link เฉพาะอีเมลตรงกัน); phone↔google ของคนเดียวกันไม่ auto-merge (คนละ identity)
 - **Auth flow**: user ปกติ → `/auth/signin`, เจ้าของที่ → `/auth/signin-landowner`
 - **Account page**: `/account` (`src/app/account/page.tsx`) — หน้าบัญชีของฉัน (โปรไฟล์ + ลิงก์ wishlists/แดชบอร์ด + ออกจากระบบ); ปุ่ม avatar ใน Header กดแล้วไป `/account` ถ้า login อยู่, ไม่งั้นเปิด login dialog (`UserDialog` = login-only)
 

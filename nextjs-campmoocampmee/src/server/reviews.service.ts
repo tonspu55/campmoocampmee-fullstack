@@ -1,9 +1,9 @@
 import { client } from "@/sanity/client";
 import { ApiError } from "./http";
-import { getSanityUserIdByEmail } from "./users.service";
+import { resolveSanityUserId } from "./users.service";
 
 type CreateReviewInput = {
-  email: string;
+  authUserId: string;
   postId?: string;
   rating?: number;
   comment?: string;
@@ -12,7 +12,7 @@ type CreateReviewInput = {
 // Create a pending review. Validates input first (to mirror original ordering),
 // then resolves the user, then guards against duplicate reviews per post.
 export async function createReview(input: CreateReviewInput) {
-  const { email, postId, rating, comment } = input;
+  const { authUserId, postId, rating, comment } = input;
 
   if (!postId || !rating || !comment) {
     throw new ApiError(400, "กรุณากรอกข้อมูลให้ครบถ้วน");
@@ -24,7 +24,7 @@ export async function createReview(input: CreateReviewInput) {
     throw new ApiError(400, "ความคิดเห็นต้องมีความยาว 10-1000 ตัวอักษร");
   }
 
-  const userId = await getSanityUserIdByEmail(email);
+  const userId = await resolveSanityUserId(authUserId);
 
   const existingReview = await client.fetch(
     '*[_type == "review" && post._ref == $postId && user._ref == $userId][0]',
