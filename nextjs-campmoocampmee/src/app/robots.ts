@@ -9,7 +9,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: [
         "/api/",
-        "/landowner/", // หน้าจัดการของเจ้าของที่ดิน
         "/auth/", // หน้า sign-in ทั้งหมด
         "/wishlists", // รายการโปรดเฉพาะผู้ใช้
       ],

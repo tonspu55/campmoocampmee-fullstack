@@ -12,15 +12,12 @@ import {
   Camera,
   ChevronRight,
   Heart,
-  LayoutDashboard,
   LogOut,
-  MapPin,
   Pencil,
   Tent,
   User,
 } from 'lucide-react';
 import { authClient } from '@/lib/auth-client';
-import { useLandOwnerStore } from '@/lib/store';
 import { useWishlistStore } from '@/lib/wishlist-store';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -63,7 +60,6 @@ interface AccountClientProps {
 export default function AccountClient({ initialUser }: AccountClientProps) {
   const router = useRouter();
   const { data: session, refetch } = authClient.useSession();
-  const { isLandOwner, fetchPosts, reset } = useLandOwnerStore();
 
   // Prefer the live client session (reflects edits after refetch),
   // fall back to the server-provided user on first paint.
@@ -78,12 +74,6 @@ export default function AccountClient({ initialUser }: AccountClientProps) {
     defaultValues: { name: '', image: undefined },
   });
 
-  // Determine land-owner status to show the dashboard shortcut.
-  // Auth is already guaranteed by the server component.
-  useEffect(() => {
-    fetchPosts();
-  }, [fetchPosts]);
-
   // Revoke object URL preview when it changes/unmounts.
   useEffect(() => {
     return () => {
@@ -92,7 +82,6 @@ export default function AccountClient({ initialUser }: AccountClientProps) {
   }, [imagePreview]);
 
   const handleSignOut = async () => {
-    reset();
     useWishlistStore.getState().reset();
     await authClient.signOut({
       fetchOptions: { onSuccess: () => router.push('/') },
@@ -182,17 +171,8 @@ export default function AccountClient({ initialUser }: AccountClientProps) {
 
   const roleBadge = (
     <span className="inline-flex w-fit items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-xs font-medium text-white">
-      {isLandOwner ? (
-        <>
-          <MapPin className="size-3" />
-          เจ้าของลาน
-        </>
-      ) : (
-        <>
-          <Tent className="size-3" />
-          นักท่องเที่ยว
-        </>
-      )}
+      <Tent className="size-3" />
+      นักท่องเที่ยว
     </span>
   );
 
@@ -293,14 +273,6 @@ export default function AccountClient({ initialUser }: AccountClientProps) {
                   >
                     รายการโปรด
                   </AccountLink>
-                  {isLandOwner && (
-                    <AccountLink
-                      href="/landowner"
-                      icon={<LayoutDashboard className="size-5" />}
-                    >
-                      แดชบอร์ดเจ้าของลาน
-                    </AccountLink>
-                  )}
                 </nav>
 
                 <Button

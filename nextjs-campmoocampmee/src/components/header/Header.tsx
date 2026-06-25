@@ -167,7 +167,6 @@ const Header = () => {
             <NavLink path="/contact" isHomepageTop={isHomepageTop}>
               ติดต่อลงข้อมูล
             </NavLink>
-            {/* <NavLink path="/landowner" isHomepageTop={isHomepageTop}>สำหรับเจ้าของลาน</NavLink> */}
           </div>
 
           {/* Desktop User Dialog */}
@@ -232,9 +231,6 @@ const Header = () => {
             <NavLinkMobile onCloseNav={handleCloseNav} path="/contact">
               ติดต่อลงข้อมูล
             </NavLinkMobile>
-            {/* <NavLinkMobile onCloseNav={handleCloseNav} path="/landowner">
-              สำหรับเจ้าของลาน
-            </NavLinkMobile> */}
           </div>
         </div>
       </div>
