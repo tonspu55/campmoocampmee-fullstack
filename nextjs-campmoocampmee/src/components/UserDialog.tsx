@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { authClient } from '@/lib/auth-client';
 import { User, Copy, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -34,7 +34,6 @@ export default function UserDialog({
   open: externalOpen,
   onOpenChange: externalOnOpenChange,
 }: UserDialogProps) {
-  const router = useRouter();
   const { data: session } = authClient.useSession();
   const [loading, setLoading] = useState(false);
   const [internalOpen, setInternalOpen] = useState(false);
@@ -47,22 +46,12 @@ export default function UserDialog({
 
   const isControlled = externalOpen !== undefined;
   const open = isControlled ? externalOpen : internalOpen;
+  const avatarClass = `flex h-9 w-9 items-center justify-center rounded-full cursor-pointer ${className}`;
 
   const handleOpenChange = (isOpen: boolean) => {
     if (!isControlled) setInternalOpen(isOpen);
     externalOnOpenChange?.(isOpen);
     if (isOpen) onOpen?.();
-  };
-
-  // Avatar button (uncontrolled): logged-in users go to the account page,
-  // otherwise open the login dialog.
-  const handleAvatarClick = () => {
-    onOpen?.();
-    if (session) {
-      router.push('/account');
-    } else {
-      setInternalOpen(true);
-    }
   };
 
   const handleGoogleSignIn = async () => {
@@ -86,15 +75,27 @@ export default function UserDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      {!isControlled && (
-        <Button
-          onClick={handleAvatarClick}
-          aria-label="บัญชีของฉัน"
-          className={`flex h-9 w-9 items-center justify-center rounded-full cursor-pointer ${className}`}
-        >
-          <User />
-        </Button>
-      )}
+      {!isControlled &&
+        (session ? (
+          // Logged in: real <Link> so Next prefetches /account → instant click.
+          <Button asChild className={avatarClass}>
+            <Link href="/account" onClick={onOpen} aria-label="บัญชีของฉัน">
+              <User />
+            </Link>
+          </Button>
+        ) : (
+          // Logged out: open the login dialog.
+          <Button
+            onClick={() => {
+              onOpen?.();
+              setInternalOpen(true);
+            }}
+            aria-label="เข้าสู่ระบบ"
+            className={avatarClass}
+          >
+            <User />
+          </Button>
+        ))}
       <DialogContent className="p-4 sm:max-w-md z-999">
         <DialogHeader className="sr-only">
           <DialogTitle>เข้าสู่ระบบ</DialogTitle>
