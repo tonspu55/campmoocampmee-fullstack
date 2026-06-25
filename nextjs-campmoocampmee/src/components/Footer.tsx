@@ -49,12 +49,6 @@ const Footer = async () => {
                 >
                   ติดต่อลงข้อมูล
                 </Link>
-                {/* <Link
-                  href="/landowner"
-                  className="text-md max-lg:text-sm hover:opacity-70"
-                >
-                  สำหรับเจ้าของลาน
-                </Link> */}
               </nav>
             </div>
 
