@@ -7,7 +7,7 @@ export type UserIdentity = {
   /** Stable per-user key used to scope content (Google accountId or phone). */
   providerId: string;
   name: string;
-  email: string;
+  email: string | null;
   image: string | null;
   phoneNumber: string | null;
 };
