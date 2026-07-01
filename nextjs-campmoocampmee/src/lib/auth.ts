@@ -1,10 +1,10 @@
-import { betterAuth } from "better-auth";
-import { prismaAdapter } from "better-auth/adapters/prisma";
-import { phoneNumber } from "better-auth/plugins";
-import { prisma } from "@/lib/prisma";
-import { sendSms } from "@/lib/sms";
-import { getUserIdentity } from "@/server/identity.service";
-import { upsertSanityUser } from "@/server/users.service";
+import { betterAuth } from 'better-auth';
+import { prismaAdapter } from 'better-auth/adapters/prisma';
+import { phoneNumber } from 'better-auth/plugins';
+import { prisma } from '@/lib/prisma';
+import { sendSms } from '@/lib/sms';
+import { getUserIdentity } from '@/server/identity.service';
+import { upsertSanityUser } from '@/server/users.service';
 
 // Mirror a freshly-authenticated user into Sanity. Self-contained and never
 // throws so it can be fired-and-forgotten off the login critical path. Only
@@ -22,12 +22,12 @@ async function syncUserToSanity(userId: string) {
     });
   } catch (err) {
     // Don't throw — auth must succeed even if Sanity sync fails
-    console.error("Sanity sync error:", err);
+    console.error('Sanity sync error:', err);
   }
 }
 
 export const auth = betterAuth({
-  database: prismaAdapter(prisma, { provider: "postgresql" }),
+  database: prismaAdapter(prisma, { provider: 'postgresql' }),
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -43,7 +43,7 @@ export const auth = betterAuth({
   account: {
     accountLinking: {
       enabled: true,
-      trustedProviders: ["google"],
+      trustedProviders: ['google'],
     },
   },
   // Phone number + OTP login. Better Auth generates/stores/verifies the OTP in
@@ -54,15 +54,17 @@ export const auth = betterAuth({
       expiresIn: 300, // 5 minutes
       allowedAttempts: 3,
       sendOTP: async ({ phoneNumber: phone, code }) => {
-        await sendSms(phone, `รหัส OTP สำหรับเข้าสู่ระบบ CampMooCampMee คือ ${code}`);
+        await sendSms(
+          phone,
+          `รหัส OTP สำหรับเข้าสู่ระบบ CAMPMOOCAMPMEE คือ ${code}`,
+        );
       },
       // Create a user on first successful verification (phone-only signup).
-      // Required email/name columns are filled with placeholders.
       signUpOnVerification: {
-        // Strip non-digits so the placeholder is a valid email local-part
-        // (E.164 numbers start with "+").
-        getTempEmail: (phone) =>
-          `${phone.replace(/[^0-9]/g, "")}@phone.campmoocampmee.com`,
+        // Phone-only users store NO email (column is nullable). We return null;
+        // Better Auth's createUser maps it to undefined → Prisma leaves it NULL.
+        // A future email↔phone linking flow can fill it in later.
+        getTempEmail: () => null as unknown as string,
         getTempName: (phone) => phone,
       },
     }),
@@ -79,14 +81,14 @@ export const auth = betterAuth({
     },
     userAgent: true,
     expiresIn: 60 * 60 * 24 * 15, // 15 days
-    updateAge: 3600,              // refresh every hour of activity
+    updateAge: 3600, // refresh every hour of activity
   },
   // Cookie configuration — secure in production
   cookie: {
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
     domain: process.env.COOKIE_DOMAIN || undefined,
-    path: "/",
+    path: '/',
   },
   // Sync user to Sanity CMS on every new session (after User + Account rows exist).
   // Fired-and-forgotten so it never blocks the OAuth redirect or throws into the

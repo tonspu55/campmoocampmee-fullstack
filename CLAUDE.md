@@ -53,7 +53,7 @@ pnpm deploy     # Deploy studio
 - ต้องมี:
   - Auth: `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
   - Auth DB (Supabase): `DATABASE_URL` (pooler `:6543?pgbouncer=true`), `DIRECT_URL` (`:5432`, ใช้ตอน migrate)
-  - SMS OTP: `SMS_API_URL`, `SMS_API_TOKEN`, `SMS_SENDER` (Thai SMS gateway; ถ้าไม่ตั้งจะ log OTP ใน dev)
+  - SMS OTP (deeSMSx): `SMS_API_KEY`, `SMS_SECRET_KEY`, `SMS_SENDER` (+ optional `SMS_API_URL`; ถ้าไม่ตั้งจะ log OTP ใน dev)
   - อื่นๆ: `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`, `NEXT_PUBLIC_SANITY_DATASET`, `SANITY_API_TOKEN`
 
 ## Key Patterns
@@ -72,7 +72,7 @@ pnpm deploy     # Deploy studio
   - **Sanity sync**: หลัง login จะ sync user เข้า Sanity แบบ deferred ด้วย `after()` (ไม่บล็อก redirect)
 - **Phone OTP login**:
   - ใช้ Better Auth `phoneNumber` plugin (gen/ตรวจ OTP เองในตาราง `Verification`)
-  - ส่ง SMS ผ่าน abstraction `src/lib/sms.ts` (`sendSms`) — config ด้วย env `SMS_API_URL`/`SMS_API_TOKEN`/`SMS_SENDER`; ถ้าไม่ตั้ง env จะ log OTP ลง console (dev)
+  - ส่ง SMS ผ่าน abstraction `src/lib/sms.ts` (`sendSms`) → deeSMSx (`POST /v1/SMSWebService`, body `{apiKey,secretKey,to,sender,msg}`, `to`=E.164 ไม่มี `+`); config ด้วย env `SMS_API_KEY`/`SMS_SECRET_KEY`/`SMS_SENDER`; ถ้าไม่ตั้งจะ log OTP ลง console (dev)
   - normalize เบอร์เป็น E.164 ไทยที่ `src/lib/phone.ts` (`toE164TH`)
   - UI: `src/components/PhoneOtpForm.tsx` (flow 3 ขั้น: เลือกวิธี → กรอกเบอร์ +66 → กรอก OTP; เก็บ resend cooldown ใน localStorage)
   - phone-only signup → gen placeholder email `<digits>@phone.campmoocampmee.com`

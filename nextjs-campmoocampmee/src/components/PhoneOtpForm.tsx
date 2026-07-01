@@ -195,7 +195,6 @@ export default function PhoneOtpForm({
         </div>
 
         <Button
-          disabled
           onClick={() => setStep('phone')}
           className="w-full gap-2 text-base"
         >

@@ -21,8 +21,10 @@ export async function upsertSanityUser(
   input: SanityUserInput,
   patch?: { name: string; image?: string },
 ): Promise<string> {
+  // Match by phone (phone-only users) or by email — but only when non-null, so
+  // two phone users (both email null) never match each other.
   const existingId = await client.fetch<string | null>(
-    '*[_type == "user" && (($phone != null && phoneNumber == $phone) || email == $email)][0]._id',
+    '*[_type == "user" && (($phone != null && phoneNumber == $phone) || ($email != null && email == $email))][0]._id',
     { phone: input.phoneNumber, email: input.email },
   );
 

@@ -15,8 +15,8 @@ export const userType = defineType({
       name: 'email',
       title: 'Email',
       type: 'string',
-      // Optional: phone-only users sign up without a real email.
-      validation: (rule) => rule.email(),
+      // Plain string (no .email()): phone-only users store a non-email
+      // placeholder identifier here, not a real email.
     }),
     defineField({
       name: 'phoneNumber',
