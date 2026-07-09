@@ -1,18 +1,15 @@
-'use client'
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import {
-  FacebookShareButton,
-  LineShareButton
-} from 'next-share'
+'use client';
+import { Button } from '@/components/ui/button';
+import Image from 'next/image';
+import { FacebookShareButton, LineShareButton } from 'next-share';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Share2, Link2, Check } from "lucide-react";
-import { useState, useCallback, useEffect } from "react";
-import { toast } from "sonner";
+} from '@/components/ui/popover';
+import { Share2, Link2, Check } from 'lucide-react';
+import { useState, useCallback, useEffect } from 'react';
+import { toast } from 'sonner';
 
 interface ShareToSocialProps {
   title?: string;
@@ -85,10 +82,15 @@ const ShareToSocial = ({ title, slug }: ShareToSocialProps) => {
     <>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button className="flex h-9 w-9 items-center  justify-center rounded-full cursor-pointer" variant="default"><Share2 /></Button>
+          <Button
+            className="flex h-9 w-9 items-center  justify-center rounded-full cursor-pointer  hover:scale-110 active:scale-95 transition-transform"
+            variant="default"
+          >
+            <Share2 />
+          </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-34 border-none" >
-          <div className="flex flex-row gap-2 justify-center" >
+        <PopoverContent className="w-34 border-none">
+          <div className="flex flex-row gap-2 justify-center">
             <Button
               onClick={() => {
                 handleCopyUrl();
@@ -97,11 +99,7 @@ const ShareToSocial = ({ title, slug }: ShareToSocialProps) => {
               variant="default"
               className="flex justify-center rounded-full cursor-pointer h-7.5 w-7.5"
             >
-              {copied ? (
-                <Check />
-              ) : (
-                <Link2 />
-              )}
+              {copied ? <Check /> : <Link2 />}
             </Button>
             <FacebookShareButton
               url={currentUrl}
@@ -133,6 +131,6 @@ const ShareToSocial = ({ title, slug }: ShareToSocialProps) => {
       </Popover>
     </>
   );
-}
+};
 
 export default ShareToSocial;

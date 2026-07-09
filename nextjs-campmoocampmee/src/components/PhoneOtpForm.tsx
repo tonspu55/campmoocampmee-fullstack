@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import Image from 'next/image';
 import { ChevronLeft, Smartphone } from 'lucide-react';
 import { authClient } from '@/lib/auth-client';
+import { authErrorMessage } from '@/lib/auth-errors';
 import { toE164TH, isValidThaiMobile } from '@/lib/phone';
 import { Button } from '@/components/ui/button';
 import {
@@ -127,7 +128,13 @@ export default function PhoneOtpForm({
     });
     setLoading(false);
     if (error) {
-      toast.error('ส่งรหัส OTP ไม่สำเร็จ กรุณาลองใหม่อีกครั้ง');
+      // A 5xx/network failure (e.g. DB unreachable) gets the generic "temporary
+      // problem" message; anything else is treated as a delivery failure.
+      toast.error(
+        (error.status ?? 0) >= 500
+          ? authErrorMessage(error)
+          : 'ส่งรหัส OTP ไม่สำเร็จ กรุณาลองใหม่อีกครั้ง',
+      );
       return;
     }
     const ref = makeRefCode();
