@@ -1,7 +1,9 @@
 'use client';
 
 import { Suspense } from 'react';
+import { toast } from 'sonner';
 import { authClient } from '@/lib/auth-client';
+import { authErrorMessage } from '@/lib/auth-errors';
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Copy, Check } from 'lucide-react';
@@ -40,12 +42,22 @@ function SignInContent() {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
-      await authClient.signIn.social({
+      // On success Better Auth redirects the browser to Google, so the spinner
+      // stays until the page unloads. On failure it returns an error object
+      // (it does NOT throw) — surface a friendly message and reset the button.
+      const { error } = await authClient.signIn.social({
         provider: 'google',
         callbackURL: callbackUrl,
       });
+      if (error) {
+        console.error('Sign in error:', error);
+        toast.error(authErrorMessage(error));
+        setLoading(false);
+      }
     } catch (error) {
+      // Network failure (fetch threw) before a response came back.
       console.error('Sign in error:', error);
+      toast.error(authErrorMessage(null));
       setLoading(false);
     }
   };

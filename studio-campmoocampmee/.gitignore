@@ -30,3 +30,6 @@
 
 # Dotenv and similar local-only files
 *.local
+
+# npm lockfile — โปรเจกต์นี้ใช้ pnpm
+package-lock.json

@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import Image from "next/image";
+import Image from 'next/image';
 
 type OtherBenefits = {
   priceOfStay: string;
@@ -95,7 +95,7 @@ const OtherBenefits = ({ otherBenefits }: OtherBenefitsProps) => {
               height={35}
             />
             <p className="max-md:text-sm">
-              งดส่งเสียง {otherBenefits.noNoise} น.
+              งดส่งเสียงดัง {otherBenefits.noNoise} น.
             </p>
           </div>
         )}

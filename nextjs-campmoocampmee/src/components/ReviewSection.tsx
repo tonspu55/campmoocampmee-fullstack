@@ -8,6 +8,12 @@ import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
 import UserDialog from "@/components/UserDialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface Review {
   _id: string;
@@ -34,14 +40,13 @@ export default function ReviewSection({ postId }: ReviewSectionProps) {
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userDialogOpen, setUserDialogOpen] = useState(false);
+  const [reviewFormOpen, setReviewFormOpen] = useState(false);
 
   const handleWriteReviewClick = () => {
     if (!session) {
       setUserDialogOpen(true);
     } else {
-      document
-        .getElementById("write-review-form")
-        ?.scrollIntoView({ behavior: "smooth" });
+      setReviewFormOpen(true);
     }
   };
 
@@ -104,6 +109,7 @@ export default function ReviewSection({ postId }: ReviewSectionProps) {
         toast.success(data.message);
         setRating(0);
         setComment("");
+        setReviewFormOpen(false);
         // รีวิวจะแสดงหลังจากได้รับอนุมัติ
       } else {
         toast.error(data.error);
@@ -212,11 +218,11 @@ export default function ReviewSection({ postId }: ReviewSectionProps) {
       )}
 
       {session && (
-        <div id="write-review-form">
-          <h3 className="text-lg md:text-xl font-semibold mt-6 mb-4 ">
-            เขียนรีวิว
-          </h3>
-          <div className="p-4  rounded-lg border border-gray-200 dark:border-primary">
+        <Dialog open={reviewFormOpen} onOpenChange={setReviewFormOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>เขียนรีวิว</DialogTitle>
+            </DialogHeader>
             <form onSubmit={handleSubmitReview} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-2">
@@ -249,8 +255,8 @@ export default function ReviewSection({ postId }: ReviewSectionProps) {
                 </Button>
               </div>
             </form>
-          </div>
-        </div>
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );

@@ -28,6 +28,25 @@ async function syncUserToSanity(userId: string) {
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, { provider: 'postgresql' }),
+  // Turn cryptic API failures into an actionable log line. A DB-connectivity
+  // failure surfaces to the client as a bare 500; the usual culprit is the
+  // Supabase project being paused (free tier auto-pauses after ~7 days). The
+  // client shows a friendly message (see src/lib/auth-errors.ts) — this just
+  // makes the server log point straight at the cause.
+  onAPIError: {
+    onError: (error) => {
+      const name = error instanceof Error ? error.name : '';
+      if (
+        name === 'PrismaClientInitializationError' ||
+        name === 'PrismaClientKnownRequestError'
+      ) {
+        console.error(
+          '[auth] Database unreachable — check that the Supabase project is not paused.',
+          error,
+        );
+      }
+    },
+  },
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -52,7 +71,8 @@ export const auth = betterAuth({
     phoneNumber({
       otpLength: 6,
       expiresIn: 300, // 5 minutes
-      allowedAttempts: 3,
+      allowedAttempts: 3, // 3 tries before the OTP is invalidated
+      // Send the OTP via SMS. This is the only custom logic we need to implement.
       sendOTP: async ({ phoneNumber: phone, code }) => {
         await sendSms(
           phone,
