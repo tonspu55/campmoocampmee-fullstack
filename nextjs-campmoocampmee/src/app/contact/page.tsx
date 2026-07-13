@@ -1,22 +1,22 @@
-import { Metadata } from "next";
-import ContactForm from "@/components/ContactForm";
-import styles from "@/app/homepage.module.css";
+import { Metadata } from 'next';
+import ContactForm from '@/components/ContactForm';
+import styles from '@/app/homepage.module.css';
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.campmoocampmee.com"),
-  title: "ติดต่อลงข้อมูล | แคมป์หมูแคมป์หมี",
+  metadataBase: new URL('https://www.campmoocampmee.com'),
+  title: 'ติดต่อลงข้อมูล | แคมป์หมูแคมป์หมี',
   description:
-    "ส่งรายละเอียดข้อมูลเบื้องต้นเพื่อให้ทางเราติดต่อกลับโดยเร็วที่สุด",
+    'ส่งรายละเอียดข้อมูลเบื้องต้นเพื่อให้ทางเราติดต่อกลับโดยเร็วที่สุด',
   openGraph: {
-    title: "ติดต่อลงข้อมูล | แคมป์หมูแคมป์หมี",
+    title: 'ติดต่อลงข้อมูล | แคมป์หมูแคมป์หมี',
     description:
-      "ส่งรายละเอียดข้อมูลเบื้องต้นเพื่อให้ทางเราติดต่อกลับโดยเร็วที่สุด",
+      'ส่งรายละเอียดข้อมูลเบื้องต้นเพื่อให้ทางเราติดต่อกลับโดยเร็วที่สุด',
     images: [
       {
-        url: "/assets/images/banner-desktop.jpg",
+        url: '/assets/images/banner-desktop.jpg',
         width: 1200,
         height: 630,
-        alt: "แคมป์หมูแคมป์หมี",
+        alt: 'แคมป์หมูแคมป์หมี',
       },
     ],
   },
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 
 const ContactPage = () => {
   return (
-    <main className="py-8 lg:py-10 mt-8 lg:mt-10">
+    <main className="py-8 lg:py-10 mt-15">
       <div className="container mx-auto max-w-225 ">
         <h1 className="text-lg lg:text-2xl font-semibold text-center">
           ติดต่อลงข้อมูล

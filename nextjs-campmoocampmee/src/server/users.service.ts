@@ -15,14 +15,16 @@ export type SanityUserInput = {
 // rather than duplicate.
 //
 // - Missing doc → create with the full `input`.
-// - Existing doc → left untouched unless `patch` is given, in which case its
-//   name is set (and image only when `patch.image` is provided).
+// - Existing doc → left untouched unless `patch` is given, in which case only
+//   the defined patch fields are set (undefined/null keys are skipped so we
+//   never unset an existing value).
 export async function upsertSanityUser(
   input: SanityUserInput,
-  patch?: { name: string; image?: string },
+  patch?: Partial<{ name: string; image: string; phoneNumber: string }>,
 ): Promise<string> {
   // Match by phone (phone-only users) or by email — but only when non-null, so
-  // two phone users (both email null) never match each other.
+  // two phone users (both email null) never match each other. A Google user
+  // adding a phone still matches by their unchanged email.
   const existingId = await client.fetch<string | null>(
     '*[_type == "user" && (($phone != null && phoneNumber == $phone) || ($email != null && email == $email))][0]._id',
     { phone: input.phoneNumber, email: input.email },
@@ -30,10 +32,12 @@ export async function upsertSanityUser(
 
   if (existingId) {
     if (patch) {
-      await client
-        .patch(existingId)
-        .set({ name: patch.name, ...(patch.image ? { image: patch.image } : {}) })
-        .commit();
+      const set = Object.fromEntries(
+        Object.entries(patch).filter(([, v]) => v != null),
+      );
+      if (Object.keys(set).length) {
+        await client.patch(existingId).set(set).commit();
+      }
     }
     return existingId;
   }

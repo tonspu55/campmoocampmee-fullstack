@@ -12,12 +12,14 @@ import {
   Camera,
   ChevronRight,
   Heart,
-  LogOut,
   Pencil,
+  Phone,
+  Plus,
   Tent,
   User,
 } from 'lucide-react';
 import { authClient } from '@/lib/auth-client';
+import AddPhoneDialog from '@/components/AddPhoneDialog';
 import { useWishlistStore } from '@/lib/wishlist-store';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -54,7 +56,19 @@ type ProfileValues = z.infer<typeof profileSchema>;
 
 interface AccountClientProps {
   /** Server-resolved user — guarantees content without a client spinner. */
-  initialUser: { name?: string | null; image?: string | null };
+  initialUser: {
+    name?: string | null;
+    image?: string | null;
+    phoneNumber?: string | null;
+  };
+}
+
+// Format an E.164 Thai number for display: +66812345678 → 081-234-5678.
+function formatThaiPhone(phone: string): string {
+  const local = phone.startsWith('+66') ? '0' + phone.slice(3) : phone;
+  return /^0\d{9}$/.test(local)
+    ? `${local.slice(0, 3)}-${local.slice(3, 6)}-${local.slice(6)}`
+    : phone;
 }
 
 export default function AccountClient({ initialUser }: AccountClientProps) {
@@ -64,8 +78,14 @@ export default function AccountClient({ initialUser }: AccountClientProps) {
   // Prefer the live client session (reflects edits after refetch),
   // fall back to the server-provided user on first paint.
   const user = session?.user ?? initialUser;
+  const phoneNumber =
+    (session?.user as { phoneNumber?: string | null } | undefined)
+      ?.phoneNumber ??
+    initialUser.phoneNumber ??
+    null;
 
   const [editing, setEditing] = useState(false);
+  const [addPhoneOpen, setAddPhoneOpen] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -177,7 +197,7 @@ export default function AccountClient({ initialUser }: AccountClientProps) {
   );
 
   return (
-    <main className="py-12 lg:py-16 mt-15">
+    <main className="py-8 lg:py-10 mt-15">
       <div className="container mx-auto max-w-lg px-4">
         <h1 className="text-2xl font-semibold mb-6">บัญชีของฉัน</h1>
 
@@ -265,6 +285,34 @@ export default function AccountClient({ initialUser }: AccountClientProps) {
                   </Button>
                 </div>
 
+                {/* Phone number — add-only in v1 */}
+                <div className="flex items-center gap-3 rounded-lg border px-3 py-3">
+                  <span className="text-primary">
+                    <Phone className="size-5" />
+                  </span>
+                  <div className="flex flex-1 flex-col">
+                    <span className="text-xs text-muted-foreground">
+                      เบอร์โทรศัพท์
+                    </span>
+                    <span className="text-sm font-medium">
+                      {phoneNumber
+                        ? formatThaiPhone(phoneNumber)
+                        : 'ยังไม่ได้เพิ่มเบอร์โทรศัพท์'}
+                    </span>
+                  </div>
+                  {!phoneNumber && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setAddPhoneOpen(true)}
+                      className="gap-1 text-primary hover:text-primary"
+                    >
+                      <Plus className="size-4" />
+                      เพิ่ม
+                    </Button>
+                  )}
+                </div>
+
                 {/* Menu */}
                 <nav className="flex flex-col">
                   <AccountLink
@@ -278,9 +326,8 @@ export default function AccountClient({ initialUser }: AccountClientProps) {
                 <Button
                   onClick={handleSignOut}
                   variant="outline"
-                  className="w-full gap-2 border-primary text-primary hover:text-primary dark:text-primary-foreground"
+                  className="w-full border-primary text-primary hover:text-primary dark:text-primary-foreground"
                 >
-                  <LogOut className="size-4" />
                   ออกจากระบบ
                 </Button>
               </>
@@ -288,6 +335,12 @@ export default function AccountClient({ initialUser }: AccountClientProps) {
           </CardContent>
         </Card>
       </div>
+
+      <AddPhoneDialog
+        open={addPhoneOpen}
+        onOpenChange={setAddPhoneOpen}
+        onSuccess={() => refetch?.({ query: { disableCookieCache: true } })}
+      />
     </main>
   );
 }
