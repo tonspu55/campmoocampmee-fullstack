@@ -75,11 +75,16 @@ pnpm deploy     # Deploy studio
   - ส่ง SMS ผ่าน abstraction `src/lib/sms.ts` (`sendSms`) → deeSMSx (`POST /v1/SMSWebService`, body `{apiKey,secretKey,to,sender,msg}`, `to`=E.164 ไม่มี `+`); config ด้วย env `SMS_API_KEY`/`SMS_SECRET_KEY`/`SMS_SENDER`; ถ้าไม่ตั้งจะ log OTP ลง console (dev)
   - normalize เบอร์เป็น E.164 ไทยที่ `src/lib/phone.ts` (`toE164TH`)
   - UI: `src/components/PhoneOtpForm.tsx` (flow 3 ขั้น: เลือกวิธี → กรอกเบอร์ +66 → กรอก OTP; เก็บ resend cooldown ใน localStorage)
-  - phone-only signup → gen placeholder email `<digits>@phone.campmoocampmee.com`
+  - phone-only signup → `getTempEmail` คืน `null` (คอลัมน์ `email` เป็น NULL, ไม่มี placeholder); `getTempName` = เบอร์โทร
+- **Add phone to account** (สำหรับ user ที่ login ด้วย Google เพิ่มเบอร์ทีหลัง):
+  - route `POST /api/account/phone` → `linkPhoneNumber` (`src/server/phone.service.ts`) เรียก `auth.api.verifyPhoneNumber({ updatePhoneNumber:true })` — ผูกเบอร์เข้า user ปัจจุบัน, เช็คเบอร์ซ้ำให้เอง (throw `PHONE_NUMBER_EXIST`), ไม่สร้าง user/session ใหม่
+  - ส่ง OTP ฝั่ง client ด้วย `authClient.phoneNumber.sendOtp`; verify ผ่าน route แล้ว best-effort patch เบอร์เข้า Sanity mirror
+  - UI: `src/components/AddPhoneDialog.tsx` (แยกจาก `PhoneOtpForm` เพื่อไม่กระทบ flow login); เปิดจากแถวเบอร์ในหน้า `/account`
+  - v1: เพิ่มอย่างเดียว (ยังไม่มีแก้/ลบ); ยังไม่มีฟีเจอร์เพิ่ม email ให้ phone-only user (ต้องตั้ง email provider ก่อน)
 - **Authorization/identity**: resolve จาก Postgres เสมอ (`getUserIdentity` ใน `src/server/identity.service.ts`), ไม่อ่านจาก Sanity mirror; ฟีเจอร์ที่ผูก Sanity `_id` (wishlist/review) ใช้ `resolveSanityUserId` ที่ self-heal สร้าง doc ถ้าหาย
 - **Account linking policy**: `accountLinking` เปิด `trustedProviders:["google"]` (auto-link เฉพาะอีเมลตรงกัน); phone↔google ของคนเดียวกันไม่ auto-merge (คนละ identity)
 - **Auth flow**: user ปกติ → `/auth/signin`, เจ้าของที่ → `/auth/signin-landowner`
-- **Account page**: `/account` (`src/app/account/page.tsx`) — หน้าบัญชีของฉัน (โปรไฟล์ + ลิงก์ wishlists/แดชบอร์ด + ออกจากระบบ); ปุ่ม avatar ใน Header กดแล้วไป `/account` ถ้า login อยู่, ไม่งั้นเปิด login dialog (`UserDialog` = login-only)
+- **Account page**: `/account` (`src/app/account/page.tsx`) — หน้าบัญชีของฉัน (โปรไฟล์ name/avatar แก้ผ่าน `POST /api/account/profile` + แถวเบอร์โทร/ปุ่มเพิ่มเบอร์ + ลิงก์ wishlists + ออกจากระบบ); ปุ่ม avatar ใน Header กดแล้วไป `/account` ถ้า login อยู่, ไม่งั้นเปิด login dialog (`UserDialog` = login-only)
 
 ## Conventions
 

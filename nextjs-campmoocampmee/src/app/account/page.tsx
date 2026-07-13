@@ -17,7 +17,11 @@ export default async function AccountPage() {
 
   return (
     <AccountClient
-      initialUser={{ name: session.user.name, image: session.user.image }}
+      initialUser={{
+        name: session.user.name,
+        image: session.user.image,
+        phoneNumber: session.user.phoneNumber ?? null,
+      }}
     />
   );
 }

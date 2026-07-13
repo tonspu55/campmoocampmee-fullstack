@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { type SanityDocument } from "next-sanity";
-import { Heart } from "lucide-react";
-import CampCard, { CampThumbnailSkeleton } from "@/components/CampThumbnail";
+import { useEffect, useState } from 'react';
+import { authClient } from '@/lib/auth-client';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { type SanityDocument } from 'next-sanity';
+import { Heart } from 'lucide-react';
+import CampCard, { CampThumbnailSkeleton } from '@/components/CampThumbnail';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,7 +14,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+} from '@/components/ui/breadcrumb';
 
 export default function WishlistsPage() {
   const { data: session, isPending } = authClient.useSession();
@@ -26,7 +26,7 @@ export default function WishlistsPage() {
     if (isPending) return;
 
     if (!session) {
-      router.push("/");
+      router.push('/');
       return;
     }
 
@@ -35,8 +35,8 @@ export default function WishlistsPage() {
 
   const fetchWishlist = async () => {
     try {
-      const response = await fetch("/api/wishlist?full=true", {
-        cache: "no-store",
+      const response = await fetch('/api/wishlist?full=true', {
+        cache: 'no-store',
       });
 
       if (response.ok) {
@@ -44,7 +44,7 @@ export default function WishlistsPage() {
         setPosts(data.posts || []);
       }
     } catch (error) {
-      console.error("Error fetching wishlist:", error);
+      console.error('Error fetching wishlist:', error);
     } finally {
       setLoading(false);
     }
@@ -52,8 +52,8 @@ export default function WishlistsPage() {
 
   if (isPending) {
     return (
-      <main className="max-lg:pb-6 max-lg:pt-12 lg:py-10">
-        <div className="container mx-auto px-2 max-w-6xl pt-6 lg:pt-10">
+      <main className="py-8 lg:py-10 mt-15">
+        <div className="container mx-auto px-2 max-w-6xl ">
           <Breadcrumb className="mb-4">
             <BreadcrumbList>
               <BreadcrumbItem>
@@ -75,8 +75,8 @@ export default function WishlistsPage() {
   }
 
   return (
-    <main className="max-lg:pb-6 max-lg:pt-12 lg:py-10">
-      <div className="container mx-auto px-2 max-w-6xl pt-6 lg:pt-10">
+    <main className="py-8 lg:py-10 mt-15">
+      <div className="container mx-auto px-2 max-w-6xl">
         <Breadcrumb className="mb-4">
           <BreadcrumbList>
             <BreadcrumbItem>
