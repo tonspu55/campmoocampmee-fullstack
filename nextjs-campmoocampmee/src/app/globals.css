@@ -216,6 +216,7 @@ ul {
 .leaflet-container {
   font-family: inherit;
   background: var(--muted);
+  z-index: 0;
 }
 
 .leaflet-popup-content-wrapper {

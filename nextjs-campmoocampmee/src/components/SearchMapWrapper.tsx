@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { useState, useRef, useEffect } from "react";
-import { type SanityDocument } from "next-sanity";
-import dynamic from "next/dynamic";
-import { Map, List } from "lucide-react";
-import CampThumbnail from "@/components/CampThumbnail";
-import SearchPagination from "@/components/SearchPagination";
-import { getThaiProvinceName } from "@/lib/provinces";
-import { getThaiRegionName } from "@/lib/regions";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { useState, useRef, useEffect } from 'react';
+import { type SanityDocument } from 'next-sanity';
+import dynamic from 'next/dynamic';
+import { Map, List } from 'lucide-react';
+import CampThumbnail from '@/components/CampThumbnail';
+import SearchPagination from '@/components/SearchPagination';
+import { getThaiProvinceName } from '@/lib/provinces';
+import { getThaiRegionName } from '@/lib/regions';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 export interface CampPost extends SanityDocument {
   title: string;
@@ -21,7 +21,7 @@ export interface CampPost extends SanityDocument {
 }
 
 // Dynamically import the map component to avoid SSR issues
-const CampMap = dynamic(() => import("@/components/CampMap"), {
+const CampMap = dynamic(() => import('@/components/CampMap'), {
   ssr: false,
   loading: () => (
     <div className="w-full h-full bg-gray-100 dark:bg-gray-800 animate-pulse flex items-center justify-center">
@@ -52,7 +52,7 @@ export default function SearchMapWrapper({
   totalCount,
 }: SearchMapWrapperProps) {
   const [showMap, setShowMap] = useState(false);
-  const [activeTab, setActiveTab] = useState("list");
+  const [activeTab, setActiveTab] = useState('list');
   // track ว่าเคยเปิด map tab หรือยัง เพื่อ lazy load
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapLoadedMobile, setMapLoadedMobile] = useState(false);
@@ -84,10 +84,10 @@ export default function SearchMapWrapper({
   // สร้าง URL สำหรับ pagination
   const createPageUrl = (pageNumber: number) => {
     const params = new URLSearchParams();
-    if (province) params.set("province", province);
-    if (region) params.set("region", region);
-    if (tag) params.set("tag", tag);
-    params.set("page", pageNumber.toString());
+    if (province) params.set('province', province);
+    if (region) params.set('region', region);
+    if (tag) params.set('tag', tag);
+    params.set('page', pageNumber.toString());
     return `/search?${params.toString()}`;
   };
 
@@ -96,11 +96,11 @@ export default function SearchMapWrapper({
     ? `ลานกางเต็นท์ในจังหวัด${provinceTh}`
     : regionTh
       ? `ลานกางเต็นท์ใน${regionTh}`
-      : "ผลการค้นหา";
+      : 'ผลการค้นหา';
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
-    if (value === "map" && !mapLoaded) {
+    if (value === 'map' && !mapLoaded) {
       setMapLoaded(true);
     }
   };
@@ -144,18 +144,18 @@ export default function SearchMapWrapper({
         <div ref={sentinelRef} className="h-0" />
         <Tabs value={activeTab} onValueChange={handleTabChange}>
           <TabsList
-            className={`rounded-none! w-full sticky top-15 z-30 transition-shadow ${isSticky ? "shadow-none" : ""} bg-white dark:bg-gray-900 `}
+            className={`rounded-none! w-full sticky top-15 z-30 transition-shadow ${isSticky ? 'shadow-none' : ''} bg-white dark:bg-gray-900 `}
           >
             <TabsTrigger
               value="list"
-              className={`cursor-pointer ${activeTab === "list" ? "bg-primary! text-white!" : ""}`}
+              className={`cursor-pointer ${activeTab === 'list' ? 'bg-primary! text-white!' : ''}`}
             >
               <List className="w-4 h-4" />
               แบบรายการ
             </TabsTrigger>
             <TabsTrigger
               value="map"
-              className={`cursor-pointer ${activeTab === "map" ? "bg-primary! text-white!" : ""}`}
+              className={`cursor-pointer ${activeTab === 'map' ? 'bg-primary! text-white!' : ''}`}
             >
               <Map className="w-4 h-4" />
               แบบแผนที่
@@ -177,11 +177,11 @@ export default function SearchMapWrapper({
       {/* Mobile Layout - Toggle between list and map */}
       <div className="lg:hidden">
         {/* Content */}
-        <div className={showMap ? "hidden" : ""}>{contentJSX}</div>
+        <div className={showMap ? 'hidden' : ''}>{contentJSX}</div>
 
         {/* Map View - keep mounted after first load to preserve map state */}
         <div
-          className={`fixed inset-0 z-40 bg-white dark:bg-gray-900 pt-15 ${showMap ? "" : "hidden"}`}
+          className={`fixed inset-0 z-40 bg-white dark:bg-gray-900 pt-15 ${showMap ? '' : 'hidden'}`}
         >
           {mapLoadedMobile && (
             <CampMap posts={posts} className="w-full h-full" />
@@ -192,7 +192,7 @@ export default function SearchMapWrapper({
         <div className="fixed top-3.25 left-1/2 -translate-x-1/2 z-50">
           <button
             onClick={handleMobileToggle}
-            aria-label={showMap ? "แสดงแบบรายการ" : "แสดงแบบแผนที่"}
+            aria-label={showMap ? 'แสดงแบบรายการ' : 'แสดงแบบแผนที่'}
             className="flex items-center gap-2 px-4 py-2 border border-primary  dark:bg-white text-primary dark:text-primary rounded-full   transition-all active:scale-95"
           >
             {showMap ? (
