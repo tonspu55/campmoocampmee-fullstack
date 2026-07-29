@@ -1,26 +1,19 @@
 "use client";
 
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import {
-  GoogleMap,
-  useJsApiLoader,
-  MarkerF,
-  InfoWindowF,
-} from "@react-google-maps/api";
-import Image from "next/image";
-import Link from "next/link";
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMap,
+  useMapEvents,
+} from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 import { type SanityDocument } from "next-sanity";
-import imageUrlBuilder from "@sanity/image-url";
-import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
-import { client } from "@/sanity/client";
-import { X } from "lucide-react";
-
-// Image URL builder
-const { projectId, dataset } = client.config();
-const urlFor = (source: SanityImageSource) =>
-  projectId && dataset
-    ? imageUrlBuilder({ projectId, dataset }).image(source)
-    : null;
+import CampInfoCard from "@/components/CampInfoCard";
+import MobileCampCard from "@/components/MobileCampCard";
 
 interface CampMapProps {
   posts: SanityDocument[];
@@ -28,54 +21,75 @@ interface CampMapProps {
 }
 
 // Default map center (Thailand)
-const defaultCenter = {
-  lat: 13.7563,
-  lng: 100.5018,
-};
+const defaultCenter: L.LatLngExpression = [13.7563, 100.5018];
 
-// Custom map styles for a cleaner look (similar to Airbnb)
-const mapStyles = [
-  {
-    featureType: "poi",
-    elementType: "labels",
-    stylers: [{ visibility: "off" }],
-  },
-  {
-    featureType: "transit",
-    elementType: "labels",
-    stylers: [{ visibility: "off" }],
-  },
-];
+// OpenStreetMap-based raster tiles (ไม่ต้องใช้ API key)
+// เปลี่ยน provider ได้ด้วย env NEXT_PUBLIC_MAP_TILE_URL หากต้องการ tile server ของตัวเอง
+const TILE_URL =
+  process.env.NEXT_PUBLIC_MAP_TILE_URL ||
+  "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+const TILE_ATTRIBUTION =
+  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
 
-const mapOptions: google.maps.MapOptions = {
-  disableDefaultUI: true,
-  zoomControl: true,
-  streetViewControl: false,
-  mapTypeControl: false,
-  fullscreenControl: true,
-  styles: mapStyles,
-  clickableIcons: false,
-};
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 
-// Create price marker SVG
-const createPriceMarkerSvg = (price: string, isSelected: boolean) => {
-  const bgColor = isSelected ? "#085953" : "#ffffff";
-  const textColor = isSelected ? "#ffffff" : "#085953";
-  const strokeColor = isSelected ? "#ffffff" : "#085953";
+// Price pill marker (styles อยู่ใน globals.css → .camp-price-pill)
+// cache ไว้เพื่อให้ icon มี identity คงที่ — ไม่งั้น react-leaflet จะสร้าง DOM marker ใหม่ทุก render
+const iconCache = new Map<string, L.DivIcon>();
+
+const getPriceIcon = (price: string, isSelected: boolean) => {
+  const key = `${price}|${isSelected}`;
+  const cached = iconCache.get(key);
+  if (cached) return cached;
+
   const width = Math.max(60, price.length * 10 + 24);
+  const icon = L.divIcon({
+    className: "camp-price-marker",
+    html: `<div class="camp-price-pill${isSelected ? " is-selected" : ""}" style="width:${width}px">฿${escapeHtml(price)}</div>`,
+    iconSize: [width, 32],
+    iconAnchor: [width / 2, 16],
+    popupAnchor: [0, -18],
+  });
 
-  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
-    <svg width="${width}" height="32" viewBox="0 0 ${width} 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="1" y="1" width="${width - 2}" height="28" rx="14" fill="${bgColor}" stroke="${strokeColor}" stroke-width="1.5"/>
-      <text x="${width / 2}" y="20" text-anchor="middle" fill="${textColor}" font-size="12" font-weight="600" font-family="Arial, sans-serif">฿${price}</text>
-    </svg>
-  `)}`;
+  iconCache.set(key, icon);
+  return icon;
 };
+
+// ปรับ viewport ให้เห็นทุก marker (เทียบเท่า fitBounds ของ Google Maps)
+function FitBounds({ points }: { points: L.LatLngTuple[] }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (points.length > 1) {
+      map.fitBounds(L.latLngBounds(points), { padding: [50, 50] });
+    } else if (points.length === 1) {
+      map.setView(points[0], 14);
+    }
+  }, [map, points]);
+
+  return null;
+}
+
+// คลิกพื้นที่ว่างบนแผนที่ → เคลียร์ camp ที่เลือกอยู่
+// หมายเหตุ: ห้ามผูก `popupclose` ที่นี่ — react-leaflet remount popup ทุกครั้งที่ position เปลี่ยน
+// (cleanup เรียก map.removeLayer) ทำให้ popupclose ยิงตอนสลับหมุด แล้วปิด popup ที่เพิ่งเปิด
+function MapEvents({ onDeselect }: { onDeselect: () => void }) {
+  useMapEvents({
+    click: onDeselect,
+  });
+
+  return null;
+}
 
 export default function CampMap({ posts, className = "" }: CampMapProps) {
   const [selectedCamp, setSelectedCamp] = useState<SanityDocument | null>(null);
-  const [map, setMap] = useState<google.maps.Map | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const mapRef = useRef<L.Map | null>(null);
 
   // Detect mobile screen size
   useEffect(() => {
@@ -89,267 +103,113 @@ export default function CampMap({ posts, className = "" }: CampMapProps) {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  const { isLoaded, loadError } = useJsApiLoader({
-    id: "google-map-script",
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
-  });
-
   // Filter posts that have location data
   const postsWithLocation = useMemo(() => {
     return posts.filter((post) => post.location?.lat && post.location?.lng);
   }, [posts]);
 
-  // Calculate center based on posts or use default
-  const center = useMemo(() => {
-    if (postsWithLocation.length === 0) return defaultCenter;
-
-    const avgLat =
-      postsWithLocation.reduce(
-        (sum, post) => sum + (post.location?.lat || 0),
-        0,
-      ) / postsWithLocation.length;
-    const avgLng =
-      postsWithLocation.reduce(
-        (sum, post) => sum + (post.location?.lng || 0),
-        0,
-      ) / postsWithLocation.length;
-
-    return { lat: avgLat, lng: avgLng };
-  }, [postsWithLocation]);
-
-  const onLoad = useCallback(
-    (map: google.maps.Map) => {
-      setMap(map);
-
-      // Fit bounds to show all markers
-      if (postsWithLocation.length > 1) {
-        const bounds = new google.maps.LatLngBounds();
-        postsWithLocation.forEach((post) => {
-          if (post.location?.lat && post.location?.lng) {
-            bounds.extend({ lat: post.location.lat, lng: post.location.lng });
-          }
-        });
-        map.fitBounds(bounds, { top: 50, right: 50, bottom: 50, left: 50 });
-      }
-    },
+  // position ต้องมี identity คงที่ (useMemo) — react-leaflet ใช้ค่านี้เป็น effect dependency
+  const markers = useMemo(
+    () =>
+      postsWithLocation.map((post) => ({
+        post,
+        position: [post.location.lat, post.location.lng] as L.LatLngTuple,
+        price: String(post.otherBenefits?.priceOfStay || "---"),
+      })),
     [postsWithLocation],
   );
 
-  const onUnmount = useCallback(() => {
-    setMap(null);
-  }, []);
+  const points = useMemo<L.LatLngTuple[]>(
+    () => markers.map((m) => m.position),
+    [markers],
+  );
+
+  const selectedPosition = useMemo<L.LatLngTuple | null>(
+    () =>
+      selectedCamp?.location
+        ? [selectedCamp.location.lat, selectedCamp.location.lng]
+        : null,
+    [selectedCamp],
+  );
+
+  // Calculate center based on posts or use default
+  const center = useMemo<L.LatLngExpression>(() => {
+    if (points.length === 0) return defaultCenter;
+
+    const avgLat = points.reduce((sum, p) => sum + p[0], 0) / points.length;
+    const avgLng = points.reduce((sum, p) => sum + p[1], 0) / points.length;
+
+    return [avgLat, avgLng];
+  }, [points]);
 
   const handleMarkerClick = (post: SanityDocument) => {
     setSelectedCamp(post);
-    if (map && post.location) {
-      map.panTo({ lat: post.location.lat, lng: post.location.lng });
+    if (mapRef.current && post.location) {
+      mapRef.current.panTo([post.location.lat, post.location.lng]);
     }
   };
 
-  if (loadError) {
-    return (
-      <div
-        className={`flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-xl ${className}`}
-      >
-        <p className="text-gray-500">ไม่สามารถโหลดแผนที่ได้</p>
-      </div>
-    );
-  }
-
-  if (!isLoaded) {
-    return (
-      <div
-        className={`flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-xl animate-pulse ${className}`}
-      >
-        <p className="text-gray-500">กำลังโหลดแผนที่...</p>
-      </div>
-    );
-  }
-
   return (
     <div className={`relative ${className}`}>
-      <GoogleMap
-        mapContainerClassName="w-full h-full"
+      <MapContainer
+        ref={mapRef}
         center={center}
-        zoom={postsWithLocation.length === 1 ? 14 : 10}
-        onLoad={onLoad}
-        onUnmount={onUnmount}
-        options={mapOptions}
-        onClick={() => setSelectedCamp(null)}
+        zoom={points.length === 1 ? 14 : 10}
+        scrollWheelZoom
+        zoomControl
+        className="w-full h-full"
       >
-        {postsWithLocation.map((post) => {
-          const price = post.otherBenefits?.priceOfStay || "---";
+        <TileLayer
+          url={TILE_URL}
+          attribution={TILE_ATTRIBUTION}
+          subdomains="abcd"
+          maxZoom={20}
+        />
+
+        <FitBounds points={points} />
+        <MapEvents onDeselect={() => setSelectedCamp(null)} />
+
+        {markers.map(({ post, position, price }) => {
           const isSelected = selectedCamp?._id === post._id;
-          const markerWidth = Math.max(60, String(price).length * 10 + 24);
 
           return (
-            <MarkerF
+            <Marker
               key={post._id}
-              position={{
-                lat: post.location.lat,
-                lng: post.location.lng,
-              }}
-              onClick={() => handleMarkerClick(post)}
-              icon={{
-                url: createPriceMarkerSvg(String(price), isSelected),
-                scaledSize: new google.maps.Size(markerWidth, 32),
-                anchor: new google.maps.Point(markerWidth / 2, 16),
-              }}
-              zIndex={isSelected ? 1000 : 1}
+              position={position}
+              icon={getPriceIcon(price, isSelected)}
+              zIndexOffset={isSelected ? 1000 : 0}
+              eventHandlers={{ click: () => handleMarkerClick(post) }}
             />
           );
         })}
 
-        {/* Info Window - Desktop only */}
-        {selectedCamp && selectedCamp.location && !isMobile && (
-          <InfoWindowF
-            position={{
-              lat: selectedCamp.location.lat,
-              lng: selectedCamp.location.lng,
-            }}
-            onCloseClick={() => setSelectedCamp(null)}
-            options={{
-              pixelOffset: new google.maps.Size(0, -25),
-              disableAutoPan: false,
-            }}
+        {/* Popup - Desktop only */}
+        {selectedCamp && selectedPosition && !isMobile && (
+          <Popup
+            position={selectedPosition}
+            offset={[0, -18]}
+            minWidth={220}
+            maxWidth={220}
+            autoPan
+            closeButton={false}
           >
-            <CampInfoCard camp={selectedCamp} />
-          </InfoWindowF>
+            <CampInfoCard
+              camp={selectedCamp}
+              onClose={() => setSelectedCamp(null)}
+            />
+          </Popup>
         )}
-      </GoogleMap>
+      </MapContainer>
 
       {/* Mobile Selected Camp Card - Fixed at bottom */}
       {selectedCamp && (
-        <div className="lg:hidden absolute bottom-4 left-4 right-4 z-10">
+        <div className="lg:hidden absolute bottom-4 left-4 right-4 z-1000">
           <MobileCampCard
             camp={selectedCamp}
             onClose={() => setSelectedCamp(null)}
           />
         </div>
       )}
-    </div>
-  );
-}
-
-// Info Card for desktop (inside InfoWindow)
-// หมายเหตุ: InfoWindow default styles (padding/radius/close btn) ถูก override ใน globals.css
-function CampInfoCard({ camp }: { camp: SanityDocument }) {
-  const imageUrl = camp.thumbnail
-    ? urlFor(camp.thumbnail)?.width(280).height(158).url()
-    : null;
-
-  return (
-    <div className="w-55 p-0">
-      <Link
-        href={`/land/${camp.slug?.current}`}
-        className="flex flex-col gap-2"
-      >
-        {/* Image */}
-        <div className="relative w-full aspect-video bg-muted  overflow-hidden">
-          {imageUrl ? (
-            <Image
-              src={imageUrl}
-              alt={camp.title || "Camp"}
-              fill
-              className="object-cover"
-              sizes="220px"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <span className="text-muted-foreground text-sm">ไม่มีรูปภาพ</span>
-            </div>
-          )}
-        </div>
-
-        {/* Content */}
-        <div className="px-2 pb-2">
-          <h3 className="text-sm font-semibold line-clamp-1">{camp.title}</h3>
-          {camp.address?.province && (
-            <p className="text-sm">
-              {camp.address.district &&
-                `${camp.address.district} ${camp.address.province}`}
-            </p>
-          )}
-          {camp.otherBenefits?.priceOfStay && (
-            <p className="text-sm text-gray-700">
-              <strong className="font-bold!">
-                ฿{camp.otherBenefits.priceOfStay}
-              </strong>{" "}
-              / คน / คืน
-            </p>
-          )}
-        </div>
-      </Link>
-    </div>
-  );
-}
-
-// Mobile Camp Card (fixed at bottom)
-function MobileCampCard({
-  camp,
-  onClose,
-}: {
-  camp: SanityDocument;
-  onClose: () => void;
-}) {
-  const imageUrl = camp.thumbnail
-    ? urlFor(camp.thumbnail)?.width(120).height(120).url()
-    : null;
-
-  return (
-    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg overflow-hidden">
-      <Link href={`/land/${camp.slug?.current}`} className="flex items-stretch">
-        {/* Image */}
-        <div className="relative w-24 h-24 shrink-0 bg-gray-100">
-          {imageUrl ? (
-            <Image
-              src={imageUrl}
-              alt={camp.title || "Camp"}
-              fill
-              className="object-cover"
-              sizes="96px"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <span className="text-gray-400 text-xs">ไม่มีรูป</span>
-            </div>
-          )}
-        </div>
-
-        {/* Content */}
-        <div className="flex-1 p-3 pr-10 min-w-0">
-          <h3 className="font-semibold text-sm text-gray-900 dark:text-white line-clamp-1">
-            {camp.title}
-          </h3>
-          {camp.address?.province && (
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1">
-              {camp.address.district && `${camp.address.district}, `}
-              {camp.address.province}
-            </p>
-          )}
-          {camp.otherBenefits?.priceOfStay && (
-            <p className="text-sm font-semibold text-gray-900 dark:text-white mt-1">
-              ฿{camp.otherBenefits.priceOfStay}{" "}
-              <span className="font-normal text-gray-500 dark:text-gray-400">
-                / คน / คืน
-              </span>
-            </p>
-          )}
-        </div>
-      </Link>
-
-      {/* Close button */}
-      <button
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          onClose();
-        }}
-        className="absolute top-2 right-2 p-1.5 bg-white dark:bg-gray-800 rounded-full shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-        aria-label="ปิด"
-      >
-        <X className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-      </button>
     </div>
   );
 }

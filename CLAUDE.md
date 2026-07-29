@@ -7,20 +7,20 @@
 Monorepo แบ่งเป็น 2 ส่วน:
 
 - `nextjs-campmoocampmee/` — Next.js 16 frontend (App Router, Turbopack)
-- `studio-campmoocampmee/` — Sanity Studio v5 (headless CMS)
+- `studio-campmoocampmee/` — Sanity Studio v6 (headless CMS)
 
 ## Tech Stack
 
 | Category       | Technology                                          |
 | -------------- | --------------------------------------------------- |
-| Framework      | Next.js 16 (App Router), React 19, TypeScript 5.8   |
+| Framework      | Next.js 16 (App Router), React 19, TypeScript 5.9   |
 | Styling        | Tailwind CSS 4, shadcn/ui (New York), Radix UI      |
 | State          | Zustand 5                                           |
 | Forms          | React Hook Form + Zod                               |
 | Auth           | Better Auth 1.6 (Google OAuth) + Prisma adapter     |
 | Auth DB        | Supabase Postgres (via Prisma 6, pgBouncer pooling) |
-| CMS            | Sanity.io v5 (Content Lake)                         |
-| Maps           | @react-google-maps/api                              |
+| CMS            | Sanity.io v6 (Content Lake)                         |
+| Maps           | Leaflet + react-leaflet (OpenStreetMap tiles)       |
 | Animation      | GSAP, Swiper, Embla Carousel                        |
 | Analytics      | Vercel Analytics                                    |
 | Deployment     | Vercel (frontend), Sanity Cloud (CMS)               |
@@ -54,12 +54,14 @@ pnpm deploy     # Deploy studio
   - Auth: `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
   - Auth DB (Supabase): `DATABASE_URL` (pooler `:6543?pgbouncer=true`), `DIRECT_URL` (`:5432`, ใช้ตอน migrate)
   - SMS OTP (deeSMSx): `SMS_API_KEY`, `SMS_SECRET_KEY`, `SMS_SENDER` (+ optional `SMS_API_URL`; ถ้าไม่ตั้งจะ log OTP ใน dev)
-  - อื่นๆ: `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`, `NEXT_PUBLIC_SANITY_DATASET`, `SANITY_API_TOKEN`
+  - อื่นๆ: `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_SANITY_DATASET`, `SANITY_API_TOKEN`
+  - Optional: `NEXT_PUBLIC_MAP_TILE_URL` (เปลี่ยน tile provider ของแผนที่; default = CARTO Voyager บนข้อมูล OSM, ไม่ต้องใช้ API key)
 
 ## Key Patterns
 
 - **ISR**: หน้า camp detail revalidate ทุก 300 วินาที
 - **force-dynamic**: หน้า search ใช้ dynamic rendering
+- **Map**: `src/components/CampMap.tsx` (Leaflet + react-leaflet, dynamic import `ssr:false` จาก `SearchMapWrapper`); marker = `L.divIcon` ป้ายราคา (สไตล์ `.camp-price-pill` ใน `globals.css`), desktop ใช้ popup / mobile ใช้การ์ดล่างจอ; ต้องคง attribution ของ OSM ไว้
 - **Sanity client**: config อยู่ที่ `src/sanity/client.ts`
 - **Zustand stores**: `src/lib/store.ts` (scroll, gallery, landowner state)
 - **UI components**: shadcn/ui อยู่ใน `src/components/ui/`
