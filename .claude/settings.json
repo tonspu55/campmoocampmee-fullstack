@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm view *)",
+      "Bash(pnpm ls *)",
+      "Bash(curl -s http://localhost:2499/_next/static/chunks/ -o /dev/null)",
+      "Bash(pkill -f \"next dev\")"
+    ]
+  }
+}
