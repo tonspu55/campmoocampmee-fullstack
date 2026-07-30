@@ -63,7 +63,7 @@ pnpm deploy     # Deploy studio
 - **force-dynamic**: หน้า search ใช้ dynamic rendering
 - **Map**: `src/components/CampMap.tsx` (Leaflet + react-leaflet, dynamic import `ssr:false` จาก `SearchMapWrapper`); marker = `L.divIcon` ป้ายราคา (สไตล์ `.camp-price-pill` ใน `globals.css`), desktop ใช้ popup / mobile ใช้การ์ดล่างจอ; ต้องคง attribution ของ OSM ไว้
 - **Sanity client**: config อยู่ที่ `src/sanity/client.ts`
-- **Zustand stores**: `src/lib/store.ts` (scroll, gallery, landowner state)
+- **Zustand stores**: `src/lib/store.ts` — `useScrollStore`, `useGalleryStore`
 - **UI components**: shadcn/ui อยู่ใน `src/components/ui/`
 - **Auth (Better Auth)**:
   - Server config: `src/lib/auth.ts` (Google provider, `phoneNumber` plugin, Prisma adapter, session cookieCache 5 นาที)
@@ -85,7 +85,8 @@ pnpm deploy     # Deploy studio
   - v1: เพิ่มอย่างเดียว (ยังไม่มีแก้/ลบ); ยังไม่มีฟีเจอร์เพิ่ม email ให้ phone-only user (ต้องตั้ง email provider ก่อน)
 - **Authorization/identity**: resolve จาก Postgres เสมอ (`getUserIdentity` ใน `src/server/identity.service.ts`), ไม่อ่านจาก Sanity mirror; ฟีเจอร์ที่ผูก Sanity `_id` (wishlist/review) ใช้ `resolveSanityUserId` ที่ self-heal สร้าง doc ถ้าหาย
 - **Account linking policy**: `accountLinking` เปิด `trustedProviders:["google"]` (auto-link เฉพาะอีเมลตรงกัน); phone↔google ของคนเดียวกันไม่ auto-merge (คนละ identity)
-- **Auth flow**: user ปกติ → `/auth/signin`, เจ้าของที่ → `/auth/signin-landowner`
+- **Auth flow**: มีทางเข้าเดียวคือ `/auth/signin` (ยังไม่มี flow แยกสำหรับเจ้าของที่)
+- **เจ้าของที่ (landowner)**: ยังไม่มี role/สิทธิ์ในระบบ — `User` ใน Prisma มีแต่ field auth, ไม่มี role/ownership model; ปัจจุบันเจ้าของที่ติดต่อเข้ามาผ่านฟอร์ม `/contact` (`submitContact` ใน `src/server/contact.service.ts` → เก็บเป็น doc ใน Sanity) แล้วจัดการต่อนอกระบบ; **ไม่มีที่เก็บ ownership (user ↔ camp) ที่ไหนเลย** — เดิมมี field `providerIds` ใน Sanity `post` แต่ลบทิ้งแล้ว (ไม่มีโค้ดอ่าน + production ไม่มีข้อมูล); เมื่อทำระบบเจ้าของจริง ownership ต้องอยู่ใน Postgres ไม่ใช่ Sanity เพราะ Sanity แก้ผ่าน Studio ได้ = ยกสิทธิ์ให้ตัวเองได้
 - **Account page**: `/account` (`src/app/account/page.tsx`) — หน้าบัญชีของฉัน (โปรไฟล์ name/avatar แก้ผ่าน `POST /api/account/profile` + แถวเบอร์โทร/ปุ่มเพิ่มเบอร์ + ลิงก์ wishlists + ออกจากระบบ); ปุ่ม avatar ใน Header กดแล้วไป `/account` ถ้า login อยู่, ไม่งั้นเปิด login dialog (`UserDialog` = login-only)
 
 ## Conventions

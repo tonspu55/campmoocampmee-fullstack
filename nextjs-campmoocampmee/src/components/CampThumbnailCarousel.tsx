@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import useEmblaCarousel from "embla-carousel-react";
-import Link from "next/link";
-import Image from "next/image";
-import { type SanityDocument } from "next-sanity";
-import { urlFor } from "@/sanity/client";
-import HeartButton from "@/components/HeartButton";
+import useEmblaCarousel from 'embla-carousel-react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { type SanityDocument } from 'next-sanity';
+import { urlFor } from '@/sanity/client';
+import HeartButton from '@/components/HeartButton';
 
 export default function CampThumbnailCarousel({
   posts,
@@ -13,8 +13,8 @@ export default function CampThumbnailCarousel({
   posts: SanityDocument[];
 }) {
   const [emblaRef] = useEmblaCarousel({
-    align: "start",
-    containScroll: "trimSnaps",
+    align: 'start',
+    containScroll: 'trimSnaps',
     dragFree: true,
   });
 
@@ -35,7 +35,7 @@ export default function CampThumbnailCarousel({
                 href={`/land/${post.slug.current}`}
                 className="flex flex-col gap-2"
               >
-                <div className="rounded-[20px] overflow-hidden w-44.25 aspect-square">
+                <div className="rounded-lg overflow-hidden w-44.25 aspect-square">
                   {postImageUrl ? (
                     <Image
                       src={postImageUrl}
