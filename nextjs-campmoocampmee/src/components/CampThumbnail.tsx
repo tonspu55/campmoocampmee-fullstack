@@ -1,10 +1,10 @@
-"use client";
-import Link from "next/link";
-import Image from "next/image";
-import { type SanityDocument } from "next-sanity";
-import { urlFor } from "@/sanity/client";
-import { Skeleton } from "@/components/ui/skeleton";
-import HeartButton from "@/components/HeartButton";
+'use client';
+import Link from 'next/link';
+import Image from 'next/image';
+import { type SanityDocument } from 'next-sanity';
+import { urlFor } from '@/sanity/client';
+import { Skeleton } from '@/components/ui/skeleton';
+import HeartButton from '@/components/HeartButton';
 
 interface CampCardProps {
   posts?: SanityDocument[];
@@ -52,7 +52,7 @@ export default function CampCard({
           >
             <HeartButton postId={post._id} />
             <Link href={`/land/${post.slug.current}`}>
-              <div className="aspect-square rounded-[20px] overflow-hidden">
+              <div className="aspect-square rounded-lg overflow-hidden">
                 {postImageUrl ? (
                   <Image
                     src={postImageUrl}

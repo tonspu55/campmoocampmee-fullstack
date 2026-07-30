@@ -65,15 +65,6 @@ export const postType = defineType({
       type: 'image',
       group: 'basic',
     }),
-    defineField({
-      name: 'providerIds',
-      title: 'Provider IDs',
-      type: 'array',
-      group: 'basic',
-      of: [{type: 'string'}],
-      description: 'ID ของเจ้าของลานจาก Google Provider (รองรับหลาย user)',
-    }),
-
     // ── สถานที่ ─────────────────────────────────────────────────────
     defineField({
       name: 'address',

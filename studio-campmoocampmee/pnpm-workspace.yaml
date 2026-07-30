@@ -15,3 +15,14 @@ minimumReleaseAgeExclude:
   - '@sanity/util@5.31.0'
   - '@sanity/vision@5.31.0'
   - sanity@5.31.0
+  - '@sanity/cli-build@5.1.0'
+  - '@sanity/cli-core@2.7.1'
+  - '@sanity/cli@7.15.1'
+  - '@sanity/diff@6.8.0'
+  - '@sanity/mutator@6.8.0'
+  - '@sanity/schema@6.8.0'
+  - '@sanity/types@6.8.0'
+  - '@sanity/util@6.8.0'
+  - '@sanity/vision@6.8.0'
+  - '@sanity/workbench-cli@1.8.0'
+  - sanity@6.8.0
