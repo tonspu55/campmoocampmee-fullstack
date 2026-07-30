@@ -1,77 +1,55 @@
-"use client";
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { PhoneCall } from "lucide-react";
-import { Navigation } from "lucide-react";
-import { Button } from "@/components/ui/button";
+'use client';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { PhoneCall } from 'lucide-react';
+import { Navigation } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import type { SocialContactLinks } from '@/types/social';
 
-type SocialContactLinks = {
-  facebook?: string;
-  line?: string;
-  instagram?: string;
-  googleMap?: string;
-  phone?: string;
-  googleMapNavigation?: string;
-};
-
-interface ContactSocialLinkProps {
-  socialContactLinks: SocialContactLinks;
+interface NavigationMobileProps {
+  socialContactLinks?: SocialContactLinks;
 }
 
-const NavigationMobile = ({ socialContactLinks }: ContactSocialLinkProps) => {
+const NavigationMobile = ({ socialContactLinks }: NavigationMobileProps) => {
   const [isAtBottom, setIsAtBottom] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const endElement = document.querySelector(".end-page-detection");
-      if (endElement) {
-        const endElementRect = endElement.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
+    const endElement = document.querySelector('.end-page-detection');
+    if (!endElement) return;
 
-        // ตรวจสอบว่า scroll ถึง end-page-detection หรือไม่ (เพิ่ม buffer เล็กน้อย)
-        const isAtEndElement = endElementRect.top <= windowHeight - 50;
-        setIsAtBottom(isAtEndElement);
-      }
-    };
+    // ซ่อนแถบเมื่อ sentinel ท้ายหน้าเข้ามาในจอ (เผื่อ buffer 50px)
+    // rootMargin ด้านบนเผื่อไว้เยอะ เพื่อให้ยังนับว่า "ถึงท้ายหน้า" แม้ scroll เลยไปแล้ว
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsAtBottom(entry.isIntersecting),
+      { rootMargin: '9999px 0px -50px 0px' },
+    );
 
-    // ใช้ throttle เพื่อลดการเรียก handleScroll บ่อยเกินไป
-    let ticking = false;
-    const throttledScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          handleScroll();
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    window.addEventListener("scroll", throttledScroll, { passive: true });
-    handleScroll(); // เรียกครั้งแรกเพื่อตรวจสอบ initial state
-
-    return () => {
-      // Clean up event listener
-      window.removeEventListener("scroll", throttledScroll);
-    };
+    observer.observe(endElement);
+    return () => observer.disconnect();
   }, []);
-  console.log("Social Contact Links:", socialContactLinks.googleMapNavigation);
+
+  if (!socialContactLinks) return null;
+
+  const { phone, googleMapNavigation } = socialContactLinks;
+  if (!phone && !googleMapNavigation) return null;
+
   return (
     <div
       className={`${
         isAtBottom
-          ? "relative hidden"
-          : "fixed bottom-0 left-0 right-0 z-10 w-full"
+          ? 'relative hidden'
+          : 'fixed bottom-0 left-0 right-0 z-10 w-full'
       } lg:hidden bg-white dark:bg-background transition-all px-2`}
     >
       <div className="py-2 flex flex-row gap-2 items-center">
         <div className="basis-1/2">
-          {socialContactLinks.phone && (
+          {phone && (
             <Button
               variant="default"
               className="flex items-center w-full"
               asChild
             >
-              <Link href={`tel:${socialContactLinks.phone}`}>
+              <Link href={`tel:${phone}`}>
                 <PhoneCall className="w-6 h-6 " />
                 โทรติดต่อที่พัก
               </Link>
@@ -79,16 +57,13 @@ const NavigationMobile = ({ socialContactLinks }: ContactSocialLinkProps) => {
           )}
         </div>
         <div className="basis-1/2">
-          {socialContactLinks.googleMapNavigation && (
+          {googleMapNavigation && (
             <Button
               variant="default"
               className="flex items-center w-full"
               asChild
             >
-              <Link
-                target="_blank"
-                href={`${socialContactLinks.googleMapNavigation}`}
-              >
+              <Link target="_blank" rel="noopener noreferrer" href={googleMapNavigation}>
                 <Navigation className="w-6 h-6 " />
                 นำทางไปที่พัก
               </Link>
