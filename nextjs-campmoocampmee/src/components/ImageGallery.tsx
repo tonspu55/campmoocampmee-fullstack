@@ -102,6 +102,8 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
                     src={imageItem.url}
                     alt={imageItem.alt || imageItem.title || `Gallery image ${index + 1}`}
                     fill
+                    sizes="100vw"
+                    priority={index === 0}
                     className="object-cover"
                   />
                   {index === displayImages.length - 1 && (
@@ -148,6 +150,7 @@ const ImageGallery = ({ ImageGallery, slug }: ImageGalleryProps) => {
                   className="object-cover w-full h-full max-h-100 rounded-tl-xl rounded-bl-xl"
                   width={500}
                   height={400}
+                  priority
                 />
               </div>
             )}

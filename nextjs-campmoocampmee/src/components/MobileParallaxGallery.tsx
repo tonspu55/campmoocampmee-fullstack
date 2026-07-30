@@ -8,6 +8,11 @@ interface MobileParallaxGalleryProps {
   slug: string
 }
 
+/**
+ * เรนเดอร์ ImageGallery เพียงชุดเดียวสำหรับทุก breakpoint
+ * - mobile (< md): ตรึงแกลเลอรีไว้ให้เนื้อหาเลื่อนทับแบบ parallax
+ * - desktop (>= md): ปล่อยเป็น static ตาม flow ปกติ (คลาส md:* override)
+ */
 export default function MobileParallaxGallery({ ImageGallery: galleryData, slug }: MobileParallaxGalleryProps) {
   const [isFixed, setIsFixed] = useState(true)
   const galleryRef = useRef<HTMLDivElement>(null)
@@ -24,29 +29,42 @@ export default function MobileParallaxGallery({ ImageGallery: galleryData, slug 
   }, [])
 
   useEffect(() => {
-    let rafId: number
+    // parallax ใช้เฉพาะ mobile — desktop ไม่ต้องผูก scroll listener
+    const mediaQuery = window.matchMedia('(max-width: 767px)')
+    let rafId = 0
+
     const onScroll = () => {
       cancelAnimationFrame(rafId)
       rafId = requestAnimationFrame(handleScroll)
     }
 
-    window.addEventListener('scroll', onScroll, { passive: true })
-    handleScroll()
+    const bindScroll = () => {
+      window.removeEventListener('scroll', onScroll)
+      if (!mediaQuery.matches) return
+      window.addEventListener('scroll', onScroll, { passive: true })
+      handleScroll()
+    }
+
+    bindScroll()
+    mediaQuery.addEventListener('change', bindScroll)
+
     return () => {
+      mediaQuery.removeEventListener('change', bindScroll)
       window.removeEventListener('scroll', onScroll)
       cancelAnimationFrame(rafId)
     }
   }, [handleScroll])
 
   return (
-    <div className="md:hidden">
+    <div>
       <div
         ref={galleryRef}
-        className={isFixed ? 'fixed top-15 left-0 right-0 z-0' : 'absolute top-0 left-0 right-0 z-0'}
+        className={`${isFixed ? 'fixed top-15' : 'absolute top-0'} left-0 right-0 z-0 md:static md:z-auto`}
       >
         <ImageGallery ImageGallery={galleryData} slug={slug} />
       </div>
-      <div className="h-75" />
+      {/* spacer กันเนื้อหาซ้อนแกลเลอรีที่ถูกตรึงไว้ (mobile เท่านั้น) */}
+      <div className="h-75 md:hidden" />
     </div>
   )
 }
