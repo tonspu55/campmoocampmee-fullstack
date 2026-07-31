@@ -1,10 +1,11 @@
 'use client'
 
 import { useEffect, useState, useRef, useCallback } from 'react'
-import ImageGallery, { type ImageGalleryItem } from '@/components/ImageGallery'
+import ImageGallery from '@/components/ImageGallery'
+import type { ImageGalleryItem } from '@/types/gallery'
 
 interface MobileParallaxGalleryProps {
-  ImageGallery: ImageGalleryItem[]
+  images: ImageGalleryItem[]
   slug: string
 }
 
@@ -13,7 +14,7 @@ interface MobileParallaxGalleryProps {
  * - mobile (< md): ตรึงแกลเลอรีไว้ให้เนื้อหาเลื่อนทับแบบ parallax
  * - desktop (>= md): ปล่อยเป็น static ตาม flow ปกติ (คลาส md:* override)
  */
-export default function MobileParallaxGallery({ ImageGallery: galleryData, slug }: MobileParallaxGalleryProps) {
+export default function MobileParallaxGallery({ images, slug }: MobileParallaxGalleryProps) {
   const [isFixed, setIsFixed] = useState(true)
   const galleryRef = useRef<HTMLDivElement>(null)
 
@@ -61,7 +62,7 @@ export default function MobileParallaxGallery({ ImageGallery: galleryData, slug 
         ref={galleryRef}
         className={`${isFixed ? 'fixed top-15' : 'absolute top-0'} left-0 right-0 z-0 md:static md:z-auto`}
       >
-        <ImageGallery ImageGallery={galleryData} slug={slug} />
+        <ImageGallery images={images} slug={slug} />
       </div>
       {/* spacer กันเนื้อหาซ้อนแกลเลอรีที่ถูกตรึงไว้ (mobile เท่านั้น) */}
       <div className="h-75 md:hidden" />

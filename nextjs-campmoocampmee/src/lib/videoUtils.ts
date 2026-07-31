@@ -1,116 +1,95 @@
-// ฟังก์ชันช่วยสำหรับแปลง Video URL จาก Sanity
-export const processVideoUrl = (url: string, platform: string) => {
+import { urlFor } from "@/sanity/client";
+import {
+  hasImageAsset,
+  type GalleryImageItem,
+  type GalleryItem,
+  type GalleryVideoItem,
+  type SanityImageItem,
+  type SanityVideoItem,
+  type VideoPlatform,
+} from "@/types/gallery";
+
+/** ความกว้างรูปในหน้าอัลบั้ม — grid สูงสุด ~900px, popup เต็มจอ */
+const GRID_IMAGE_WIDTH = 900;
+const FULL_IMAGE_WIDTH = 1920;
+
+const SUPPORTED_PLATFORMS: VideoPlatform[] = ["youtube", "tiktok"];
+
+const isSupportedPlatform = (
+  platform: string | undefined,
+): platform is VideoPlatform =>
+  !!platform && SUPPORTED_PLATFORMS.includes(platform as VideoPlatform);
+
+/**
+ * แปลง URL วิดีโอที่แอดมินวางไว้เป็น embed URL
+ * คืน null ถ้าแปลงไม่ได้ หรือไม่ใช่ https (กัน javascript:/data: หลุดเข้า iframe src)
+ */
+export const processVideoUrl = (
+  url: string,
+  platform: VideoPlatform,
+): string | null => {
   if (!url) return null;
 
-  // สำหรับ YouTube
+  let embedUrl: string | null = null;
+
   if (platform === "youtube") {
-    // ถ้าเป็น embed URL อยู่แล้ว
     if (url.includes("/embed/")) {
-      return url;
-    }
-
-    // ถ้าเป็น watch URL แปลงเป็น embed
-    if (url.includes("watch?v=")) {
+      embedUrl = url;
+    } else if (url.includes("watch?v=")) {
       const videoId = url.split("watch?v=")[1]?.split("&")[0];
-      if (videoId) {
-        return `https://www.youtube.com/embed/${videoId}`;
-      }
-    }
-
-    // ถ้าเป็น youtu.be short URL
-    if (url.includes("youtu.be/")) {
+      embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+    } else if (url.includes("youtu.be/")) {
       const videoId = url.split("youtu.be/")[1]?.split("?")[0];
-      if (videoId) {
-        return `https://www.youtube.com/embed/${videoId}`;
-      }
+      embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}` : null;
     }
   }
 
-  // สำหรับ TikTok
   if (platform === "tiktok") {
-    // ดึง video ID จาก URL รูปแบบ tiktok.com/@user/video/1234567890
-    const videoIdMatch = url.match(/\/video\/(\d+)/);
-    if (videoIdMatch?.[1]) {
-      return `https://www.tiktok.com/embed/v2/${videoIdMatch[1]}`;
-    }
-    // ถ้าเป็น URL รูปแบบอื่น ส่งกลับ url เดิม
-    return url;
+    // รูปแบบ tiktok.com/@user/video/1234567890
+    const videoId = url.match(/\/video\/(\d+)/)?.[1];
+    embedUrl = videoId ? `https://www.tiktok.com/embed/v2/${videoId}` : null;
   }
 
-  // สำหรับ platform อื่นๆ หรือ direct video URL
-  return url;
+  return embedUrl?.startsWith("https://") ? embedUrl : null;
 };
 
-// ฟังก์ชันสร้าง iframe HTML สำหรับวิดีโอ
-export const createVideoIframe = (
-  url: string,
-  platform: string,
-  title?: string,
-) => {
-  const processedUrl = processVideoUrl(url, platform);
-  if (!processedUrl) return null;
-
-  if (platform === "youtube") {
-    return `<iframe width="438" height="315" src="${processedUrl}" title="${title || "YouTube video player"}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
-  }
-
-  // สำหรับ TikTok
-  if (platform === "tiktok") {
-    return `<iframe src="${processedUrl}" width="325" height="578" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="max-width:100%; border-radius:8px;"></iframe>`;
-  }
-
-  // สำหรับ platform อื่นๆ
-  return `<iframe src="${processedUrl}" width="560" height="315" frameborder="0" allowfullscreen></iframe>`;
-};
-
-// ฟังก์ชันแปลงข้อมูลจาก Sanity เป็นรูปแบบที่ TabGallery ใช้ได้
-interface SanityImageItem {
-  _type: "image";
-  asset?: { url: string };
-  category?: string;
-  alt?: string;
-}
-
-interface SanityVideoItem {
-  _type: "videoUrl";
-  url?: string;
-  platform?: string;
-  category?: string;
-  title?: string;
-}
-
+/** แปลงข้อมูลจาก Sanity เป็นรูปแบบที่ TabGallery ใช้ (ทิ้ง item ที่ข้อมูลไม่ครบ) */
 export const transformGalleryData = (
-  galleryImages: SanityImageItem[],
+  galleryImages: SanityImageItem[] = [],
   videos: SanityVideoItem[] = [],
-) => {
-  // แปลงข้อมูลรูปภาพ
-  const imageItems = galleryImages.map((item) => {
-    if (item._type === "image" && item.asset?.url) {
-      return {
-        _type: "image" as const,
-        url: item.asset.url,
+): GalleryItem[] => {
+  const imageItems = galleryImages.flatMap<GalleryImageItem>((item, index) => {
+    if (!hasImageAsset(item)) return [];
+    return [
+      {
+        _type: "image",
+        _key: item._key ?? `image-${index}`,
+        url: urlFor(item).width(GRID_IMAGE_WIDTH).quality(80).url(),
+        fullUrl: urlFor(item).width(FULL_IMAGE_WIDTH).quality(85).url(),
         category: item.category || "วิว",
-        alt: item.alt,
-      };
-    }
-    return null;
+        alt: item.alt || null,
+      },
+    ];
   });
 
-  // แปลงข้อมูลวิดีโอ
-  const videoItems = videos.map((item) => {
-    if (item._type === "videoUrl" && item.url && item.platform) {
-      const embedCode = createVideoIframe(item.url, item.platform, item.title);
-      return {
-        _type: "video" as const,
-        embedCode: embedCode,
+  const videoItems = videos.flatMap<GalleryVideoItem>((item, index) => {
+    if (item._type !== "videoUrl" || !item.url) return [];
+    if (!isSupportedPlatform(item.platform)) return [];
+
+    const embedUrl = processVideoUrl(item.url, item.platform);
+    if (!embedUrl) return [];
+
+    return [
+      {
+        _type: "video",
+        _key: item._key ?? `video-${index}`,
+        embedUrl,
         platform: item.platform,
         category: item.category || "วิดีโอ",
-        title: item.title,
-      };
-    }
-    return null;
+        title: item.title || null,
+      },
+    ];
   });
 
-  // รวมข้อมูลทั้งหมด
-  return [...imageItems, ...videoItems].filter(Boolean);
+  return [...imageItems, ...videoItems];
 };

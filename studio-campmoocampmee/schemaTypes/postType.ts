@@ -188,6 +188,12 @@ export const postType = defineType({
               initialValue: 'youtube',
             }),
             defineField({
+              name: 'title',
+              title: 'Title',
+              type: 'string',
+              description: 'ชื่อวิดีโอ (ใช้เป็น title ของ iframe เพื่อ accessibility)',
+            }),
+            defineField({
               name: 'category',
               title: 'Category',
               type: 'string',

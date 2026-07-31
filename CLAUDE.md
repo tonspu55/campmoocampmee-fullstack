@@ -63,7 +63,8 @@ pnpm deploy     # Deploy studio
 - **force-dynamic**: หน้า search ใช้ dynamic rendering
 - **Map**: `src/components/CampMap.tsx` (Leaflet + react-leaflet, dynamic import `ssr:false` จาก `SearchMapWrapper`); marker = `L.divIcon` ป้ายราคา (สไตล์ `.camp-price-pill` ใน `globals.css`), desktop ใช้ popup / mobile ใช้การ์ดล่างจอ; ต้องคง attribution ของ OSM ไว้
 - **Sanity client**: config อยู่ที่ `src/sanity/client.ts`
-- **Zustand stores**: `src/lib/store.ts` — `useScrollStore`, `useGalleryStore`
+- **Zustand stores**: `src/lib/store.ts` — `useScrollStore`
+- **Gallery**: หน้าอัลบั้ม `/land/[slug]/gallery` — `TabGallery` (แถบหมวดหมู่ sticky + IntersectionObserver บอกว่าติดบนแล้ว) + `TabGalleryPopup` (shadcn `Dialog` เต็มจอ + Embla, โหลด iframe เฉพาะสไลด์ใกล้ๆ); แปลงข้อมูล Sanity ด้วย `transformGalleryData` (`src/lib/videoUtils.ts`) ที่ย่อรูปด้วย `urlFor` (grid 900px / popup 1920px) และแปลง video URL เป็น embed URL (เฉพาะ https); วิดีโอเรนเดอร์ผ่าน `VideoEmbed` เป็น `<iframe>` JSX ไม่ใช้ `dangerouslySetInnerHTML`; คลิกรูปบนหน้า land → ไปหน้าอัลบั้มพร้อม hash `#img-<_key>` (ไม่ใช้ store ส่ง index)
 - **UI components**: shadcn/ui อยู่ใน `src/components/ui/`
 - **Auth (Better Auth)**:
   - Server config: `src/lib/auth.ts` (Google provider, `phoneNumber` plugin, Prisma adapter, session cookieCache 5 นาที)

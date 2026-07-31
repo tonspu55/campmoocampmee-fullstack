@@ -16,6 +16,7 @@ import ExpandableContent from '@/components/ExpandableContent';
 import ReviewSection from '@/components/ReviewSection';
 import JsonLd from '@/components/JsonLd';
 import CampThumbnailCarousel from '@/components/CampThumbnailCarousel';
+import { hasImageAsset, type SanityImageItem } from '@/types/gallery';
 
 const SITE_URL = 'https://www.campmoocampmee.com';
 
@@ -23,16 +24,10 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-interface SanityImageItem {
-  _type: 'image';
-  asset?: { _id: string; url: string };
-  category?: string;
-  alt?: string;
-}
-
 const POST_QUERY = `*[_type == "post" && !(_id in path("drafts.**")) && slug.current == $slug][0]{
   ...,
   gallery[]{
+    _key,
     _type,
     asset->{
       _id,
@@ -183,11 +178,9 @@ export default async function PostPage({ params }: PageProps) {
 
   // สำหรับ ImageGallery (เฉพาะรูปภาพ)
   const ImageGalleryData = rawGalleryData
-    .filter(
-      (item): item is SanityImageItem & { asset: { url: string } } =>
-        item._type === 'image' && !!item.asset?.url,
-    )
-    .map((item) => ({
+    .filter(hasImageAsset)
+    .map((item, index) => ({
+      key: item._key ?? `image-${index}`,
       url: urlFor(item).width(1200).height(1200).url(),
       alt: item.alt || null,
       title: post.title,
@@ -273,7 +266,7 @@ export default async function PostPage({ params }: PageProps) {
       <JsonLd data={campgroundSchema} />
       <JsonLd data={breadcrumbSchema} />
       {/* ImageGallery ชุดเดียวทุก breakpoint (mobile ตรึงแบบ parallax, desktop static) */}
-      <MobileParallaxGallery ImageGallery={ImageGalleryData} slug={slug} />
+      <MobileParallaxGallery images={ImageGalleryData} slug={slug} />
 
       {/* Content section - scrolls over ImageGallery on mobile */}
       <div className="relative z-10 bg-background md:bg-transparent rounded-t-2xl md:rounded-none -mt-4 md:mt-0 pt-4 md:pt-0">
