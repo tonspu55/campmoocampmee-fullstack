@@ -14,8 +14,9 @@ type PageProps = {
 
 type GalleryPost = {
   title?: string;
-  gallery?: SanityImageItem[];
-  videos?: SanityVideoItem[];
+  // โพสต์ที่ยังไม่มี field เหล่านี้ GROQ คืน `null` ไม่ใช่ `undefined`
+  gallery?: SanityImageItem[] | null;
+  videos?: SanityVideoItem[] | null;
 };
 
 // ดึงเฉพาะ field ที่หน้านี้ใช้ — ไม่ต้องลาก body/benefits/contact มาด้วย

@@ -53,12 +53,17 @@ export const processVideoUrl = (
   return embedUrl?.startsWith("https://") ? embedUrl : null;
 };
 
-/** แปลงข้อมูลจาก Sanity เป็นรูปแบบที่ TabGallery ใช้ (ทิ้ง item ที่ข้อมูลไม่ครบ) */
+/**
+ * แปลงข้อมูลจาก Sanity เป็นรูปแบบที่ TabGallery ใช้ (ทิ้ง item ที่ข้อมูลไม่ครบ)
+ *
+ * โพสต์ที่ยังไม่มี field `gallery`/`videos` เลย GROQ จะคืน `null` (ไม่ใช่ `undefined`)
+ * ซึ่ง default parameter ไม่ครอบให้ — เลย normalize เป็น array เองตรงนี้
+ */
 export const transformGalleryData = (
-  galleryImages: SanityImageItem[] = [],
-  videos: SanityVideoItem[] = [],
+  galleryImages?: SanityImageItem[] | null,
+  videos?: SanityVideoItem[] | null,
 ): GalleryItem[] => {
-  const imageItems = galleryImages.flatMap<GalleryImageItem>((item, index) => {
+  const imageItems = (galleryImages ?? []).flatMap<GalleryImageItem>((item, index) => {
     if (!hasImageAsset(item)) return [];
     return [
       {
@@ -72,7 +77,7 @@ export const transformGalleryData = (
     ];
   });
 
-  const videoItems = videos.flatMap<GalleryVideoItem>((item, index) => {
+  const videoItems = (videos ?? []).flatMap<GalleryVideoItem>((item, index) => {
     if (item._type !== "videoUrl" || !item.url) return [];
     if (!isSupportedPlatform(item.platform)) return [];
 
