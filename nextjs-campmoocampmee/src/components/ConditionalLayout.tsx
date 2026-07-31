@@ -14,8 +14,8 @@ export default function ConditionalLayout({
 }: ConditionalLayoutProps) {
   const pathname = usePathname();
 
-  // ซ่อน header และ footer ในหน้า gallery
-  const hideHeaderFooter = pathname.includes("/gallery");
+  // ซ่อน header และ footer เฉพาะหน้าอัลบั้ม (/land/[slug]/gallery)
+  const hideHeaderFooter = pathname.endsWith("/gallery");
 
   return (
     <div className="flex min-h-screen flex-col">

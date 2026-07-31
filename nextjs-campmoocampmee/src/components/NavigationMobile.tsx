@@ -1,8 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { PhoneCall } from 'lucide-react';
-import { Navigation } from 'lucide-react';
+import { PhoneCall, Navigation } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { SocialContactLinks } from '@/types/social';
 
@@ -63,7 +62,11 @@ const NavigationMobile = ({ socialContactLinks }: NavigationMobileProps) => {
               className="flex items-center w-full"
               asChild
             >
-              <Link target="_blank" rel="noopener noreferrer" href={googleMapNavigation}>
+              <Link
+                target="_blank"
+                rel="noopener noreferrer"
+                href={googleMapNavigation}
+              >
                 <Navigation className="w-6 h-6 " />
                 นำทางไปที่พัก
               </Link>

@@ -1,6 +1,12 @@
 packages:
   - '.'
 
+# ข้าม lockfile supply-chain check ก่อนรัน script (pnpm dev/build)
+# เพราะ lockfile verification ไม่สนใจ minimumReleaseAgeExclude ด้านล่าง
+# ทำให้ pnpm dev พังทุกครั้งที่อัป Sanity เป็นเวอร์ชันที่ปล่อยไม่ถึง 24 ชม.
+# policy ยังทำงานปกติตอน pnpm install
+verifyDepsBeforeRun: false
+
 allowBuilds:
   esbuild: false
 

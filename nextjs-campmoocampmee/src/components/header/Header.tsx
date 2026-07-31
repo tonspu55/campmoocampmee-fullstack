@@ -143,7 +143,7 @@ const Header = () => {
           }
         `}
       >
-        <div className="container mx-auto flex items-center max-w-[1800px] px-2 lg:px-6">
+        <div className="container mx-auto flex items-center max-w-450 px-2 lg:px-6">
           {showBackButton ? (
             <div className="flex flex-1">
               <Button
